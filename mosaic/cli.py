@@ -16,13 +16,13 @@ def mosaic() -> None:
 @mosaic.command()
 @click.option('-i', '--input', required=True, type=str, help='input media path')
 @click.option('-ss', '--start_time', default=None, type=HMSParamType(), help='start time in HH:MM:SS')
-@click.option('-t', '--last_time', default=None, type=HMSParamType(), help='last time in HH:MM:SS')
+@click.option('-to', '--end_time', default=None, type=HMSParamType(), help='end time in HH:MM:SS')
 @click.option('--model_path', default=None, type=str, help='pretrained model path')
 @click.argument('output', required=True, type=str)
 def remove(input: str,
            output: str,
            start_time: HMS | None,
-           last_time: HMS | None,
+           end_time: HMS | None,
            model_path: str | None) -> None:
     #
     # path
@@ -41,9 +41,10 @@ def remove(input: str,
     args += ['--mode', 'clean']
     args += ['--no_preview']
     args += ['--media_path', media_path]
-    if start_time and last_time:
-        if not last_time > start_time:
-            click.echo('Invalid time')
+    if start_time and end_time:
+        if not end_time > start_time:
+            click.echo('Invalid start time or end time')
+        last_time = str(end_time - start_time)
         args += ['--start_time', str(start_time)]
         args += ['--last_time', str(last_time)]
     args += ['--result_dir', result_dir]
@@ -54,7 +55,6 @@ def remove(input: str,
     #
     command = ['python', deepmosaic_path] + args
     click.echo(' '.join(command))
-    breakpoint()
     # run in process group
     proc = subprocess.Popen(command, preexec_fn=os.setsid)
     try:

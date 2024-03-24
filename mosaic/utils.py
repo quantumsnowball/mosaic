@@ -21,6 +21,15 @@ class HMS:
     def __lt__(self, other: 'HMS') -> bool:
         return self.total_seconds() < other.total_seconds()
 
+    def __sub__(self, other: 'HMS') -> 'HMS':
+        total_seconds = self.total_seconds() - other.total_seconds()
+
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        seconds = (total_seconds % 3600) % 60
+
+        return HMS(hours, minutes, seconds)
+
     def __str__(self) -> str:
         return f"{self.hours:02d}:{self.minutes:02d}:{self.seconds:02d}"
 
