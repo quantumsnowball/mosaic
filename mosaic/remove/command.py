@@ -1,3 +1,6 @@
+import os
+import signal
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -45,3 +48,11 @@ class DeepMosaicsCommand:
 
     def __str__(self) -> str:
         return ' '.join(self.tokens)
+
+    def run(self) -> None:
+        # run in process group
+        proc = subprocess.Popen(self.tokens, preexec_fn=os.setsid)
+        try:
+            proc.wait()
+        except KeyboardInterrupt:
+            os.killpg(proc.pid, signal.SIGTERM)

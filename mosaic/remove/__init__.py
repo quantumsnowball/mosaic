@@ -38,9 +38,5 @@ def remove(input: str,
     if dry_run:
         command.pprint()
         return
-    # run in process group
-    proc = subprocess.Popen(command.tokens, preexec_fn=os.setsid)
-    try:
-        proc.wait()
-    except KeyboardInterrupt:
-        os.killpg(proc.pid, signal.SIGTERM)
+
+    command.run()
