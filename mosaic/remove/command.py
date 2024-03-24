@@ -3,10 +3,13 @@ import signal
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import quote
 
 import click
 
 from mosaic.utils import HMS
+
+TEMP_DIRNAME = '.temp'
 
 
 @dataclass
@@ -40,6 +43,7 @@ class DeepMosaicsCommand:
             parts += ['--last_time', str(last_time)]
         parts += ['--result_dir', str(self.result_dir)]
         parts += ['--model_path', str(self.model_path)]
+        parts += ['--temp_dir', str(self.result_dir/TEMP_DIRNAME)]
 
         return parts
 
