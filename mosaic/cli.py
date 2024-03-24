@@ -1,3 +1,5 @@
+import os
+import signal
 import subprocess
 from pathlib import Path
 
@@ -20,7 +22,9 @@ def remove(input: str,
            start_time: str | None,
            last_time: str | None,
            model_path: str | None) -> None:
+    #
     # path
+    #
     working_dir = Path(__file__).parent
     deepmosaic_path = str(working_dir / 'DeepMosaics' / 'deepmosaic.py')
     media_path = input
@@ -28,7 +32,9 @@ def remove(input: str,
     default_model_path = str(working_dir/'DeepMosaics'/'pretrained_models'/'clean_youknow_video.pth')
     model_path = model_path if model_path is not None else default_model_path
 
+    #
     # args
+    #
     args = []
     args += ['--mode', 'clean']
     args += ['--no_preview']
@@ -38,7 +44,14 @@ def remove(input: str,
     args += ['--result_dir', result_dir]
     args += ['--model_path', model_path]
 
+    #
     # run
+    #
     command = ['python', deepmosaic_path] + args
-    print(' '.join(command))
-    # subprocess.run(command)
+    click.echo(' '.join(command))
+    # run in process group
+    proc = subprocess.Popen(command, preexec_fn=os.setsid)
+    try:
+        proc.wait()
+    except KeyboardInterrupt:
+        os.killpg(proc.pid, signal.SIGTERM)
