@@ -1,0 +1,3 @@
+[submodule "mosaic/DeepMosaics"]
+	path = mosaic/DeepMosaics
+	url = git@github.com:quantumsnowball/DeepMosaics.git

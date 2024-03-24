@@ -1,3 +1,6 @@
+import subprocess
+from pathlib import Path
+
 import click
 
 
@@ -8,4 +11,6 @@ def mosaic() -> None:
 
 @mosaic.command()
 def remove() -> None:
-    print('mosaic remove')
+    cwd = Path(__file__).parent
+    deepmosaic_path = cwd / 'DeepMosaics' / 'deepmosaic.py'
+    subprocess.run(['python', deepmosaic_path])
