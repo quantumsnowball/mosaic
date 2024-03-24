@@ -1,4 +1,6 @@
 import re
+import shutil
+from pathlib import Path
 
 import click
 
@@ -46,3 +48,15 @@ class HMSParamType(click.ParamType):
             self.fail('Invalid time format. Please provide time in HH:MM:SS format.')
         hours, minutes, seconds = map(int, value.split(':'))
         return HMS(hours, minutes, seconds)
+
+
+def clean_up_cache(cache_dir: Path) -> None:
+    # remove self cache
+    if cache_dir.is_dir():
+        shutil.rmtree(cache_dir)
+
+    # remove parent cache dir if empty
+    try:
+        cache_dir.parent.rmdir()
+    except OSError:
+        pass
