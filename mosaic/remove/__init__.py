@@ -4,7 +4,9 @@ from pathlib import Path
 import click
 
 from mosaic.remove.command import DeepMosaicsCommand
-from mosaic.utils import HMS, HMSParamType, VideoPathParamType, clean_up_cache
+from mosaic.utils import HMS, HMSParamType, VideoPathParamType, clean_up
+
+CACHE_DIRNAME = '.mosaic'
 
 
 @click.command()
@@ -23,10 +25,6 @@ def remove(input: Path,
            dry_run: bool,
            output: Path,
            ) -> None:
-    output_dir = output.parent
-    output_fname = output.name
-    result_dir = output_dir / '.mosaic' / output_fname
-
     # create command for DeepMosaics
     dm = DeepMosaicsCommand(
         root=Path(__file__).parent.parent,
@@ -34,7 +32,7 @@ def remove(input: Path,
         start_time=start_time,
         end_time=end_time,
         preview=preview,
-        result_dir=result_dir,
+        result_dir=output.parent / CACHE_DIRNAME / output.name,
         model_path=model_path
     )
 
@@ -47,8 +45,7 @@ def remove(input: Path,
     dm.run()
 
     # move result to target path
-    result = result_dir / f'{input.stem}_clean.mp4'
-    shutil.move(result, output)
+    shutil.move(dm.result_file, output)
 
     # clean
-    clean_up_cache(result_dir)
+    clean_up(dm.result_dir)

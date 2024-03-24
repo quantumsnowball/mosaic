@@ -60,7 +60,7 @@ class VideoPathParamType(click.ParamType):
         return Path(value)
 
 
-def clean_up_cache(cache_dir: Path) -> None:
+def clean_up(cache_dir: Path) -> None:
     # remove self cache
     if cache_dir.is_dir():
         shutil.rmtree(cache_dir)

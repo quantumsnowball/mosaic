@@ -43,6 +43,10 @@ class DeepMosaicsCommand:
 
         return parts
 
+    @property
+    def result_file(self) -> Path:
+        return self.result_dir / f'{self.media_path.stem}_clean.mp4'
+
     def pprint(self) -> None:
         click.echo(str(self).replace('--', '\n--'))
 
