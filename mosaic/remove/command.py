@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from pathlib import Path
 
+import click
+
 from mosaic.utils import HMS
 
 
@@ -37,6 +39,9 @@ class DeepMosaicsCommand:
         parts += ['--model_path', self.model_path]
 
         return parts
+
+    def pprint(self) -> None:
+        click.echo(str(self).replace('--', '\n--'))
 
     def __str__(self) -> str:
         return ' '.join(self.tokens)

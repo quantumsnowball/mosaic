@@ -35,8 +35,8 @@ def remove(input: str,
         model_path=model_path
     )
 
-    click.echo(str(command))
     if dry_run:
+        command.pprint()
         return
     # run in process group
     proc = subprocess.Popen(command.tokens, preexec_fn=os.setsid)
