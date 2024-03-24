@@ -9,7 +9,9 @@ setup(
     author_email='quantum.snowball@gmail.com',
     license='MIT',
     packages=['mosaic'],
-    zip_safe=False,
+    install_requires=[
+        'click',
+    ],
     entry_points={
         'console_scripts': [
             'mosaic=mosaic.cli:mosaic',
