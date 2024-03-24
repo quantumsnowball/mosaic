@@ -1,6 +1,4 @@
-import os
-import signal
-import subprocess
+import shutil
 from pathlib import Path
 
 import click
@@ -25,18 +23,29 @@ def remove(input: str,
            dry_run: bool,
            output: str,
            ) -> None:
-    command = DeepMosaicsCommand(
+    output_dir = Path(output).parent
+    output_fname = Path(output).name
+    result_dir = str(output_dir / '.mosaic' / output_fname) + '/'
+
+    # create command for DeepMosaics
+    dm = DeepMosaicsCommand(
         root=Path(__file__).parent.parent,
         media_path=input,
         start_time=start_time,
         end_time=end_time,
         preview=preview,
-        result_dir=str(Path(output).parent),
+        result_dir=result_dir,
         model_path=model_path
     )
 
+    # preview command
     if dry_run:
-        command.pprint()
+        dm.pprint()
         return
 
-    command.run()
+    # run command
+    dm.run()
+
+    # move result to target path
+    result = Path(result_dir) / f'{str(Path(input).stem)}_clean.mp4'
+    shutil.move(result, Path(output))
