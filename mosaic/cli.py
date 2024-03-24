@@ -18,12 +18,15 @@ def mosaic() -> None:
 @click.option('-ss', '--start_time', default=None, type=HMSParamType(), help='start time in HH:MM:SS')
 @click.option('-to', '--end_time', default=None, type=HMSParamType(), help='end time in HH:MM:SS')
 @click.option('--model_path', default=None, type=str, help='pretrained model path')
+@click.option('--preview', default=False, is_flag=True, help='Enable preview mode')
 @click.argument('output', required=True, type=str)
 def remove(input: str,
-           output: str,
            start_time: HMS | None,
            end_time: HMS | None,
-           model_path: str | None) -> None:
+           model_path: str | None,
+           preview: bool,
+           output: str,
+           ) -> None:
     #
     # path
     #
@@ -39,7 +42,8 @@ def remove(input: str,
     #
     args = []
     args += ['--mode', 'clean']
-    args += ['--no_preview']
+    if not preview:
+        args += ['--no_preview']
     args += ['--media_path', media_path]
     if start_time and end_time:
         if not end_time > start_time:
