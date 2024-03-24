@@ -11,10 +11,14 @@ def mosaic() -> None:
 
 @mosaic.command()
 @click.option('-i', '--input', required=True, type=str, help='input media path')
+@click.option('-ss', '--start_time', default=None, type=str, help='start time')
+@click.option('-t', '--last_time', default=None, type=str, help='last time')
 @click.option('--model_path', default=None, type=str, help='pretrained model path')
 @click.argument('output', required=True, type=str)
 def remove(input: str,
            output: str,
+           start_time: str | None,
+           last_time: str | None,
            model_path: str | None) -> None:
     # path
     working_dir = Path(__file__).parent
@@ -29,6 +33,8 @@ def remove(input: str,
     args += ['--mode', 'clean']
     args += ['--no_preview']
     args += ['--media_path', media_path]
+    args += ['--start_time', start_time] if start_time else []
+    args += ['--last_time', last_time] if last_time else []
     args += ['--result_dir', result_dir]
     args += ['--model_path', model_path]
 
