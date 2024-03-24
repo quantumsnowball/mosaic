@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='mosaic',
-    version='0.1.0',
+    version='0.2.0',
     description='mosaic - handle mosaic in video',
     url='https://github.com/quantumsnowball/mosaic',
     author='Quantum Snowball',
@@ -11,6 +11,9 @@ setup(
     packages=['mosaic'],
     install_requires=[
         'click',
+        'torch',
+        'torchvision',
+        'opencv-python',
     ],
     entry_points={
         'console_scripts': [
