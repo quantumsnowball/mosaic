@@ -1,2 +1,11 @@
+import click
+
+
+@click.group()
 def mosaic() -> None:
-    print('im mosaic')
+    pass
+
+
+@mosaic.command()
+def remove() -> None:
+    print('mosaic remove')
