@@ -7,6 +7,7 @@ from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.utils import HMS, HMSParamType, VideoPathParamType
 
+PACKAGE_DIR = Path(__file__).parent
 TEMP_DIRNAME = '.mosaic'
 
 
@@ -20,10 +21,6 @@ def free(input_file: Path,
          end_time: HMS | None,
          output_file: Path,
          ) -> None:
-    # paths
-    this_dir = Path(__file__).parent
-    output_dir = output_file.parent
-
     # verify inputs
     assert input_file.exists(), f'{input_file} does not exists'
     if start_time and end_time:
@@ -31,15 +28,15 @@ def free(input_file: Path,
             raise ValueError('Invalid start time or end time')
 
     # load netM
-    netM = bisenet(this_dir/'net/netM/state_dicts/mosaic_position.pth')
+    netM = bisenet(PACKAGE_DIR/'net/netM/state_dicts/mosaic_position.pth')
 
     # load netG
-    netG = video(this_dir/'net/netG/state_dicts/clean_youknow_video.pth')
+    netG = video(PACKAGE_DIR/'net/netG/state_dicts/clean_youknow_video.pth')
 
     # run
     cleanmosaic_video_fusion(
         media_path=input_file,
-        temp_dir=output_dir/TEMP_DIRNAME,
+        temp_dir=output_file.parent/TEMP_DIRNAME,
         start_time=start_time,
         end_time=end_time,
         output_file=output_file,
