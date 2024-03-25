@@ -12,9 +12,9 @@ from mosaic.free.cleaner.extract import detect_mosaic_positions
 from mosaic.free.cleaner.split import disassemble_video
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
-from mosaic.free.net.util import data, ffmpeg
-from mosaic.free.net.util import image_processing as impro
-from mosaic.free.net.util import util
+from mosaic.free.utils import data, ffmpeg
+from mosaic.free.utils import image_processing as impro
+from mosaic.free.utils import util
 from mosaic.utils import HMS
 
 

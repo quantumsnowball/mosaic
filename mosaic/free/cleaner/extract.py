@@ -9,9 +9,9 @@ import numpy as np
 
 from mosaic.free.cleaner import runmodel
 from mosaic.free.net.netM.BiSeNet import BiSeNet
-from mosaic.free.net.util import filt
-from mosaic.free.net.util import image_processing as impro
-from mosaic.free.net.util import util
+from mosaic.free.utils import filt
+from mosaic.free.utils import image_processing as impro
+from mosaic.free.utils import util
 
 
 def detect_mosaic_positions(netM: BiSeNet,

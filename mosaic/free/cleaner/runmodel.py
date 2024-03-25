@@ -3,10 +3,9 @@ from typing import Any
 
 import cv2
 import numpy as np
-import torch
 
-import mosaic.free.net.util.image_processing as impro
-from mosaic.free.net.util import data, mosaic
+import mosaic.free.utils.image_processing as impro
+from mosaic.free.utils import data
 
 sys.path.append("..")
 
