@@ -2,7 +2,8 @@ import os
 from pathlib import Path
 from typing import Any
 
-from mosaic.free.utils import ffmpeg, util
+from mosaic.free import utils
+from mosaic.free.utils import ffmpeg
 from mosaic.utils import HMS
 
 
@@ -26,6 +27,6 @@ def disassemble_video(temp_dir: Path,
     imagepaths = os.listdir(temp_dir/'video2image')
     imagepaths.sort()
     step = {'step': 2, 'frame': 0}
-    util.savejson(temp_dir/'step.json', step)
+    utils.savejson(temp_dir/'step.json', step)
 
     return fps, imagepaths, height, width

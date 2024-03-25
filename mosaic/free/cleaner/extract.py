@@ -7,11 +7,11 @@ from threading import Thread
 import cv2
 import numpy as np
 
+from mosaic.free import utils
 from mosaic.free.cleaner import runmodel
 from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.free.utils import filt
 from mosaic.free.utils import image_processing as impro
-from mosaic.free.utils import util
 
 
 def detect_mosaic_positions(netM: BiSeNet,
@@ -23,7 +23,7 @@ def detect_mosaic_positions(netM: BiSeNet,
     # resume
     continue_flag = False
     if os.path.isfile(os.path.join(temp_dir, 'step.json')):
-        step = util.loadjson(os.path.join(temp_dir, 'step.json'))
+        step = utils.loadjson(os.path.join(temp_dir, 'step.json'))
         resume_frame = int(step['frame'])
         if int(step['step']) > 2:
             pre_positions = np.load(os.path.join(temp_dir, 'mosaic_positions.npy'))
@@ -62,15 +62,15 @@ def detect_mosaic_positions(netM: BiSeNet,
                 save_positions = np.concatenate((pre_positions, save_positions), axis=0)
             np.save(temp_dir / 'mosaic_positions.npy', save_positions)
             step = {'step': 2, 'frame': i+resume_frame}
-            util.savejson(temp_dir / 'step.json', step)
+            utils.savejson(temp_dir / 'step.json', step)
 
         # preview result and print
         if not no_preview:
             cv2.imshow('mosaic mask', mask)
             cv2.waitKey(1) & 0xFF
         t2 = time.time()
-        print('\r', str(i)+'/'+str(len(imagepaths)), util.get_bar(100*i/len(imagepaths), num=35),
-              util.counttime(t1, t2, i, len(imagepaths)), end='')
+        print('\r', str(i)+'/'+str(len(imagepaths)), utils.get_bar(100*i/len(imagepaths), num=35),
+              utils.counttime(t1, t2, i, len(imagepaths)), end='')
 
     if not no_preview:
         cv2.destroyAllWindows()
@@ -81,7 +81,7 @@ def detect_mosaic_positions(netM: BiSeNet,
     for i in range(3):
         positions[:, i] = filt.medfilt(positions[:, i], medfilt_num)
     step = {'step': 3, 'frame': 0}
-    util.savejson(temp_dir / 'step.json', step)
+    utils.savejson(temp_dir / 'step.json', step)
     np.save(temp_dir / 'mosaic_positions.npy', positions)
 
     return positions

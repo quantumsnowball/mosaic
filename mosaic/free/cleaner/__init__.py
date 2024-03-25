@@ -8,13 +8,13 @@ import cv2
 import numpy as np
 import torch
 
+from mosaic.free import utils
 from mosaic.free.cleaner.extract import detect_mosaic_positions
 from mosaic.free.cleaner.split import disassemble_video
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.free.utils import data, ffmpeg
 from mosaic.free.utils import image_processing as impro
-from mosaic.free.utils import util
 from mosaic.utils import HMS
 
 
@@ -37,7 +37,7 @@ def cleanmosaic_video_fusion(media_path: Path,
     previous_frame = None
     init_flag = True
 
-    util.clean_tempfiles(temp_dir, True)
+    utils.clean_tempfiles(temp_dir, True)
 
     fps, imagepaths, height, width = disassemble_video(temp_dir,
                                                        start_time,
@@ -119,8 +119,8 @@ def cleanmosaic_video_fusion(media_path: Path,
             init_flag = True
 
         t2 = time.time()
-        print('\r', str(i+1)+'/'+str(length), util.get_bar(100*i/length, num=35),
-              util.counttime(t1, t2, i+1, len(imagepaths)), end='')
+        print('\r', str(i+1)+'/'+str(length), utils.get_bar(100*i/length, num=35),
+              utils.counttime(t1, t2, i+1, len(imagepaths)), end='')
     print()
     write_pool.close()
     show_pool.close()
@@ -132,4 +132,4 @@ def cleanmosaic_video_fusion(media_path: Path,
                        temp_dir/'voice_tmp.mp3',
                        output_file)
 
-    util.clean_tempfiles(temp_dir, False)
+    utils.clean_tempfiles(temp_dir, False)

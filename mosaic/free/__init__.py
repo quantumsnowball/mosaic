@@ -5,7 +5,6 @@ import click
 from mosaic.free.cleaner import cleanmosaic_video_fusion
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
-from mosaic.free.utils.util import clean_tempfiles
 from mosaic.utils import HMS, HMSParamType, VideoPathParamType
 
 TEMP_DIRNAME = '.mosaic'
