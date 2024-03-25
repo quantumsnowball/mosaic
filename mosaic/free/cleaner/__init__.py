@@ -25,7 +25,6 @@ def cleanmosaic_video_fusion(media_path: Path,
                              output_file: Path,
                              netG: BVDNet,
                              netM: BiSeNet,
-                             no_preview: bool = True,
                              gpu_id: int = 0) -> None:
     path = media_path
     N, T, S = 2, 5, 3
@@ -48,14 +47,11 @@ def cleanmosaic_video_fusion(media_path: Path,
                                         temp_dir,
                                         imagepaths)[(start_frame-1):]
     t1 = time.time()
-    if not no_preview:
-        cv2.namedWindow('clean', cv2.WINDOW_NORMAL)
 
     # clean mosaic
     print('Step:3/4 -- Clean Mosaic:')
     length = len(imagepaths)
     write_pool = Queue(4)
-    show_pool = Queue(4)
 
     def write_result(no_feather: bool = False) -> None:
         while True:
@@ -65,8 +61,6 @@ def cleanmosaic_video_fusion(media_path: Path,
             else:
                 mask = cv2.imread(str(temp_dir/'mosaic_mask' / imagepath), 0)
                 img_result = impro.replace_mosaic(img_origin, img_fake, mask, x, y, size, no_feather)
-            if not no_preview:
-                show_pool.put(img_result.copy())
             cv2.imwrite(str(temp_dir/'replace_mosaic' / imagepath), img_result)
             os.remove(temp_dir/'video2image' / imagepath)
     t = Thread(target=write_result, args=())
@@ -86,12 +80,6 @@ def cleanmosaic_video_fusion(media_path: Path,
             img_pool.append(impro.imread(os.path.join(str(temp_dir)+'/video2image',
                             imagepaths[np.clip(i+LEFT_FRAME, 0, len(imagepaths)-1)])))
         img_origin = img_pool[LEFT_FRAME]
-
-        # preview result and print
-        if not no_preview:
-            if show_pool.qsize() > 3:
-                cv2.imshow('clean', show_pool.get())
-                cv2.waitKey(1) & 0xFF
 
         if size > 50:
             try:  # Avoid unknown errors
@@ -123,9 +111,7 @@ def cleanmosaic_video_fusion(media_path: Path,
               utils.counttime(t1, t2, i+1, len(imagepaths)), end='')
     print()
     write_pool.close()
-    show_pool.close()
-    if not no_preview:
-        cv2.destroyAllWindows()
+
     print('Step:4/4 -- Convert images to video')
     ffmpeg.image2video(fps,
                        temp_dir/'replace_mosaic/output_%06d.jpg',
