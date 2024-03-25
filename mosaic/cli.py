@@ -2,6 +2,7 @@ import importlib.metadata as meta
 
 import click
 
+from mosaic.free import free
 from mosaic.remove import remove
 
 NAME = 'mosaic'
@@ -15,3 +16,4 @@ def mosaic(version: bool) -> None:
 
 
 mosaic.add_command(remove)
+mosaic.add_command(free)
