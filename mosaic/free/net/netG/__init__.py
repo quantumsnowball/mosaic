@@ -11,7 +11,6 @@ def video(model_path: Path):
     show_paramsnumber(netG, 'netG')
     # netG.load_state_dict(torch.load(opt.model_path))
     netG.load_state_dict(torch.load(model_path))
-    # netG = model_util.todevice(netG, opt.gpu_id)
     netG.cuda()
     netG.eval()
     return netG

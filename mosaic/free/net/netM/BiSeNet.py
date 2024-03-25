@@ -1,13 +1,13 @@
 import torch
 import torch.nn as nn
 
-import mosaic.free.net.model_util as model_util
+import mosaic.free.net.utils as utils
 
 
 class resnet18(torch.nn.Module):
     def __init__(self, pretrained=True):
         super().__init__()
-        self.features = model_util.resnet18(pretrained=pretrained)
+        self.features = utils.resnet18(pretrained=pretrained)
         self.conv1 = self.features.conv1
         self.bn1 = self.features.bn1
         self.relu = self.features.relu

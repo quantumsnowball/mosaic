@@ -1,7 +1,7 @@
 import torch.nn as nn
 
-import mosaic.free.net.model_util as model_util
-from mosaic.free.net.model_util import ResnetBlockSpectralNorm, SpectralNorm
+import mosaic.free.net.utils as utils
+from mosaic.free.net.utils import ResnetBlockSpectralNorm, SpectralNorm
 
 
 def show_paramsnumber(net, netname='net'):
@@ -104,7 +104,6 @@ class BVDNet(nn.Module):
 
 def define_G(N=2, n_blocks=1):
     netG = BVDNet(N=N, n_blocks=n_blocks)
-    # netG = model_util.todevice(netG, gpu_id)
     netG.cuda()
-    netG.apply(model_util.init_weights)
+    netG.apply(utils.init_weights)
     return netG
