@@ -55,7 +55,11 @@ def cleanmosaic_video_fusion(media_path: Path,
 
     def write_result(no_feather: bool = False) -> None:
         while True:
-            save_ori, imagepath, img_origin, img_fake, x, y, size = write_pool.get()
+            try:
+                item = write_pool.get()
+            except ValueError:
+                break
+            save_ori, imagepath, img_origin, img_fake, x, y, size = item
             if save_ori:
                 img_result = img_origin
             else:
@@ -110,6 +114,7 @@ def cleanmosaic_video_fusion(media_path: Path,
         print('\r', str(i+1)+'/'+str(length), utils.get_bar(100*i/length, num=35),
               utils.counttime(t1, t2, i+1, len(imagepaths)), end='')
     print()
+
     write_pool.close()
 
     print('Step:4/4 -- Convert images to video')
