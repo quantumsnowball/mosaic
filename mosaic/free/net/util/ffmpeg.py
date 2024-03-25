@@ -4,6 +4,8 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+from mosaic.utils import HMS
+
 # ffmpeg 3.4.6
 
 
@@ -39,15 +41,15 @@ def run(args,
         return sout
 
 
-def video2image(videopath,
-                imagepath,
-                fps=0,
-                start_time='00:00:00',
-                last_time='00:00:00'):
+def video2image(videopath: Path,
+                imagepath: Path,
+                start_time: HMS | None,
+                end_time: HMS | None,
+                fps: int) -> None:
     args = ['ffmpeg']
-    if last_time != '00:00:00':
-        args += ['-ss', start_time]
-        args += ['-t', last_time]
+    if start_time and end_time:
+        args += ['-ss', str(start_time)]
+        args += ['-to', str(end_time)]
     args += ['-i', '"'+str(videopath)+'"']
     if fps != 0:
         args += ['-r', str(fps)]
@@ -55,14 +57,14 @@ def video2image(videopath,
     run(args)
 
 
-def video2voice(videopath,
-                voicepath,
-                start_time='00:00:00',
-                last_time='00:00:00'):
+def video2voice(videopath: Path,
+                voicepath: Path,
+                start_time: HMS | None,
+                end_time: HMS | None) -> None:
     args = ['ffmpeg', '-i', '"'+str(videopath)+'"', '-async 1 -f mp3', '-b:a 320k']
-    if last_time != '00:00:00':
-        args += ['-ss', start_time]
-        args += ['-t', last_time]
+    if start_time and end_time:
+        args += ['-ss', str(start_time)]
+        args += ['-to', str(end_time)]
     args += [voicepath]
     run(args)
 

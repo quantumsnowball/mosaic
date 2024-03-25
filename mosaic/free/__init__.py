@@ -12,15 +12,13 @@ TEMP_DIRNAME = '.mosaic'
 
 
 @click.command()
-@click.option('-i', '--input', required=True, type=VideoPathParamType(), help='input media path')
+@click.option('-i', '--input-file', required=True, type=VideoPathParamType(), help='input media path')
 @click.option('-ss', '--start-time', default=None, type=HMSParamType(), help='start time in HH:MM:SS')
 @click.option('-to', '--end-time', default=None, type=HMSParamType(), help='end time in HH:MM:SS')
-@click.option('--model-file', default=None, type=VideoPathParamType(), help='pretrained model path')
 @click.argument('output-file', required=True, type=VideoPathParamType())
-def free(input: Path,
+def free(input_file: Path,
          start_time: HMS | None,
          end_time: HMS | None,
-         model_file: Path | None,
          output_file: Path,
          ) -> None:
 
@@ -28,18 +26,22 @@ def free(input: Path,
     output_dir = output_file.parent
 
     # load netM
-    netM_state = this_dir / 'net/netM/state_dicts/mosaic_position.pth'
-    netM = bisenet(netM_state)
+    netM = bisenet(this_dir/'net/netM/state_dicts/mosaic_position.pth')
     # print(netM)
-    netG_state = this_dir / 'net/netG/state_dicts/clean_youknow_video.pth'
-    netG = video(netG_state)
+
+    # load netG
+    netG = video(this_dir/'net/netG/state_dicts/clean_youknow_video.pth')
     # print(netG)
-    cleanmosaic_video_fusion(media_path=input,
-                             temp_dir=output_dir/TEMP_DIRNAME,
-                             result_dir=output_dir,
-                             start_time=start_time,
-                             end_time=end_time,
-                             output_file=output_file,
-                             netG=netG,
-                             netM=netM)
-    print('Finished!')
+
+    # run
+    cleanmosaic_video_fusion(
+        media_path=input_file,
+        temp_dir=output_dir/TEMP_DIRNAME,
+        result_dir=output_dir,
+        start_time=start_time,
+        end_time=end_time,
+        output_file=output_file,
+        netG=netG,
+        netM=netM
+    )
+    click.echo('Finished!')

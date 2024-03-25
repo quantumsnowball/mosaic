@@ -16,19 +16,18 @@ from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.free.net.util import data, ffmpeg, filt
 from mosaic.free.net.util import image_processing as impro
 from mosaic.free.net.util import util
+from mosaic.utils import HMS
 
 # from .init import video_init
 
 
 def video_init(temp_dir: Path,
-               result_dir: Path,
-               start_time,
-               last_time,
+               start_time: HMS | None,
+               last_time: HMS | None,
                path: Path) -> tuple[Any, list[str], int, int]:
     fps, endtime, height, width = ffmpeg.get_video_infos(path)
 
     print('Step:1/4 -- Convert video to images')
-    # util.file_init(result_dir)
 
     ffmpeg.video2voice(path,
                        temp_dir/'voice_tmp.mp3',
@@ -36,9 +35,9 @@ def video_init(temp_dir: Path,
                        last_time)
     ffmpeg.video2image(path,
                        temp_dir/'video2image/output_%06d.jpg',
-                       fps,
                        start_time,
-                       last_time)
+                       last_time,
+                       fps)
     imagepaths = os.listdir(temp_dir/'video2image')
     imagepaths.sort()
     step = {'step': 2, 'frame': 0}
@@ -128,8 +127,8 @@ def get_mosaic_positions(netM: BiSeNet,
 def cleanmosaic_video_fusion(media_path: Path,
                              temp_dir: Path,
                              result_dir: Path,
-                             start_time,
-                             end_time,
+                             start_time: HMS | None,
+                             end_time: HMS | None,
                              output_file: Path,
                              netG: BVDNet,
                              netM: BiSeNet,
@@ -148,7 +147,6 @@ def cleanmosaic_video_fusion(media_path: Path,
     util.clean_tempfiles(temp_dir, True)
 
     fps, imagepaths, height, width = video_init(temp_dir,
-                                                result_dir,
                                                 start_time,
                                                 end_time,
                                                 path)
@@ -240,3 +238,5 @@ def cleanmosaic_video_fusion(media_path: Path,
                        temp_dir/'replace_mosaic/output_%06d.jpg',
                        temp_dir/'voice_tmp.mp3',
                        output_file)
+
+    util.clean_tempfiles(temp_dir, False)
