@@ -38,7 +38,6 @@ def detect_mosaic_positions(netM: BiSeNet,
     t1 = time.time()
     if not no_preview:
         cv2.namedWindow('mosaic mask', cv2.WINDOW_NORMAL)
-    print('Step:2/4 -- Find mosaic location')
 
     img_read_pool = Queue(4)
 

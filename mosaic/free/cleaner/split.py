@@ -13,8 +13,6 @@ def disassemble_video(temp_dir: Path,
                       path: Path) -> tuple[Any, list[str], int, int]:
     fps, endtime, height, width = ffmpeg.get_video_infos(path)
 
-    print('Step:1/4 -- Convert video to images')
-
     ffmpeg.video2voice(path,
                        temp_dir/'voice_tmp.mp3',
                        start_time,
