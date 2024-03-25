@@ -2,6 +2,7 @@ from pathlib import Path
 
 import click
 
+from mosaic.free.net.netM import bisenet
 from mosaic.utils import HMS, HMSParamType, VideoPathParamType
 
 
@@ -23,3 +24,8 @@ def free(input: Path,
     print(end_time)
     print(model_file)
     print(output_file)
+
+    # load netM
+    cwd = Path(__file__).parent
+    netM_state = cwd / 'net/netM/state_dicts/mosaic_position.pth'
+    netM = bisenet(netM_state)
