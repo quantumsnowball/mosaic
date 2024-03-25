@@ -3,13 +3,13 @@ from pathlib import Path
 
 import click
 
-from mosaic.free import utils
 from mosaic.free.cleaner.clean import start_cleaner, start_result_writer
+from mosaic.free.cleaner.combine import combine_result_to_video
 from mosaic.free.cleaner.extract import detect_mosaic_positions
 from mosaic.free.cleaner.split import disassemble_video
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
-from mosaic.free.utils import ffmpeg
+from mosaic.free.utils import clean_tempfiles
 from mosaic.utils import HMS
 
 
@@ -21,7 +21,7 @@ def cleanmosaic_video_fusion(media_path: Path,
                              netG: BVDNet,
                              netM: BiSeNet) -> None:
     # prepare temp dirs
-    utils.clean_tempfiles(temp_dir, True)
+    clean_tempfiles(temp_dir, True)
 
     # disassemble media into images and sound
     click.echo('Step:1/4 -- Convert video to images')
@@ -47,10 +47,7 @@ def cleanmosaic_video_fusion(media_path: Path,
 
     # re-assemble clean images into new video
     click.echo('Step:4/4 -- Convert images to video')
-    ffmpeg.image2video(fps,
-                       temp_dir/'replace_mosaic/output_%06d.jpg',
-                       temp_dir/'voice_tmp.mp3',
-                       output_file)
+    combine_result_to_video(fps, temp_dir, output_file)
 
     # clean up temp dirs
-    utils.clean_tempfiles(temp_dir, False)
+    clean_tempfiles(temp_dir, False)
