@@ -130,6 +130,7 @@ def cleanmosaic_video_fusion(media_path: Path,
                              result_dir: Path,
                              start_time,
                              end_time,
+                             output_file: Path,
                              netG: BVDNet,
                              netM: BiSeNet,
                              no_preview: bool = True,
@@ -238,4 +239,4 @@ def cleanmosaic_video_fusion(media_path: Path,
     ffmpeg.image2video(fps,
                        temp_dir/'replace_mosaic/output_%06d.jpg',
                        temp_dir/'voice_tmp.mp3',
-                       os.path.join(result_dir, os.path.splitext(os.path.basename(path))[0]+'_clean.mp4'))
+                       output_file)

@@ -39,6 +39,7 @@ def free(input: Path,
                              result_dir=output_dir,
                              start_time=start_time,
                              end_time=end_time,
+                             output_file=output_file,
                              netG=netG,
                              netM=netM)
     print('Finished!')
