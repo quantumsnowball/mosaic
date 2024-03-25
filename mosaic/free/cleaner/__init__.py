@@ -2,15 +2,14 @@ import os
 import time
 from multiprocessing import Queue
 from pathlib import Path
-from threading import Thread
 
 import cv2
 import numpy as np
 import torch
 
 from mosaic.free import utils
+from mosaic.free.cleaner.clean import start_result_writer
 from mosaic.free.cleaner.extract import detect_mosaic_positions
-from mosaic.free.cleaner.io import start_result_writer
 from mosaic.free.cleaner.split import disassemble_video
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
@@ -53,7 +52,7 @@ def cleanmosaic_video_fusion(media_path: Path,
     print('Step:3/4 -- Clean Mosaic:')
     length = len(imagepaths)
     write_pool = Queue(4)
-    writer_thread = start_result_writer(write_pool, temp_dir)
+    writer_process = start_result_writer(write_pool, temp_dir)
 
     for i, imagepath in enumerate(imagepaths, 0):
         x, y, size = positions[i][0], positions[i][1], positions[i][2]
@@ -100,7 +99,7 @@ def cleanmosaic_video_fusion(media_path: Path,
     print()
 
     write_pool.put(None)
-    writer_thread.join()
+    writer_process.join()
     write_pool.close()
 
     print('Step:4/4 -- Convert images to video')

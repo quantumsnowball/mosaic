@@ -1,5 +1,5 @@
 import os
-from multiprocessing import Queue
+from multiprocessing import Process, Queue
 from pathlib import Path
 from threading import Thread
 
@@ -9,7 +9,7 @@ from mosaic.free.utils import image_processing as impro
 
 
 def start_result_writer(write_pool: Queue,
-                        temp_dir: Path) -> Thread:
+                        temp_dir: Path) -> Process:
 
     def worker() -> None:
         while True:
@@ -32,9 +32,9 @@ def start_result_writer(write_pool: Queue,
             # remove original image
             os.remove(temp_dir/'video2image' / imagepath)
 
-    # run worker in a new thread
-    t = Thread(target=worker, args=())
-    t.start()
+    # run worker in a new process
+    p = Process(target=worker, args=())
+    p.start()
 
     # return thread
-    return t
+    return p
