@@ -11,40 +11,13 @@ import torch
 
 # from models import runmodel
 from mosaic.free.cleaner import runmodel
+from mosaic.free.cleaner.split import disassemble_video
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.free.net.util import data, ffmpeg, filt
 from mosaic.free.net.util import image_processing as impro
 from mosaic.free.net.util import util
 from mosaic.utils import HMS
-
-# from .init import video_init
-
-
-def video_init(temp_dir: Path,
-               start_time: HMS | None,
-               last_time: HMS | None,
-               path: Path) -> tuple[Any, list[str], int, int]:
-    fps, endtime, height, width = ffmpeg.get_video_infos(path)
-
-    print('Step:1/4 -- Convert video to images')
-
-    ffmpeg.video2voice(path,
-                       temp_dir/'voice_tmp.mp3',
-                       start_time,
-                       last_time)
-    ffmpeg.video2image(path,
-                       temp_dir/'video2image/output_%06d.jpg',
-                       start_time,
-                       last_time,
-                       fps)
-    imagepaths = os.listdir(temp_dir/'video2image')
-    imagepaths.sort()
-    step = {'step': 2, 'frame': 0}
-    util.savejson(temp_dir/'step.json', step)
-
-    return fps, imagepaths, height, width
-
 
 '''
 ---------------------Clean Mosaic---------------------
@@ -145,10 +118,10 @@ def cleanmosaic_video_fusion(media_path: Path,
 
     util.clean_tempfiles(temp_dir, True)
 
-    fps, imagepaths, height, width = video_init(temp_dir,
-                                                start_time,
-                                                end_time,
-                                                path)
+    fps, imagepaths, height, width = disassemble_video(temp_dir,
+                                                       start_time,
+                                                       end_time,
+                                                       path)
     start_frame = int(imagepaths[0][7:13])
     positions = get_mosaic_positions(netM,
                                      temp_dir,

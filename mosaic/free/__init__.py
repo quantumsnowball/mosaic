@@ -41,7 +41,6 @@ def free(input_file: Path,
     cleanmosaic_video_fusion(
         media_path=input_file,
         temp_dir=output_dir/TEMP_DIRNAME,
-        result_dir=output_dir,
         start_time=start_time,
         end_time=end_time,
         output_file=output_file,
