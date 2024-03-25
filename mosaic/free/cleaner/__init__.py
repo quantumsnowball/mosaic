@@ -10,7 +10,7 @@ import numpy as np
 import torch
 
 # from models import runmodel
-from mosaic.free.net.clean import runmodel
+from mosaic.free.cleaner import runmodel
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.free.net.util import data, ffmpeg, filt
@@ -126,7 +126,6 @@ def get_mosaic_positions(netM: BiSeNet,
 
 def cleanmosaic_video_fusion(media_path: Path,
                              temp_dir: Path,
-                             result_dir: Path,
                              start_time: HMS | None,
                              end_time: HMS | None,
                              output_file: Path,

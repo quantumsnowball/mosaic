@@ -2,7 +2,7 @@ from pathlib import Path
 
 import click
 
-from mosaic.free.net.clean import cleanmosaic_video_fusion
+from mosaic.free.cleaner import cleanmosaic_video_fusion
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.free.net.util.util import clean_tempfiles
@@ -21,17 +21,21 @@ def free(input_file: Path,
          end_time: HMS | None,
          output_file: Path,
          ) -> None:
-
+    # paths
     this_dir = Path(__file__).parent
     output_dir = output_file.parent
 
+    # verify inputs
+    assert input_file.exists(), f'{input_file} does not exists'
+    if start_time and end_time:
+        if not end_time > start_time:
+            raise ValueError('Invalid start time or end time')
+
     # load netM
     netM = bisenet(this_dir/'net/netM/state_dicts/mosaic_position.pth')
-    # print(netM)
 
     # load netG
     netG = video(this_dir/'net/netG/state_dicts/clean_youknow_video.pth')
-    # print(netG)
 
     # run
     cleanmosaic_video_fusion(
