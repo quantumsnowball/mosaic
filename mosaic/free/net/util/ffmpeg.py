@@ -44,7 +44,6 @@ def video2image(videopath,
                 fps=0,
                 start_time='00:00:00',
                 last_time='00:00:00'):
-    imagepath.parent.mkdir()
     args = ['ffmpeg']
     if last_time != '00:00:00':
         args += ['-ss', start_time]

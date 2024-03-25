@@ -29,7 +29,6 @@ def video_init(temp_dir: Path,
 
     print('Step:1/4 -- Convert video to images')
     # util.file_init(result_dir)
-    temp_dir.mkdir()
 
     ffmpeg.video2voice(path,
                        temp_dir/'voice_tmp.mp3',
@@ -145,6 +144,8 @@ def cleanmosaic_video_fusion(media_path: Path,
     previous_frame = None
     init_flag = True
 
+    util.clean_tempfiles(temp_dir, True)
+
     fps, imagepaths, height, width = video_init(temp_dir,
                                                 result_dir,
                                                 start_time,
@@ -163,9 +164,6 @@ def cleanmosaic_video_fusion(media_path: Path,
     length = len(imagepaths)
     write_pool = Queue(4)
     show_pool = Queue(4)
-
-    (temp_dir/'mosaic_mask').mkdir()
-    (temp_dir/'replace_mosaic').mkdir()
 
     def write_result(no_feather: bool = False):
         while True:

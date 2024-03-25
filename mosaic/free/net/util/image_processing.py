@@ -229,7 +229,6 @@ def replace_mosaic(img_origin,
         # for i in range(3):img_fake[:,:,i] = np.clip(img_fake[:,:,i]+RGB_origin[i]-RGB_fake[i],0,255)
         # eclosion
         eclosion_num = int(size/10)+2
-
         mask_crop = cv2.resize(mask, (img_origin.shape[1], img_origin.shape[0]))[y-size:y+size, x-size:x+size]
         mask_crop = ch_one2three(mask_crop)
 
