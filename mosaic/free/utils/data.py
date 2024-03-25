@@ -101,7 +101,7 @@ def random_transform_single_mask(img, out_shape):
     return img
 
 
-def get_transform_params():
+def get_transform_params() -> dict[str, dict]:
     crop_flag = True
     rotat_flag = np.random.random() < 0.2
     color_flag = True

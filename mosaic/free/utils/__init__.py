@@ -93,7 +93,7 @@ def makedirs(path):
 
 
 def clean_tempfiles(tmpdir: Path,
-                    tmp_init=True):
+                    tmp_init=True) -> None:
     if os.path.isdir(tmpdir):
         print('Clean temp...')
         shutil.rmtree(tmpdir)
@@ -110,7 +110,7 @@ def clean_tempfiles(tmpdir: Path,
         os.makedirs(os.path.join(tmpdir, 'ROI_mask_check'))
 
 
-def file_init(result_dir: Path):
+def file_init(result_dir: Path) -> None:
     if not os.path.isdir(result_dir):
         os.makedirs(result_dir)
         print('makedir:', result_dir)

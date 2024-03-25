@@ -331,7 +331,7 @@ def resnet101(pretrained=False, **kwargs):
 
 
 class HingeLossD(nn.Module):
-    def __init__(self):
+    def __init__(self) -> None:
         super(HingeLossD, self).__init__()
 
     def forward(self, dis_fake, dis_real):
@@ -341,7 +341,7 @@ class HingeLossD(nn.Module):
 
 
 class HingeLossG(nn.Module):
-    def __init__(self):
+    def __init__(self) -> None:
         super(HingeLossG, self).__init__()
 
     def forward(self, dis_fake):

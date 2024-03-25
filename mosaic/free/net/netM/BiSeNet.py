@@ -53,7 +53,7 @@ class ConvBlock(torch.nn.Module):
 
 
 class Spatial_path(torch.nn.Module):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.convblock1 = ConvBlock(in_channels=3, out_channels=64)
         self.convblock2 = ConvBlock(in_channels=64, out_channels=128)
@@ -163,7 +163,7 @@ class BiSeNet(torch.nn.Module):
         self.mul_lr.append(self.feature_fusion_module)
         self.mul_lr.append(self.conv)
 
-    def init_weight(self):
+    def init_weight(self) -> None:
         for name, m in self.named_modules():
             if 'context_path' not in name:
                 if isinstance(m, nn.Conv2d):

@@ -4,6 +4,7 @@ from threading import Thread
 
 import cv2
 import numpy as np
+from cv2.typing import MatLike
 
 system_type = 'Linux'
 if 'Windows' in platform.platform():
@@ -13,7 +14,7 @@ if 'Windows' in platform.platform():
 def imread(file_path: str,
            mod='normal',
            loadsize=0,
-           rgb=False):
+           rgb=False) -> MatLike:
     '''
     mod:  'normal' | 'gray' | 'all'
     loadsize: 0->original
@@ -47,7 +48,7 @@ def imread(file_path: str,
 
 def imwrite(file_path: str,
             img,
-            use_thread=False):
+            use_thread=False) -> None:
     '''
     in other to save chinese path images in windows,
     this fun just for save final output images

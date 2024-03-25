@@ -26,7 +26,7 @@ def cleanmosaic_video_fusion(media_path: Path,
                              netG: BVDNet,
                              netM: BiSeNet,
                              no_preview: bool = True,
-                             gpu_id: int = 0):
+                             gpu_id: int = 0) -> None:
     path = media_path
     N, T, S = 2, 5, 3
     LEFT_FRAME = (N*S)
@@ -57,7 +57,7 @@ def cleanmosaic_video_fusion(media_path: Path,
     write_pool = Queue(4)
     show_pool = Queue(4)
 
-    def write_result(no_feather: bool = False):
+    def write_result(no_feather: bool = False) -> None:
         while True:
             save_ori, imagepath, img_origin, img_fake, x, y, size = write_pool.get()
             if save_ori:

@@ -6,6 +6,7 @@ from threading import Thread
 
 import cv2
 import numpy as np
+from numpy.typing import NDArray
 
 from mosaic.free import utils
 from mosaic.free.cleaner import runmodel
@@ -19,7 +20,7 @@ def detect_mosaic_positions(netM: BiSeNet,
                             imagepaths: list[str],
                             savemask: bool = True,
                             medfilt_num: int = 11,
-                            no_preview: bool = True):
+                            no_preview: bool = True) -> NDArray:
     # resume
     continue_flag = False
     if os.path.isfile(os.path.join(temp_dir, 'step.json')):
@@ -41,7 +42,7 @@ def detect_mosaic_positions(netM: BiSeNet,
 
     img_read_pool = Queue(4)
 
-    def loader(imagepaths: list[str]):
+    def loader(imagepaths: list[str]) -> None:
         for imagepath in imagepaths:
             img_origin = impro.imread(os.path.join(temp_dir/'video2image', imagepath))
             img_read_pool.put(img_origin)
