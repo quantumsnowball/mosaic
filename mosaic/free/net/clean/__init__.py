@@ -93,7 +93,7 @@ def get_mosaic_positions(netM: BiSeNet,
         x, y, size, mask = runmodel.get_mosaic_position(img_origin, netM)
         positions.append([x, y, size])
         if savemask:
-            t = Thread(target=cv2.imwrite, args=(temp_dir/'mosaic_mask'/imagepath, mask,))
+            t = Thread(target=cv2.imwrite, args=(str(temp_dir/'mosaic_mask'/imagepath), mask,))
             t.start()
         if i % 1000 == 0:
             save_positions = np.array(positions)
@@ -164,17 +164,20 @@ def cleanmosaic_video_fusion(media_path: Path,
     write_pool = Queue(4)
     show_pool = Queue(4)
 
+    (temp_dir/'mosaic_mask').mkdir()
+    (temp_dir/'replace_mosaic').mkdir()
+
     def write_result(no_feather: bool = False):
         while True:
             save_ori, imagepath, img_origin, img_fake, x, y, size = write_pool.get()
             if save_ori:
                 img_result = img_origin
             else:
-                mask = cv2.imread(temp_dir/'mosaic_mask' / imagepath, 0)
+                mask = cv2.imread(str(temp_dir/'mosaic_mask' / imagepath), 0)
                 img_result = impro.replace_mosaic(img_origin, img_fake, mask, x, y, size, no_feather)
-            if not opt.no_preview:
+            if not no_preview:
                 show_pool.put(img_result.copy())
-            cv2.imwrite(temp_dir/'replace_mosaic' / imagepath, img_result)
+            cv2.imwrite(str(temp_dir/'replace_mosaic' / imagepath), img_result)
             os.remove(temp_dir/'video2image' / imagepath)
     t = Thread(target=write_result, args=())
     t.setDaemon(True)

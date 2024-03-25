@@ -40,3 +40,4 @@ def free(input: Path,
                              end_time=end_time,
                              netG=netG,
                              netM=netM)
+    print('Finished!')

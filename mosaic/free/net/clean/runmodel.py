@@ -81,7 +81,7 @@ def get_mosaic_position(img_origin,
                         net_mosaic_pos,
                         all_mosaic_area: bool = False,
                         mask_threshold: int = 64,
-                        ex_mult: str = 'auto') -> tuple[int, int, int, Any]:
+                        ex_mult: float = 1.5) -> tuple[int, int, int, Any]:
     h, w = img_origin.shape[:2]
     mask = run_segment(img_origin, net_mosaic_pos, size=360, gpu_id='0')
     # mask_1 = mask.copy()
