@@ -10,6 +10,7 @@ import torch
 
 from mosaic.free import utils
 from mosaic.free.cleaner.extract import detect_mosaic_positions
+from mosaic.free.cleaner.io import start_result_writer
 from mosaic.free.cleaner.split import disassemble_video
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
@@ -52,24 +53,7 @@ def cleanmosaic_video_fusion(media_path: Path,
     print('Step:3/4 -- Clean Mosaic:')
     length = len(imagepaths)
     write_pool = Queue(4)
-
-    def write_result(no_feather: bool = False) -> None:
-        while True:
-            try:
-                item = write_pool.get()
-            except ValueError:
-                break
-            save_ori, imagepath, img_origin, img_fake, x, y, size = item
-            if save_ori:
-                img_result = img_origin
-            else:
-                mask = cv2.imread(str(temp_dir/'mosaic_mask' / imagepath), 0)
-                img_result = impro.replace_mosaic(img_origin, img_fake, mask, x, y, size, no_feather)
-            cv2.imwrite(str(temp_dir/'replace_mosaic' / imagepath), img_result)
-            os.remove(temp_dir/'video2image' / imagepath)
-    t = Thread(target=write_result, args=())
-    t.setDaemon(True)
-    t.start()
+    writer_thread = start_result_writer(write_pool, temp_dir)
 
     for i, imagepath in enumerate(imagepaths, 0):
         x, y, size = positions[i][0], positions[i][1], positions[i][2]
@@ -115,6 +99,8 @@ def cleanmosaic_video_fusion(media_path: Path,
               utils.counttime(t1, t2, i+1, len(imagepaths)), end='')
     print()
 
+    write_pool.put(None)
+    writer_thread.join()
     write_pool.close()
 
     print('Step:4/4 -- Convert images to video')
