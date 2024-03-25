@@ -2,9 +2,12 @@ from pathlib import Path
 
 import click
 
+from mosaic.free.net.clean import cleanmosaic_video_fusion
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.utils import HMS, HMSParamType, VideoPathParamType
+
+TEMP_DIRNAME = '.mosaic'
 
 
 @click.command()
@@ -19,18 +22,21 @@ def free(input: Path,
          model_file: Path | None,
          output_file: Path,
          ) -> None:
-    click.echo('mosaic free')
-    print(input)
-    print(start_time)
-    print(end_time)
-    print(model_file)
-    print(output_file)
+
+    this_dir = Path(__file__).parent
+    output_dir = output_file.parent
 
     # load netM
-    cwd = Path(__file__).parent
-    netM_state = cwd / 'net/netM/state_dicts/mosaic_position.pth'
+    netM_state = this_dir / 'net/netM/state_dicts/mosaic_position.pth'
     netM = bisenet(netM_state)
     # print(netM)
-    netG_state = cwd / 'net/netG/state_dicts/clean_youknow_video.pth'
+    netG_state = this_dir / 'net/netG/state_dicts/clean_youknow_video.pth'
     netG = video(netG_state)
     # print(netG)
+    cleanmosaic_video_fusion(media_path=input,
+                             temp_dir=output_dir/TEMP_DIRNAME,
+                             result_dir=output_dir,
+                             start_time=start_time,
+                             end_time=end_time,
+                             netG=netG,
+                             netM=netM)
