@@ -8,16 +8,15 @@ from alive_progress import alive_bar
 def ffmpeg(args: Sequence[str],
            *,
            exp_total_secs: int,
-           stats_period: float = 0.1):
+           stats_period: float = 0.1) -> None:
     # verify args
     args = list(map(str, args))
     args = list(filter(lambda x: len(x) > 0, args))
     # create ffmpeg command
-    cmd = ['ffmpeg']
-    cmd += ['-loglevel', 'fatal']
-    cmd += ['-progress', 'pipe:1']
-    cmd += ['-stats_period', str(stats_period)]
-    cmd += args
+    cmd = args if args[0] == 'ffmpeg' else ['ffmpeg'] + args
+    cmd[1:1] = ['-loglevel', 'fatal']
+    cmd[1:1] = ['-progress', 'pipe:1']
+    cmd[1:1] = ['-stats_period', str(stats_period)]
 
     # run ffmpeg in a process, monitor stdout
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
@@ -41,7 +40,7 @@ def ffmpeg(args: Sequence[str],
 
 
 if __name__ == '__main__':
-    ffmpeg(f' -i {Path.home()}/Videos/input.mp4'
+    ffmpeg(f'-i {Path.home()}/Videos/input.mp4'
            ' -ss 00:00:00 -to 00:10:00'
            ' -vf scale=640:480'
            ' -y'

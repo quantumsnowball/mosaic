@@ -23,6 +23,9 @@ class HMS:
     def __lt__(self, other: 'HMS') -> bool:
         return self.total_seconds() < other.total_seconds()
 
+    def __int__(self) -> int:
+        return self.total_seconds()
+
     def __sub__(self, other: 'HMS') -> 'HMS':
         total_seconds = self.total_seconds() - other.total_seconds()
 
