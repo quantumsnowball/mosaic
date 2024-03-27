@@ -13,6 +13,9 @@ NAME = 'mosaic'
 def mosaic(version: bool) -> None:
     if version:
         print(f'v{meta.version(NAME)}')
+    else:
+        click.echo(click.get_current_context().get_help())
+        exit(1)
 
 
 mosaic.add_command(remove)
