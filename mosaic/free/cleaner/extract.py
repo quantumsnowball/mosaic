@@ -61,7 +61,7 @@ def detect_mosaic_positions(netM: BiSeNet,
             step = {'step': 2, 'frame': i+resume_frame}
             utils.savejson(temp_dir / 'step.json', step)
 
-    print('\nOptimize mosaic locations...')
+    print('Optimize mosaic locations...')
     positions = np.array(positions)
     if continue_flag:
         positions = np.concatenate((pre_positions, positions), axis=0)
