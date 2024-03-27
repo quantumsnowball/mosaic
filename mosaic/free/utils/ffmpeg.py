@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from mosaic.utils import HMS
+from mosaic.utils.progress import ffmpeg
 
 # ffmpeg 3.4.6
 
@@ -46,14 +47,14 @@ def video2image(videopath: Path,
                 start_time: HMS | None,
                 end_time: HMS | None,
                 fps: int) -> None:
-    args = ['ffmpeg']
+    args = ['ffmpeg-watch']
     if start_time and end_time:
         args += ['-ss', str(start_time)]
         args += ['-to', str(end_time)]
     args += ['-i', '"'+str(videopath)+'"']
     if fps != 0:
         args += ['-r', str(fps)]
-    args += ['-v', 'quiet']
+    # args += ['-v', 'quiet']
     args += ['-f', 'image2', '-q:v', '-0', imagepath]
     run(args)
 
@@ -62,11 +63,11 @@ def video2voice(videopath: Path,
                 voicepath: Path,
                 start_time: HMS | None,
                 end_time: HMS | None) -> None:
-    args = ['ffmpeg', '-i', '"'+str(videopath)+'"', '-async 1 -f mp3', '-b:a 320k']
+    args = ['ffmpeg-watch', '-i', '"'+str(videopath)+'"', '-async 1 -f mp3', '-b:a 320k']
     if start_time and end_time:
         args += ['-ss', str(start_time)]
         args += ['-to', str(end_time)]
-    args += ['-v', 'quiet']
+    # args += ['-v', 'quiet']
     args += [voicepath]
     run(args)
 
