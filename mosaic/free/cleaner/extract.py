@@ -1,11 +1,11 @@
 import os
-import time
 from multiprocessing import Queue
 from pathlib import Path
 from threading import Thread
 
 import cv2
 import numpy as np
+from alive_progress import alive_it
 from numpy.typing import NDArray
 
 from mosaic.free import utils
@@ -34,7 +34,7 @@ def detect_mosaic_positions(netM: BiSeNet,
             imagepaths = imagepaths[resume_frame:]
 
     positions = []
-    t1 = time.time()
+    # t1 = time.time()
 
     img_read_pool = Queue(4)
 
@@ -46,7 +46,7 @@ def detect_mosaic_positions(netM: BiSeNet,
     t.setDaemon(True)
     t.start()
 
-    for i, imagepath in enumerate(imagepaths, 1):
+    for i, imagepath in enumerate(alive_it(imagepaths), 1):
         img_origin = img_read_pool.get()
         x, y, size, mask = runmodel.get_mosaic_position(img_origin, netM)
         positions.append([x, y, size])
@@ -60,10 +60,6 @@ def detect_mosaic_positions(netM: BiSeNet,
             np.save(temp_dir / 'mosaic_positions.npy', save_positions)
             step = {'step': 2, 'frame': i+resume_frame}
             utils.savejson(temp_dir / 'step.json', step)
-
-        t2 = time.time()
-        print('\r', str(i)+'/'+str(len(imagepaths)), utils.get_bar(100*i/len(imagepaths), num=35),
-              utils.counttime(t1, t2, i, len(imagepaths)), end='')
 
     print('\nOptimize mosaic locations...')
     positions = np.array(positions)
