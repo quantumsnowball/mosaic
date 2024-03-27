@@ -101,7 +101,5 @@ def start_cleaner(result_pool: Queue,
             result_pool.put([True, imagepath, img_origin.copy(), -1, -1, -1, -1])
             init_flag = True
 
-    print()
-
     # indicate no more result to be put into pool
     result_pool.put(None)

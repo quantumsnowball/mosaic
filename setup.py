@@ -17,7 +17,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'mosaic=mosaic.cli:mosaic',
+            'mosaic=mosaic:mosaic',
         ]
     }
 )

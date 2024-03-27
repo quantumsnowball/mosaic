@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Any
 
 from mosaic.utils import HMS
-from mosaic.utils.progress import ffmpeg
 
 # ffmpeg 3.4.6
 
