@@ -25,10 +25,10 @@ def cleanmosaic_video_fusion(media_path: Path,
 
     # disassemble media into images and sound
     click.echo('Step:1/4 -- Convert video to images')
-    fps, imagepaths, height, width = disassemble_video(temp_dir,
-                                                       start_time,
-                                                       end_time,
-                                                       media_path)
+    fps, imagepaths, *_ = disassemble_video(temp_dir,
+                                            start_time,
+                                            end_time,
+                                            media_path)
 
     # detect mosaic in raw images
     click.echo('Step:2/4 -- Find mosaic location')
