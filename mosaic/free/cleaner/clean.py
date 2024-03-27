@@ -1,14 +1,13 @@
 import os
-import time
 from multiprocessing import Process, Queue
 from pathlib import Path
 
 import cv2
 import numpy as np
 import torch
+from alive_progress import alive_it
 from numpy.typing import NDArray
 
-from mosaic.free import utils
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.utils import data
 from mosaic.free.utils import image_processing as impro
@@ -60,11 +59,10 @@ def start_cleaner(result_pool: Queue,
     img_pool = []
     previous_frame = None
     init_flag = True
-    length = len(imagepaths)
 
-    t1 = time.time()
+    # t1 = time.time()
 
-    for i, imagepath in enumerate(imagepaths, 0):
+    for i, imagepath in enumerate(alive_it(imagepaths), 0):
         x, y, size = positions[i][0], positions[i][1], positions[i][2]
         input_stream = []
         # image read stream
@@ -102,10 +100,6 @@ def start_cleaner(result_pool: Queue,
         else:
             result_pool.put([True, imagepath, img_origin.copy(), -1, -1, -1, -1])
             init_flag = True
-
-        t2 = time.time()
-        print('\r', str(i+1)+'/'+str(length), utils.get_bar(100*i/length, num=35),
-              utils.counttime(t1, t2, i+1, len(imagepaths)), end='')
 
     print()
 
