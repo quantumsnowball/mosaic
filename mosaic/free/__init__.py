@@ -26,6 +26,9 @@ def free(input_file: Path,
     if start_time and end_time:
         if not end_time > start_time:
             raise ValueError('Invalid start time or end time')
+    if output_file.exists:
+        if input(f'Output file {output_file} already exist, overwrite? y/[N] ').lower() != 'y':
+            return
 
     # load netM
     netM = bisenet(PACKAGE_DIR/'net/netM/state_dicts/mosaic_position.pth')

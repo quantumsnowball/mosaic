@@ -79,10 +79,10 @@ def image2video(fps,
     os.system(f"ffmpeg-watch -v quiet -y -r {str(fps)} -i '{imagepath}' -vcodec libx264"
               f" '{os.path.split(voicepath)[0]}/video_tmp.mp4'")
     if os.path.exists(voicepath):
-        os.system(f"ffmpeg-watch -v quiet -i '{os.path.split(voicepath)[0]}/video_tmp.mp4'"
+        os.system(f"ffmpeg-watch -v quiet -y -i '{os.path.split(voicepath)[0]}/video_tmp.mp4'"
                   f" -i '{voicepath}' -vcodec copy -acodec aac '{videopath}'")
     else:
-        os.system(f"ffmpeg-watch -v quiet -i '{os.path.split(voicepath)[0]}/video_tmp.mp4' '{videopath}'")
+        os.system(f"ffmpeg-watch -v quiet -y -i '{os.path.split(voicepath)[0]}/video_tmp.mp4' '{videopath}'")
 
 
 def get_video_infos(videopath: Path) -> tuple[Any, float, int, int]:
