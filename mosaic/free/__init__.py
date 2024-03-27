@@ -28,7 +28,7 @@ def free(input_file: Path,
     if start_time and end_time:
         if not end_time > start_time:
             raise ValueError('Invalid start time or end time')
-    if not force and output_file.exists:
+    if not force and output_file.exists():
         if input(f'Output file {output_file} already exist, overwrite? y/[N] ').lower() != 'y':
             return
 
