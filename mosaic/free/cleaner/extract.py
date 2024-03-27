@@ -19,8 +19,7 @@ def detect_mosaic_positions(netM: BiSeNet,
                             temp_dir: Path,
                             imagepaths: list[str],
                             savemask: bool = True,
-                            medfilt_num: int = 11,
-                            no_preview: bool = True) -> NDArray:
+                            medfilt_num: int = 11) -> NDArray:
     # resume
     continue_flag = False
     if os.path.isfile(os.path.join(temp_dir, 'step.json')):
@@ -36,8 +35,6 @@ def detect_mosaic_positions(netM: BiSeNet,
 
     positions = []
     t1 = time.time()
-    if not no_preview:
-        cv2.namedWindow('mosaic mask', cv2.WINDOW_NORMAL)
 
     img_read_pool = Queue(4)
 
@@ -64,16 +61,10 @@ def detect_mosaic_positions(netM: BiSeNet,
             step = {'step': 2, 'frame': i+resume_frame}
             utils.savejson(temp_dir / 'step.json', step)
 
-        # preview result and print
-        if not no_preview:
-            cv2.imshow('mosaic mask', mask)
-            cv2.waitKey(1) & 0xFF
         t2 = time.time()
         print('\r', str(i)+'/'+str(len(imagepaths)), utils.get_bar(100*i/len(imagepaths), num=35),
               utils.counttime(t1, t2, i, len(imagepaths)), end='')
 
-    if not no_preview:
-        cv2.destroyAllWindows()
     print('\nOptimize mosaic locations...')
     positions = np.array(positions)
     if continue_flag:
