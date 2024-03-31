@@ -16,11 +16,13 @@ TEMP_DIRNAME = '.mosaic'
 @click.option('-ss', '--start-time', default=None, type=HMSParamType(), help='start time in HH:MM:SS')
 @click.option('-to', '--end-time', default=None, type=HMSParamType(), help='end time in HH:MM:SS')
 @click.option('-y', '--force', is_flag=True, default=False, help='overwrite output file without asking')
+@click.option('--time-tag', is_flag=True, default=False, help='auto append time tag at end of filename')
 @click.argument('output-file', required=True, type=VideoPathParamType())
 def free(input_file: Path,
          start_time: HMS | None,
          end_time: HMS | None,
          force: bool,
+         time_tag: bool,
          output_file: Path,
          ) -> None:
     # verify inputs
@@ -37,6 +39,13 @@ def free(input_file: Path,
 
     # load netG
     netG = video(PACKAGE_DIR/'net/netG/state_dicts/clean_youknow_video.pth')
+
+    # output filename
+    if time_tag:
+        output_file = output_file.with_stem(
+            f'{output_file.stem}--'
+            f'{start_time.time_tag if start_time else ""}-'
+            f'{end_time.time_tag if end_time else ""}')
 
     # run
     cleanmosaic_video_fusion(
