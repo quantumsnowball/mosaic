@@ -53,7 +53,7 @@ def video2image(videopath: Path,
     args += ['-i', '"'+str(videopath)+'"']
     if fps != 0:
         args += ['-r', str(fps)]
-    # args += ['-v', 'quiet']
+    args += ['-v', 'quiet']
     args += ['-f', 'image2', '-q:v', '-0', imagepath]
     run(args)
 
@@ -100,32 +100,3 @@ def get_video_infos(videopath: Path) -> tuple[Any, float, int, int]:
         height = int(infos['streams'][1]['height'])
 
     return fps, endtime, height, width
-
-
-def cut_video(in_path,
-              start_time,
-              last_time,
-              out_path,
-              vcodec='h265'):
-    if vcodec == 'copy':
-        os.system(f"ffmpeg -v quiet -ss {start_time} -t {last_time} -i '{in_path}'"
-                  f" -vcodec copy -acodec copy '{out_path}'")
-    elif vcodec == 'h264':
-        os.system(f"ffmpeg -v quiet -ss {start_time} -t {last_time} -i '{in_path}'"
-                  f" -vcodec libx264 -b 12M '{out_path}'")
-    elif vcodec == 'h265':
-        os.system(f"ffmpeg -v quiet -ss {start_time} -t {last_time} -i '{in_path}'"
-                  f" -vcodec libx265 -b 12M '{out_path}'")
-
-
-def continuous_screenshot(videopath,
-                          savedir,
-                          fps):
-    '''
-    videopath: input video path
-    savedir:   images will save here
-    fps:       save how many images per second
-    '''
-    videoname = os.path.splitext(os.path.basename(videopath))[0]
-    # os.system('ffmpeg -i "'+videopath+'" -vf fps='+str(fps)+' -q:v -0 '+savedir+'/'+videoname+'_%06d.jpg')
-    os.system(f"ffmpeg -i '{videopath}' -vf fps={str(fps)} -q:v -0 '{savedir}/{videoname}_%06d.jpg'")
