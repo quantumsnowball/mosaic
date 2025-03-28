@@ -71,10 +71,10 @@ def video2voice(videopath: Path,
     run(args)
 
 
-def image2video(fps,
-                imagepath,
-                voicepath,
-                videopath):
+def image2video(fps: int,
+                imagepath: Path,
+                voicepath: Path,
+                videopath: Path):
     os.system(f"ffmpeg-watch -v quiet -y -r {str(fps)} -i '{imagepath}' -vcodec libx264"
               f" '{os.path.split(voicepath)[0]}/video_tmp.mp4'")
     if os.path.exists(voicepath):
