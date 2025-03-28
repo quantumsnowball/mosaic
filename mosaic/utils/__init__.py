@@ -23,6 +23,9 @@ class HMS:
     def __lt__(self, other: 'HMS') -> bool:
         return self.total_seconds() < other.total_seconds()
 
+    def __int__(self) -> int:
+        return self.total_seconds()
+
     def __sub__(self, other: 'HMS') -> 'HMS':
         total_seconds = self.total_seconds() - other.total_seconds()
 
@@ -34,6 +37,10 @@ class HMS:
 
     def __str__(self) -> str:
         return f"{self.hours:02d}:{self.minutes:02d}:{self.seconds:02d}"
+
+    @property
+    def time_tag(self) -> str:
+        return f"{self.hours:02d}{self.minutes:02d}{self.seconds:02d}"
 
 
 class HMSParamType(click.ParamType):

@@ -1,0 +1,23 @@
+[build-system]
+requires = [ "setuptools" ]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mosaic"
+version = "0.2.0"
+description = "mosaic - handle mosaic in video"
+authors = [
+    { name = "Quantum Snowball", email = "quantum.snowball@gmail.com" }
+]
+dependencies = [
+    'click',
+    'torch',
+    'torchvision',
+    'opencv-python'
+]
+
+[project.urls]
+Homepage = "https://github.com/quantumsnowball/mosaic"
+
+[project.scripts]
+mosaic = "mosaic:mosaic"
