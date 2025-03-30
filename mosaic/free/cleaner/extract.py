@@ -48,7 +48,7 @@ def detect_mosaic_positions(netM: BiSeNet,
 
     for i, imagepath in enumerate(alive_it(imagepaths), 1):
         img_origin = img_read_pool.get()
-        x, y, size, mask = runmodel.get_mosaic_position(img_origin, netM)
+        x, y, size, mask = runmodel.get_mosaic_position(img_origin, netM, all_mosaic_area=True)
         positions.append([x, y, size])
         if savemask:
             t = Thread(target=cv2.imwrite, args=(str(temp_dir/'mosaic_mask'/imagepath), mask,))
