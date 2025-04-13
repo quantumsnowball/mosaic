@@ -4,6 +4,7 @@ import click
 
 from mosaic.free import free
 from mosaic.remove import remove
+from mosaic.upscale import upscale
 
 NAME = 'mosaic'
 
@@ -24,3 +25,4 @@ def version() -> None:
 
 mosaic.add_command(remove)
 mosaic.add_command(free)
+mosaic.add_command(upscale)
