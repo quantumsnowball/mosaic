@@ -14,11 +14,17 @@ from mosaic.utils import VideoPathParamType
 def upscale(input_file: Path,
             output_file: Path,
             ) -> None:
-    # video info
-    # TODO: ffprobe video info here
-    width, height = 640, 480
-    frame_size = width * height * 3
-    framerate = '24/1'
+    # extract first video stream info
+    ffprobe_info = ffmpeg.probe(str(input_file))
+    for stream in ffprobe_info['streams']:
+        if stream['codec_type'] == 'video':
+            width = int(stream['width'])
+            height = int(stream['height'])
+            framerate = str(stream['r_frame_rate'])
+            frame_size = width * height * 3
+            break
+    else:
+        raise ValueError("No video stream found.")
 
     # ffmpeg input and output procs
     in_proc = (
