@@ -9,7 +9,11 @@ NAME = 'mosaic'
 
 
 @click.group()
-def mosaic() -> None:
+@click.option('-d', '--debug', is_flag=True, help='Enable debugging with PuDB')
+def mosaic(debug: bool) -> None:
+    if debug:
+        import pudb
+        pudb.set_trace()
     pass
 
 
