@@ -44,13 +44,17 @@ def upscale(input_file: Path,
         .input(str(input_file))
         .output(video_in_pipe, format='rawvideo', pix_fmt='rgb24')
         .global_args('-hide_banner', '-loglevel', 'quiet')
-        .global_args('-hide_banner')
         .run_async(pipe_stdout=False)
     )
+
+    video_stream = ffmpeg.input(video_out_pipe, format='rawvideo', pix_fmt='rgb24',
+                                s=f'{width}x{height}', framerate=framerate).video
+    audio_stream = ffmpeg.input(str(input_file)).audio
     out_proc = (
         ffmpeg
-        .input(video_out_pipe, format='rawvideo', pix_fmt='rgb24', s=f'{width}x{height}', framerate=framerate)
-        .output(str(output_file), vcodec='libx264', pix_fmt='yuv420p')
+        .output(video_stream,
+                audio_stream,
+                str(output_file), vcodec='libx264', pix_fmt='yuv420p')
         .global_args('-hide_banner')
         .overwrite_output()
         .run_async(pipe_stdin=False)
