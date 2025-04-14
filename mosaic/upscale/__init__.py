@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import click
@@ -26,41 +27,56 @@ def upscale(input_file: Path,
     else:
         raise ValueError("No video stream found.")
 
+    # create named pipes
+    video_in_pipe = '/tmp/mosaic_video_in_pipe'
+    audio_in_pipe = '/tmp/mosaic_audio_in_pipe'
+    video_out_pipe = '/tmp/mosaic_video_out_pipe'
+    try:
+        os.mkfifo(video_in_pipe)
+        os.mkfifo(audio_in_pipe)
+        os.mkfifo(video_out_pipe)
+    except FileExistsError:
+        pass
+
     # ffmpeg input and output procs
     in_proc = (
         ffmpeg
         .input(str(input_file))
-        .output('pipe:1', format='rawvideo', pix_fmt='rgb24')
+        .output(video_in_pipe, format='rawvideo', pix_fmt='rgb24')
         .global_args('-hide_banner', '-loglevel', 'quiet')
-        .run_async(pipe_stdout=True)
+        .global_args('-hide_banner')
+        .run_async(pipe_stdout=False)
     )
     out_proc = (
         ffmpeg
-        .input('pipe:0', format='rawvideo', pix_fmt='rgb24', s=f'{width}x{height}', framerate=framerate)
+        .input(video_out_pipe, format='rawvideo', pix_fmt='rgb24', s=f'{width}x{height}', framerate=framerate)
         .output(str(output_file), vcodec='libx264', pix_fmt='yuv420p')
         .global_args('-hide_banner')
         .overwrite_output()
-        .run_async(pipe_stdin=True)
+        .run_async(pipe_stdin=False)
     )
 
     # conversion loop
-    while True:
-        in_bytes = in_proc.stdout.read(frame_size)
-        if not in_bytes:
-            break  # End of stream
+    with open(video_in_pipe, 'rb') as reader, open(video_out_pipe, 'wb') as writer:
+        while True:
+            in_bytes = reader.read(frame_size)
+            if not in_bytes:
+                break
 
-        # Convert bytes to numpy array
-        frame = np.frombuffer(in_bytes, np.uint8).reshape((height, width, 3))
+            # Convert bytes to numpy array
+            frame = np.frombuffer(in_bytes, np.uint8).reshape(
+                (height, width, 3))
 
-        # apply a filter in python
-        # TODO: do you upscaling magic here
-        frame = upscale_filter(frame)
+            # apply a filter in python
+            # TODO: do you upscaling magic here
+            frame = upscale_filter(frame)
 
-        # Convert back to bytes and send to ffmpeg output
-        out_proc.stdin.write(frame.astype(np.uint8).tobytes())
+            # Convert back to bytes and send to ffmpeg output
+            writer.write(frame.astype(np.uint8).tobytes())
 
     # Step 4: Cleanup
-    in_proc.stdout.close()
-    out_proc.stdin.close()
     in_proc.wait()
     out_proc.wait()
+    os.remove(video_in_pipe)
+    os.remove(audio_in_pipe)
+    os.remove(video_out_pipe)
