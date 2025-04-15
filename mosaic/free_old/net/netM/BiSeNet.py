@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-import mosaic.free.net.utils as utils
+import mosaic.free_old.net.utils as utils
 
 
 class resnet18(torch.nn.Module):

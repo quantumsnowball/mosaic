@@ -3,13 +3,13 @@ from pathlib import Path
 
 import click
 
-from mosaic.free.cleaner.clean import start_cleaner, start_result_writer
-from mosaic.free.cleaner.combine import combine_result_to_video
-from mosaic.free.cleaner.extract import detect_mosaic_positions
-from mosaic.free.cleaner.split import disassemble_video
-from mosaic.free.net.netG.BVDNet import BVDNet
-from mosaic.free.net.netM.BiSeNet import BiSeNet
-from mosaic.free.utils import clean_tempfiles
+from mosaic.free_old.cleaner.clean import start_cleaner, start_result_writer
+from mosaic.free_old.cleaner.combine import combine_result_to_video
+from mosaic.free_old.cleaner.extract import detect_mosaic_positions
+from mosaic.free_old.cleaner.split import disassemble_video
+from mosaic.free_old.net.netG.BVDNet import BVDNet
+from mosaic.free_old.net.netM.BiSeNet import BiSeNet
+from mosaic.free_old.utils import clean_tempfiles
 from mosaic.utils import HMS
 
 

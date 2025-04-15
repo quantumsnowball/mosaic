@@ -2,7 +2,7 @@ import importlib.metadata as meta
 
 import click
 
-from mosaic.free import free
+from mosaic.free_old import free
 from mosaic.remove import remove
 from mosaic.upscale import upscale
 

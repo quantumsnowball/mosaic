@@ -1,7 +1,7 @@
 import torch.nn as nn
 
-import mosaic.free.net.utils as utils
-from mosaic.free.net.utils import ResnetBlockSpectralNorm, SpectralNorm
+import mosaic.free_old.net.utils as utils
+from mosaic.free_old.net.utils import ResnetBlockSpectralNorm, SpectralNorm
 
 
 def show_paramsnumber(net, netname='net'):

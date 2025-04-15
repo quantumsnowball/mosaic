@@ -2,7 +2,7 @@ from pathlib import Path
 
 import torch
 
-from mosaic.free.net.netM.BiSeNet import BiSeNet, show_paramsnumber
+from mosaic.free_old.net.netM.BiSeNet import BiSeNet, show_paramsnumber
 
 
 def bisenet(model_path: Path) -> BiSeNet:

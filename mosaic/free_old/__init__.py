@@ -2,9 +2,9 @@ from pathlib import Path
 
 import click
 
-from mosaic.free.cleaner import cleanmosaic_video_fusion
-from mosaic.free.net.netG import video
-from mosaic.free.net.netM import bisenet
+from mosaic.free_old.cleaner import cleanmosaic_video_fusion
+from mosaic.free_old.net.netG import video
+from mosaic.free_old.net.netM import bisenet
 from mosaic.utils import HMS, HMSParamType, VideoPathParamType
 
 PACKAGE_DIR = Path(__file__).parent

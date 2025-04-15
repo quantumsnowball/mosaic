@@ -6,7 +6,7 @@ import numpy as np
 import torch
 import torchvision.transforms as transforms
 
-from mosaic.free.utils.mosaic import get_random_parameter
+from mosaic.free_old.utils.mosaic import get_random_parameter
 
 from . import degradater
 from . import image_processing as impro
