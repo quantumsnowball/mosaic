@@ -4,7 +4,7 @@ import click
 import ffmpeg
 import numpy as np
 
-from mosaic.upscale.filter import upscale_filter
+from mosaic.upscale.filter import sharpen
 from mosaic.utils import VideoPathParamType
 
 
@@ -67,7 +67,7 @@ def upscale(input_file: Path,
 
         # apply a filter in python
         # TODO: do you upscaling magic here
-        frame = upscale_filter(frame)
+        frame = sharpen(frame)
 
         # Convert back to bytes and send to ffmpeg output
         out_proc.stdin.write(frame.astype(np.uint8).tobytes())
