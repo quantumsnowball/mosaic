@@ -18,13 +18,13 @@ TEMP_DIRNAME = '.mosaic'
 @click.option('-y', '--force', is_flag=True, default=False, help='overwrite output file without asking')
 @click.option('--time-tag', is_flag=True, default=False, help='auto append time tag at end of filename')
 @click.argument('output-file', required=True, type=VideoPathParamType())
-def free(input_file: Path,
-         start_time: HMS | None,
-         end_time: HMS | None,
-         force: bool,
-         time_tag: bool,
-         output_file: Path,
-         ) -> None:
+def free_old(input_file: Path,
+             start_time: HMS | None,
+             end_time: HMS | None,
+             force: bool,
+             time_tag: bool,
+             output_file: Path,
+             ) -> None:
     # verify inputs
     assert input_file.exists(), f'{input_file} does not exists'
     if start_time and end_time:
