@@ -20,4 +20,36 @@ def free(
     time_tag: bool,
     output_file: Path,
 ) -> None:
-    print(f'mosaic free -i {input_file} {output_file}')
+    # verify inputs
+    assert input_file.exists(), f'{input_file} does not exists'
+    if start_time and end_time:
+        if not end_time > start_time:
+            raise ValueError('Invalid start time or end time')
+    if not force and output_file.exists():
+        if input(f'Output file {output_file} already exist, overwrite? y/[N] ').lower() != 'y':
+            return
+
+    # load netM
+    # netM = bisenet(PACKAGE_DIR/'net/netM/state_dicts/mosaic_position.pth')
+
+    # load netG
+    # netG = video(PACKAGE_DIR/'net/netG/state_dicts/clean_youknow_video.pth')
+
+    # output filename
+    if time_tag:
+        output_file = output_file.with_stem(
+            f'{output_file.stem}--'
+            f'{start_time.time_tag if start_time else ""}-'
+            f'{end_time.time_tag if end_time else ""}')
+
+    # run
+    # cleanmosaic_video_fusion(
+    #     media_path=input_file,
+    #     temp_dir=output_file.parent/TEMP_DIRNAME,
+    #     start_time=start_time,
+    #     end_time=end_time,
+    #     output_file=output_file,
+    #     netG=netG,
+    #     netM=netM
+    # )
+    click.echo('Finished!')
