@@ -2,6 +2,7 @@ from pathlib import Path
 
 import click
 
+from mosaic.free.cleaner import clean_mosaic
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.utils import HMS, HMSParamType, VideoPathParamType
@@ -47,13 +48,11 @@ def free(
             f'{end_time.time_tag if end_time else ""}')
 
     # run
-    # cleanmosaic_video_fusion(
-    #     media_path=input_file,
-    #     temp_dir=output_file.parent/TEMP_DIRNAME,
-    #     start_time=start_time,
-    #     end_time=end_time,
-    #     output_file=output_file,
-    #     netG=netG,
-    #     netM=netM
-    # )
-    click.echo('Finished!')
+    clean_mosaic(
+        media_path=input_file,
+        start_time=start_time,
+        end_time=end_time,
+        output_file=output_file,
+        netG=netG,
+        netM=netM
+    )
