@@ -2,7 +2,7 @@ from pathlib import Path
 
 import click
 
-# from mosaic.free.net.netG import video
+from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.utils import HMS, HMSParamType, VideoPathParamType
 
@@ -37,7 +37,7 @@ def free(
     netM = bisenet(PACKAGE_DIR/'net/netM/state_dicts/mosaic_position.pth')
 
     # load netG
-    # netG = video(PACKAGE_DIR/'net/netG/state_dicts/clean_youknow_video.pth')
+    netG = video(PACKAGE_DIR/'net/netG/state_dicts/clean_youknow_video.pth')
 
     # output filename
     if time_tag:
