@@ -29,11 +29,12 @@ def run(
         raise ValueError("No video stream found.")
 
     # ffmpeg input and output procs
+    input_kwargs = {k: v
+                    for k, v in dict(ss=start_time, to=end_time).items()
+                    if v is not None}
     in_proc = (
         ffmpeg
-        .input(str(input_file),
-               ss=start_time,
-               to=end_time)
+        .input(str(input_file), **input_kwargs)
         .output('pipe:',
                 format='rawvideo',
                 pix_fmt='rgb24')
@@ -51,9 +52,7 @@ def run(
                          pix_fmt='rgb24',
                          s=f'{width}x{height}',
                          framerate=framerate).video,
-            ffmpeg.input(str(input_file),
-                         ss=start_time,
-                         to=end_time).audio,
+            ffmpeg.input(str(input_file), **input_kwargs).audio,
             str(output_file),
             vcodec='libx264',
             pix_fmt='yuv420p')
