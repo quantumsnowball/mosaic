@@ -31,7 +31,9 @@ def run(
     # ffmpeg input and output procs
     in_proc = (
         ffmpeg
-        .input(str(input_file))
+        .input(str(input_file),
+               ss=start_time,
+               to=end_time)
         .output('pipe:',
                 format='rawvideo',
                 pix_fmt='rgb24')
@@ -49,7 +51,9 @@ def run(
                          pix_fmt='rgb24',
                          s=f'{width}x{height}',
                          framerate=framerate).video,
-            ffmpeg.input(str(input_file)).audio,
+            ffmpeg.input(str(input_file),
+                         ss=start_time,
+                         to=end_time).audio,
             str(output_file),
             vcodec='libx264',
             pix_fmt='yuv420p')
