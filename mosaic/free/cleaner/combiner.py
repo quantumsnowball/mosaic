@@ -14,7 +14,7 @@ class Combiner:
         self.source = s = input.source
         self._stream = (
             ffmpeg.output(
-                ffmpeg.input(str(input.output_pipe),
+                ffmpeg.input(str(input.output),
                              format='rawvideo',
                              pix_fmt='rgb24',
                              s=f'{s.width}x{s.height}',

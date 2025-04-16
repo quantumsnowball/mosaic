@@ -9,14 +9,14 @@ from mosaic.free.cleaner.source import VideoSource
 
 
 class Splitter:
-    output_pipe = Path('/tmp/mosaic-free-splitter-output')
+    _output_pipe = Path('/tmp/mosaic-free-splitter-output')
 
     def __init__(self, input: VideoSource) -> None:
         self.source = s = input
         self._stream = (
             ffmpeg
             .input(str(s), **s.ffmpeg_input_kwargs)
-            .output(str(self.output_pipe),
+            .output(str(self._output_pipe),
                     format='rawvideo',
                     pix_fmt='rgb24')
             .global_args(
@@ -26,14 +26,18 @@ class Splitter:
         )
         self._proc: Popen | None = None
 
+    @property
+    def output(self) -> Path:
+        return self._output_pipe
+
     def __enter__(self) -> Self:
-        if not self.output_pipe.exists():
-            os.mkfifo(self.output_pipe)
+        if not self._output_pipe.exists():
+            os.mkfifo(self._output_pipe)
         return self
 
     def __exit__(self, type, value, traceback) -> None:
-        if self.output_pipe.exists():
-            self.output_pipe.unlink()
+        if self._output_pipe.exists():
+            self._output_pipe.unlink()
 
     def run(self) -> None:
         self._proc = self._stream.run_async(pipe_stdout=False)

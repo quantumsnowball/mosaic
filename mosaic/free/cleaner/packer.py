@@ -19,6 +19,10 @@ class Packer:
         self._queue = Queue(maxsize=maxsize)
         self._proc = Process(target=self._worker)
 
+    @property
+    def output(self) -> Queue:
+        return self._queue
+
     def __enter__(self) -> Self:
         return self
 
@@ -26,7 +30,7 @@ class Packer:
         pass
 
     def _worker(self) -> None:
-        with open(self._input.output_pipe, 'rb') as pipe:
+        with open(self._input.output, 'rb') as pipe:
             while True:
                 in_bytes = pipe.read(self._frame_size)
                 if not in_bytes:
@@ -35,10 +39,6 @@ class Packer:
                 frame = np.frombuffer(in_bytes, np.uint8).reshape(
                     (self._height, self._width, 3))
                 self._queue.put(frame)
-
-    @property
-    def queue(self) -> Queue:
-        return self._queue
 
     def run(self) -> None:
         self._proc.start()
