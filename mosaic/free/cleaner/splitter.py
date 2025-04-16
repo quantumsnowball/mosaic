@@ -5,16 +5,17 @@ from typing import Self
 
 import ffmpeg
 
+from mosaic.free.cleaner.source import VideoSource
+
 
 class Splitter:
     output_pipe = Path('/tmp/mosaic-free-splitter-output')
 
-    def __init__(self,
-                 input_file: Path,
-                 **input_kwargs) -> None:
+    def __init__(self, input: VideoSource) -> None:
+        self.source = s = input
         self._stream = (
             ffmpeg
-            .input(str(input_file), **input_kwargs)
+            .input(str(s), **s.ffmpeg_input_kwargs)
             .output(str(self.output_pipe),
                     format='rawvideo',
                     pix_fmt='rgb24')

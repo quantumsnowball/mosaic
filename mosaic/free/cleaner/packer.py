@@ -8,15 +8,14 @@ from mosaic.free.cleaner.splitter import Splitter
 
 class Packer:
     def __init__(self,
-                 src: Splitter,
+                 input: Splitter,
                  *,
-                 height: int,
-                 width: int,
                  maxsize: int = 1) -> None:
-        self._src = src
-        self._height = height
-        self._width = width
-        self._frame_size = width * height * 3
+        self.source = s = input.source
+        self._input = input
+        self._height = s.height
+        self._width = s.width
+        self._frame_size = s.width * s.height * 3
         self._queue = Queue(maxsize=maxsize)
         self._proc = Process(target=self._worker)
 
@@ -27,7 +26,7 @@ class Packer:
         pass
 
     def _worker(self) -> None:
-        with open(self._src.output_pipe, 'rb') as pipe:
+        with open(self._input.output_pipe, 'rb') as pipe:
             while True:
                 in_bytes = pipe.read(self._frame_size)
                 if not in_bytes:

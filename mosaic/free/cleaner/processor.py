@@ -11,9 +11,9 @@ from mosaic.free.cleaner.packer import Packer
 class Processor:
     output_pipe = Path('/tmp/mosaic-free-processor-output')
 
-    def __init__(self,
-                 src: Packer) -> None:
-        self._src = src
+    def __init__(self, input: Packer) -> None:
+        self.source = input.source
+        self._input = input
         self._proc = Process(target=self._worker)
 
     def __enter__(self) -> Self:
@@ -28,7 +28,7 @@ class Processor:
     def _worker(self) -> None:
         with open(self.output_pipe, 'wb') as pipe:
             while True:
-                frame = self._src.queue.get()
+                frame = self._input.queue.get()
                 if frame is None:
                     break
                 out_bytes = frame.astype(np.uint8).tobytes()

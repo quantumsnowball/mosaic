@@ -9,22 +9,17 @@ from mosaic.free.cleaner.processor import Processor
 
 class Combiner:
     def __init__(self,
-                 src: Processor,
-                 input_file: Path,
-                 output_file: Path,
-                 *,
-                 width: int,
-                 height: int,
-                 framerate: str,
-                 **input_kwargs) -> None:
+                 input: Processor,
+                 output_file: Path) -> None:
+        self.source = s = input.source
         self._stream = (
             ffmpeg.output(
-                ffmpeg.input(str(src.output_pipe),
+                ffmpeg.input(str(input.output_pipe),
                              format='rawvideo',
                              pix_fmt='rgb24',
-                             s=f'{width}x{height}',
-                             framerate=framerate).video,
-                ffmpeg.input(str(input_file), **input_kwargs).audio,
+                             s=f'{s.width}x{s.height}',
+                             framerate=s.framerate).video,
+                ffmpeg.input(str(s), **s.ffmpeg_input_kwargs).audio,
                 str(output_file),
                 vcodec='libx264',
                 pix_fmt='yuv420p')
