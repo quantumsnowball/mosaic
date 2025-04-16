@@ -12,9 +12,10 @@ class Combiner:
                  input: Processor,
                  output_file: Path) -> None:
         self.source = s = input.source
+        self._input = input
         self._stream = (
             ffmpeg.output(
-                ffmpeg.input(str(input.output),
+                ffmpeg.input(str(self.input),
                              format='rawvideo',
                              pix_fmt='rgb24',
                              s=f'{s.width}x{s.height}',
@@ -27,6 +28,10 @@ class Combiner:
             .overwrite_output()
         )
         self._proc: Popen | None = None
+
+    @property
+    def input(self) -> Path:
+        return self._input.output
 
     def __enter__(self) -> Self:
         return self

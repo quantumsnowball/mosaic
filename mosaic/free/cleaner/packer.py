@@ -1,4 +1,5 @@
 from multiprocessing import Process, Queue
+from pathlib import Path
 from typing import Self
 
 import numpy as np
@@ -20,6 +21,10 @@ class Packer:
         self._proc = Process(target=self._worker)
 
     @property
+    def input(self) -> Path:
+        return self._input.output
+
+    @property
     def output(self) -> Queue:
         return self._queue
 
@@ -30,15 +35,15 @@ class Packer:
         pass
 
     def _worker(self) -> None:
-        with open(self._input.output, 'rb') as pipe:
+        with open(self.input, 'rb') as pipe:
             while True:
                 in_bytes = pipe.read(self._frame_size)
                 if not in_bytes:
-                    self._queue.put(None)
+                    self.output.put(None)
                     break
                 frame = np.frombuffer(in_bytes, np.uint8).reshape(
                     (self._height, self._width, 3))
-                self._queue.put(frame)
+                self.output.put(frame)
 
     def run(self) -> None:
         self._proc.start()

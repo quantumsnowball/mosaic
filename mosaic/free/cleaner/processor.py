@@ -1,5 +1,5 @@
 import os
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 from pathlib import Path
 from typing import Self
 
@@ -17,22 +17,26 @@ class Processor:
         self._proc = Process(target=self._worker)
 
     @property
+    def input(self) -> Queue:
+        return self._input.output
+
+    @property
     def output(self) -> Path:
         return self._output_pipe
 
     def __enter__(self) -> Self:
-        if not self._output_pipe.exists():
-            os.mkfifo(self._output_pipe)
+        if not self.output.exists():
+            os.mkfifo(self.output)
         return self
 
     def __exit__(self, type, value, traceback) -> None:
-        if self._output_pipe.exists():
-            self._output_pipe.unlink()
+        if self.output.exists():
+            self.output.unlink()
 
     def _worker(self) -> None:
-        with open(self._output_pipe, 'wb') as pipe:
+        with open(self.output, 'wb') as pipe:
             while True:
-                frame = self._input.output.get()
+                frame = self.input.get()
                 if frame is None:
                     break
                 out_bytes = frame.astype(np.uint8).tobytes()

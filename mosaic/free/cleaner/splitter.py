@@ -31,13 +31,13 @@ class Splitter:
         return self._output_pipe
 
     def __enter__(self) -> Self:
-        if not self._output_pipe.exists():
-            os.mkfifo(self._output_pipe)
+        if not self.output.exists():
+            os.mkfifo(self.output)
         return self
 
     def __exit__(self, type, value, traceback) -> None:
-        if self._output_pipe.exists():
-            self._output_pipe.unlink()
+        if self.output.exists():
+            self.output.unlink()
 
     def run(self) -> None:
         self._proc = self._stream.run_async(pipe_stdout=False)
