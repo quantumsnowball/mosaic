@@ -34,13 +34,13 @@ class Processor:
             self.output.unlink()
 
     def _worker(self) -> None:
-        with open(self.output, 'wb') as pipe:
+        with open(self.output, 'wb') as output:
             while True:
                 frame = self.input.get()
                 if frame is None:
                     break
                 out_bytes = frame.astype(np.uint8).tobytes()
-                pipe.write(out_bytes)
+                output.write(out_bytes)
 
     def run(self) -> None:
         self._proc.start()

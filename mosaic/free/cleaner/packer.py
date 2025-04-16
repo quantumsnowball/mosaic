@@ -35,9 +35,9 @@ class Packer:
         pass
 
     def _worker(self) -> None:
-        with open(self.input, 'rb') as pipe:
+        with open(self.input, 'rb') as input:
             while True:
-                in_bytes = pipe.read(self._frame_size)
+                in_bytes = input.read(self._frame_size)
                 if not in_bytes:
                     self.output.put(None)
                     break
