@@ -11,8 +11,8 @@ from mosaic.free.cleaner.source import VideoSource
 class Splitter:
     _output_pipe = Path('/tmp/mosaic-free-splitter-output')
 
-    def __init__(self, input: VideoSource) -> None:
-        self.source = s = input
+    def __init__(self, source: VideoSource) -> None:
+        self.origin = s = source
         self._stream = (
             ffmpeg
             .input(str(s), **s.ffmpeg_input_kwargs)

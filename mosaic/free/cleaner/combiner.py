@@ -9,10 +9,10 @@ from mosaic.free.cleaner.processor import Processor
 
 class Combiner:
     def __init__(self,
-                 input: Processor,
+                 source: Processor,
                  output_file: Path) -> None:
-        self.source = s = input.source
-        self._input = input
+        self.origin = s = source.origin
+        self._input = source
         self._stream = (
             ffmpeg.output(
                 ffmpeg.input(str(self.input),

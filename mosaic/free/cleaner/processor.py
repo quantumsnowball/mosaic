@@ -11,9 +11,9 @@ from mosaic.free.cleaner.packer import Packer
 class Processor:
     _output_pipe = Path('/tmp/mosaic-free-processor-output')
 
-    def __init__(self, input: Packer) -> None:
-        self.source = input.source
-        self._input = input
+    def __init__(self, source: Packer) -> None:
+        self.origin = source.origin
+        self._input = source
         self._proc = Process(target=self._worker)
 
     @property

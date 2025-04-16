@@ -9,14 +9,14 @@ from mosaic.free.cleaner.splitter import Splitter
 
 class Packer:
     def __init__(self,
-                 input: Splitter,
+                 source: Splitter,
                  *,
                  maxsize: int = 1) -> None:
-        self.source = s = input.source
-        self._input = input
-        self._height = s.height
-        self._width = s.width
-        self._frame_size = s.width * s.height * 3
+        self.origin = o = source.origin
+        self._input = source
+        self._height = o.height
+        self._width = o.width
+        self._frame_size = o.width * o.height * 3
         self._queue = Queue(maxsize=maxsize)
         self._proc = Process(target=self._worker)
 
