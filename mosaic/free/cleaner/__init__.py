@@ -4,8 +4,10 @@ import ffmpeg
 import numpy as np
 
 from mosaic.free.cleaner import runmodel
+from mosaic.free.cleaner.combiner import Combiner
 from mosaic.free.cleaner.packer import Packer
 from mosaic.free.cleaner.processor import Processor
+from mosaic.free.cleaner.splitter import Splitter
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.utils import HMS
@@ -35,49 +37,33 @@ def run(
     input_kwargs = {k: v
                     for k, v in dict(ss=start_time, to=end_time).items()
                     if v is not None}
-    in_proc = (
-        ffmpeg
-        .input(str(input_file), **input_kwargs)
-        .output('pipe:',
-                format='rawvideo',
-                pix_fmt='rgb24')
-        .global_args(
-            '-hide_banner',
-            '-loglevel', 'quiet')
-        .run_async(pipe_stdout=True)
-    )
 
-    packer = Packer(in_proc,
-                    height=height,
+    splitter = Splitter(input_file,
+                        **input_kwargs)
+
+    packer = Packer(splitter,
                     width=width,
-                    maxsize=1).run()
+                    height=height,
+                    maxsize=1)
 
-    out_proc = (
-        ffmpeg
-        .output(
-            ffmpeg.input('pipe:',
-                         format='rawvideo',
-                         pix_fmt='rgb24',
-                         s=f'{width}x{height}',
-                         framerate=framerate).video,
-            ffmpeg.input(str(input_file), **input_kwargs).audio,
-            str(output_file),
-            vcodec='libx264',
-            pix_fmt='yuv420p')
-        .global_args('-hide_banner')
-        .overwrite_output()
-        .run_async(pipe_stdin=True)
-    )
+    processor = Processor(packer)
 
-    processor = Processor(packer._queue,
-                          out_proc).run()
+    combiner = Combiner(processor,
+                        input_file,
+                        output_file,
+                        width=width,
+                        height=height,
+                        framerate=framerate,
+                        **input_kwargs)
 
-    # cleanup
-    in_proc.stdout.close()
-    out_proc.stdin.close()
+    # run
+    splitter.run()
+    packer.run()
+    processor.run()
+    combiner.run()
 
     # wait all procs
-    in_proc.wait()
+    splitter.wait()
     packer.wait()
     processor.wait()
-    out_proc.wait()
+    combiner.wait()
