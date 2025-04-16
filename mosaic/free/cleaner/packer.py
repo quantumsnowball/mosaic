@@ -1,5 +1,4 @@
 from multiprocessing import Process, Queue
-from subprocess import Popen
 from typing import Self
 
 import numpy as np
@@ -20,6 +19,12 @@ class Packer:
         self._frame_size = width * height * 3
         self._queue = Queue(maxsize=maxsize)
         self._proc = Process(target=self._worker)
+
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(self, type, value, traceback) -> None:
+        pass
 
     def _worker(self) -> None:
         with open(self._src.output_pipe, 'rb') as pipe:

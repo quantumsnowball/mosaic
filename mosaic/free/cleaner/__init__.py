@@ -38,32 +38,33 @@ def run(
                     for k, v in dict(ss=start_time, to=end_time).items()
                     if v is not None}
 
-    splitter = Splitter(input_file,
-                        **input_kwargs)
+    with (
+        Splitter(input_file,
+                 **input_kwargs) as splitter,
 
-    packer = Packer(splitter,
-                    width=width,
-                    height=height,
-                    maxsize=1)
+        Packer(splitter,
+               width=width,
+               height=height,
+               maxsize=1) as packer,
 
-    processor = Processor(packer)
+        Processor(packer) as processor,
+        Combiner(processor,
+                 input_file,
+                 output_file,
+                 width=width,
+                 height=height,
+                 framerate=framerate,
+                 **input_kwargs) as combiner
+    ):
 
-    combiner = Combiner(processor,
-                        input_file,
-                        output_file,
-                        width=width,
-                        height=height,
-                        framerate=framerate,
-                        **input_kwargs)
+        # run
+        splitter.run()
+        packer.run()
+        processor.run()
+        combiner.run()
 
-    # run
-    splitter.run()
-    packer.run()
-    processor.run()
-    combiner.run()
-
-    # wait all procs
-    splitter.wait()
-    packer.wait()
-    processor.wait()
-    combiner.wait()
+        # wait all procs
+        splitter.wait()
+        packer.wait()
+        processor.wait()
+        combiner.wait()

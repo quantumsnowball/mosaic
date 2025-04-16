@@ -1,6 +1,7 @@
 import os
 from multiprocessing import Process
 from pathlib import Path
+from typing import Self
 
 import numpy as np
 
@@ -12,10 +13,17 @@ class Processor:
 
     def __init__(self,
                  src: Packer) -> None:
-        if not self.output_pipe.exists():
-            os.mkfifo(self.output_pipe)
         self._src = src
         self._proc = Process(target=self._worker)
+
+    def __enter__(self) -> Self:
+        if not self.output_pipe.exists():
+            os.mkfifo(self.output_pipe)
+        return self
+
+    def __exit__(self, type, value, traceback) -> None:
+        if self.output_pipe.exists():
+            self.output_pipe.unlink()
 
     def _worker(self) -> None:
         with open(self.output_pipe, 'wb') as pipe:

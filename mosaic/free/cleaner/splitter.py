@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from subprocess import Popen
+from typing import Self
 
 import ffmpeg
 
@@ -11,8 +12,6 @@ class Splitter:
     def __init__(self,
                  input_file: Path,
                  **input_kwargs) -> None:
-        if not self.output_pipe.exists():
-            os.mkfifo(self.output_pipe)
         self._stream = (
             ffmpeg
             .input(str(input_file), **input_kwargs)
@@ -25,6 +24,15 @@ class Splitter:
                 '-loglevel', 'quiet')
         )
         self._proc: Popen | None = None
+
+    def __enter__(self) -> Self:
+        if not self.output_pipe.exists():
+            os.mkfifo(self.output_pipe)
+        return self
+
+    def __exit__(self, type, value, traceback) -> None:
+        if self.output_pipe.exists():
+            self.output_pipe.unlink()
 
     def run(self) -> None:
         self._proc = self._stream.run_async(pipe_stdout=False)

@@ -1,5 +1,6 @@
 from pathlib import Path
 from subprocess import Popen
+from typing import Self
 
 import ffmpeg
 
@@ -32,9 +33,14 @@ class Combiner:
         )
         self._proc: Popen | None = None
 
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(self, type, value, traceback) -> None:
+        pass
+
     def run(self) -> None:
         self._proc = self._stream.run_async(pipe_stdin=True)
-        print(f'{self._proc=}')
 
     def wait(self) -> None:
         assert self._proc is not None
