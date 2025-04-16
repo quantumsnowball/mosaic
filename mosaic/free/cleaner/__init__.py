@@ -3,6 +3,9 @@ from pathlib import Path
 import ffmpeg
 import numpy as np
 
+from mosaic.free.cleaner import runmodel
+from mosaic.free.cleaner.packer import Packer
+from mosaic.free.cleaner.processor import Processor
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.utils import HMS
@@ -44,6 +47,11 @@ def run(
         .run_async(pipe_stdout=True)
     )
 
+    packer = Packer(in_proc,
+                    height=height,
+                    width=width,
+                    maxsize=1).run()
+
     out_proc = (
         ffmpeg
         .output(
@@ -61,23 +69,15 @@ def run(
         .run_async(pipe_stdin=True)
     )
 
-    # conversion loop
-    while True:
-        in_bytes = in_proc.stdout.read(frame_size)
-        if not in_bytes:
-            break
+    processor = Processor(packer._queue,
+                          out_proc).run()
 
-        # Convert bytes to numpy array
-        frame = np.frombuffer(in_bytes, np.uint8).reshape((height, width, 3))
-
-        # TODO: do you clean mosaic magic here
-        #
-
-        # Convert back to bytes and send to ffmpeg output
-        out_proc.stdin.write(frame.astype(np.uint8).tobytes())
-
-    # Step 4: Cleanup
+    # cleanup
     in_proc.stdout.close()
     out_proc.stdin.close()
+
+    # wait all procs
     in_proc.wait()
+    packer.wait()
+    processor.wait()
     out_proc.wait()
