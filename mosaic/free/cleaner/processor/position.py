@@ -3,13 +3,12 @@ from typing import Any
 import cv2
 import numpy as np
 
-import mosaic.free.utils.image_processing as impro
 from mosaic.free.net.netM.BiSeNet import BiSeNet
-from mosaic.free.utils import data
+from mosaic.free.cleaner.processor import utils
 
 
 def find_mostlikely_ROI(mask):
-    contours, hierarchy = cv2.findContours(
+    contours, _hierarchy = cv2.findContours(
         mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     if len(contours) > 0:
         areas = []
@@ -83,10 +82,10 @@ def run_segment(img: np.ndarray,
                 netM: BiSeNet,
                 size: int = 360,
                 gpu_id: str = '-1'):
-    img = impro.resize(img, size)
-    img_tensor = data.im2tensor(img, gpu_id=gpu_id, bgr2rgb=False, is0_1=True)
+    img = utils.resize(img, size)
+    img_tensor = utils.im2tensor(img, gpu_id=gpu_id, bgr2rgb=False, is0_1=True)
     mask = netM(img_tensor)
-    mask = data.tensor2im(mask, gray=True, is0_1=True)
+    mask = utils.tensor2im(mask, gray=True, is0_1=True)
     return mask
 
 

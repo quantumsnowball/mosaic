@@ -4,9 +4,8 @@ import torch
 
 from mosaic.free.cleaner.constants import FRAME_POS, INPUT_SIZE, N, T
 from mosaic.free.cleaner.packer import Package
+from mosaic.free.cleaner.processor import utils
 from mosaic.free.net.netG.BVDNet import BVDNet
-from mosaic.free.utils import data
-from mosaic.free.utils import image_processing as impro
 
 
 def to_tensor(data, gpu_id):
@@ -35,11 +34,11 @@ def remove_mosaic(x: int, y: int, size: int,
     img_pool = p.img_pool
     input_stream = []
     for pos in FRAME_POS:
-        input_stream.append(impro.resize(
+        input_stream.append(utils.resize(
             img_pool[pos][y-size:y+size, x-size:x+size], INPUT_SIZE, interpolation=cv2.INTER_CUBIC)[:, :, ::-1])
 
     if previous_frame is None:
-        previous_frame = data.im2tensor(
+        previous_frame = utils.im2tensor(
             input_stream[N], bgr2rgb=True, gpu_id=str(gpu_id))
 
     input_stream = np.array(input_stream).reshape(
@@ -50,7 +49,7 @@ def remove_mosaic(x: int, y: int, size: int,
     with torch.no_grad():
         unmosaic_pred = netG(input_stream, previous_frame)
 
-    img_fake = data.tensor2im(unmosaic_pred, rgb2bgr=True)
+    img_fake = utils.tensor2im(unmosaic_pred, rgb2bgr=True)
     previous_frame = unmosaic_pred
 
     return (previous_frame, img_origin.copy(), img_fake.copy())
