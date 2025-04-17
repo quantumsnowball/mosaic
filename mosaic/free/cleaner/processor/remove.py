@@ -25,19 +25,23 @@ def remove_mosaic(x: int, y: int, size: int,
                                             np.ndarray]:
     img_origin = p.img_origin
     img_pool = p.img_pool
+
     input_stream = []
+
     for pos in FRAME_POS:
         input_stream.append(utils.resize(
             img_pool[pos][y-size:y+size, x-size:x+size], INPUT_SIZE, interpolation=cv2.INTER_CUBIC)[:, :, ::-1])
 
     if previous_frame is None:
-        previous_frame = utils.im2tensor(
-            input_stream[N], bgr2rgb=True, gpu_id=str(gpu_id))
+        previous_frame = utils.im2tensor(input_stream[N],
+                                         bgr2rgb=True,
+                                         gpu_id=str(gpu_id))
 
-    input_stream = np.array(input_stream).reshape(
-        1, T, INPUT_SIZE, INPUT_SIZE, 3).transpose((0, 4, 1, 2, 3))
+    input_stream_array = normalize(np.array(input_stream)
+                                   .reshape(1, T, INPUT_SIZE, INPUT_SIZE, 3)
+                                   .transpose((0, 4, 1, 2, 3)))
 
-    input_stream_tensor = torch.from_numpy(normalize(input_stream)).cuda()
+    input_stream_tensor = torch.from_numpy(input_stream_array).cuda()
 
     with torch.no_grad():
         unmosaic_pred = netG(input_stream_tensor, previous_frame)
