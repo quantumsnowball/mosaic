@@ -65,25 +65,31 @@ class Packer:
 
     def _worker(self) -> None:
         with open(self.input, 'rb') as input:
+            # buffer is first prefilled with None values
+            # then auto shift when appending and create a sliding window
             buffer = deque[np.ndarray | None]([None,]*POOL_NUM,
                                               maxlen=POOL_NUM)
             while True:
-
+                # read from input pipe for a frame
                 in_bytes = input.read(self._frame_size)
-                if not in_bytes:
-                    buffer.append(None)
-                    print('not in_bytes')
-                else:
+                if in_bytes:
                     shape = (self._height, self._width, 3)
                     frame = np.frombuffer(in_bytes, np.uint8).reshape(shape)
                     buffer.append(frame)
-                img_pool = list(buffer)
+                else:
+                    buffer.append(None)
 
+                # img_pool is the current window
+                img_pool = list(buffer)
+                # img_origin is the buffer center item
                 img_origin = img_pool[LEFT_FRAME]
 
+                # when img_origin exists, it is a valid window
                 if img_origin is not None:
+                    # hand it to Package and put to output queue
                     self.output.put(Package(img_origin, img_pool))
 
+                # when center to right item are None, sliding window has ended
                 if all(val is None for val in img_pool[LEFT_FRAME:]):
                     break
 
