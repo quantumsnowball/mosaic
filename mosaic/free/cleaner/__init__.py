@@ -15,8 +15,8 @@ def run(
     start_time: HMS | None,
     end_time: HMS | None,
     output_file: Path,
+    netM: BiSeNet,
     netG: BVDNet,
-    netM: BiSeNet
 ):
     # extract video info
     source = VideoSource(input_file, start_time, end_time)
@@ -25,7 +25,7 @@ def run(
     with (
         Splitter(source) as splitter,
         Packer(splitter) as packer,
-        Processor(packer) as processor,
+        Processor(packer, netM=netM, netG=netG) as processor,
         Combiner(processor, output_file) as combiner
     ):
         # run

@@ -7,7 +7,10 @@ from typing import Self
 
 import numpy as np
 
+from mosaic.free.cleaner import runmodel
 from mosaic.free.cleaner.packer import Package, Packer
+from mosaic.free.net.netG.BVDNet import BVDNet
+from mosaic.free.net.netM.BiSeNet import BiSeNet
 
 
 class Processor:
@@ -16,9 +19,14 @@ class Processor:
 
     _output_pipe = Path('/tmp/mosaic-free-processor-output')
 
-    def __init__(self, source: Packer) -> None:
+    def __init__(self,
+                 source: Packer,
+                 netM: BiSeNet,
+                 netG: BVDNet) -> None:
         self.origin = source.origin
         self._input = source
+        self._netM = netM
+        self._netG = netG
         self._thread = Thread(target=self._worker)
 
     @property
@@ -41,9 +49,20 @@ class Processor:
     def _worker(self) -> None:
         with open(self.output, 'wb') as output:
             while True:
+                # read a frame package from input queue
                 package = self.input.get()
+
+                # if no more further data, quit loop
                 if package is None:
                     break
+
+                # detect mosaic position
+                x, y, size, mask = runmodel.get_mosaic_position(
+                    package.img_origin, self._netM, all_mosaic_area=True)
+
+                if size > 50:
+                    print(f'{x=}, {y=}, {size=}, {mask.shape=}')
+
                 out_bytes = package.img_origin.astype(np.uint8).tobytes()
                 output.write(out_bytes)
 

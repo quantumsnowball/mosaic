@@ -53,6 +53,6 @@ def free(
         start_time=start_time,
         end_time=end_time,
         output_file=output_file,
+        netM=netM,
         netG=netG,
-        netM=netM
     )
