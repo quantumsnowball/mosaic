@@ -5,8 +5,8 @@ import torch
 from mosaic.free.cleaner.constants import FRAME_POS, INPUT_SIZE, N, T
 from mosaic.free.cleaner.packer import Package
 from mosaic.free.net.netG.BVDNet import BVDNet
-from mosaic.free_old.utils import data
-from mosaic.free_old.utils import image_processing as impro
+from mosaic.free.utils import data
+from mosaic.free.utils import image_processing as impro
 
 
 def remove_mosaic(x: int, y: int, size: int,
