@@ -3,11 +3,11 @@ from typing import Any
 import cv2
 import numpy as np
 
-from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.free.cleaner.processor import utils
+from mosaic.free.net.netM.BiSeNet import BiSeNet
 
 
-def find_mostlikely_ROI(mask):
+def find_mostlikely_ROI(mask: np.ndarray) -> np.ndarray:
     contours, _hierarchy = cv2.findContours(
         mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     if len(contours) > 0:
@@ -20,7 +20,8 @@ def find_mostlikely_ROI(mask):
     return mask
 
 
-def boundingSquare(mask, Ex_mul):
+def boundingSquare(mask: np.ndarray,
+                   Ex_mul: float) -> tuple[int, int, int, float]:
     # thresh = mask_threshold(mask,10,threshold)
     area = mask_area(mask)
     if area == 0:
@@ -59,14 +60,16 @@ def boundingSquare(mask, Ex_mul):
     return center[0], center[1], halfsize, area
 
 
-def mask_with_threshold(mask, ex_mun, threshold):
+def mask_with_threshold(mask: np.ndarray,
+                        ex_mun: int,
+                        threshold: float) -> np.ndarray:
     mask = cv2.threshold(mask, threshold, 255, cv2.THRESH_BINARY)[1]
     mask = cv2.blur(mask, (ex_mun, ex_mun))
     mask = cv2.threshold(mask, threshold/5, 255, cv2.THRESH_BINARY)[1]
     return mask
 
 
-def mask_area(mask):
+def mask_area(mask: np.ndarray) -> float:
     mask = cv2.threshold(mask, 127, 255, 0)[1]
     # contours= cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[1] #for opencv 3.4
     contours = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[
@@ -81,7 +84,7 @@ def mask_area(mask):
 def run_segment(img: np.ndarray,
                 netM: BiSeNet,
                 size: int = 360,
-                gpu_id: str = '-1'):
+                gpu_id: str = '-1') -> np.ndarray:
     img = utils.resize(img, size)
     img_tensor = utils.im2tensor(img, gpu_id=gpu_id, bgr2rgb=False, is0_1=True)
     mask = netM(img_tensor)
