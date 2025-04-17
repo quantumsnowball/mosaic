@@ -1,4 +1,3 @@
-import time
 from collections import deque
 from pathlib import Path
 from queue import Queue
@@ -7,11 +6,8 @@ from typing import Self
 
 import numpy as np
 
+from mosaic.free.cleaner.constants import LEFT_FRAME, POOL_NUM
 from mosaic.free.cleaner.splitter import Splitter
-
-N, T, S = 2, 5, 3
-LEFT_FRAME = (N*S)        # 6
-POOL_NUM = LEFT_FRAME*2+1  # 13
 
 
 class Package:

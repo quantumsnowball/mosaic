@@ -2,16 +2,11 @@ import cv2
 import numpy as np
 import torch
 
+from mosaic.free.cleaner.constants import FRAME_POS, INPUT_SIZE, N, T
 from mosaic.free.cleaner.packer import Package
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free_old.utils import data
 from mosaic.free_old.utils import image_processing as impro
-
-N, T, S = 2, 5, 3
-LEFT_FRAME = (N*S)        # 6
-POOL_NUM = LEFT_FRAME*2+1  # 13
-INPUT_SIZE = 256
-FRAME_POS = np.linspace(0, (T-1)*S, T, dtype=np.int64)
 
 
 def remove_mosaic(x: int, y: int, size: int,
