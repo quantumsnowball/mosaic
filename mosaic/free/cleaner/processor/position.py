@@ -1,12 +1,9 @@
-import sys
 from typing import Any
 
 import numpy as np
 
 import mosaic.free.utils.image_processing as impro
 from mosaic.free.utils import data
-
-sys.path.append("..")
 
 
 def run_segment(img, net, size=360, gpu_id='-1'):
@@ -29,7 +26,7 @@ def get_mosaic_position(img_origin,
         min(h, w)/20), threshold=mask_threshold)
     if not all_mosaic_area:
         mask = impro.find_mostlikely_ROI(mask)
-    x, y, size, area = impro.boundingSquare(mask, Ex_mul=ex_mult)
+    x, y, size, _area = impro.boundingSquare(mask, Ex_mul=ex_mult)
     # Location fix
     rat = min(h, w)/360.0
     x, y, size = int(rat*x), int(rat*y), int(rat*size)

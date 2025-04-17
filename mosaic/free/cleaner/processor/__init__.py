@@ -6,8 +6,8 @@ from typing import Self
 
 import numpy as np
 
-from mosaic.free.cleaner import runmodel
 from mosaic.free.cleaner.packer import Package, Packer
+from mosaic.free.cleaner.processor.position import get_mosaic_position
 from mosaic.free.cleaner.processor.remove import remove_mosaic
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
@@ -62,7 +62,7 @@ class Processor:
                     break
 
                 # detect mosaic position
-                x, y, size, mask = runmodel.get_mosaic_position(
+                x, y, size, mask = get_mosaic_position(
                     package.img_origin, self._netM, all_mosaic_area=True)
 
                 # if area is small skip to next frame
