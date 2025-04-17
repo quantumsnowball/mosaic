@@ -2,20 +2,6 @@ import numpy as np
 import torch
 
 
-def to_tensor(data, gpu_id):
-    data = torch.from_numpy(data)
-    if gpu_id != '-1':
-        data = data.cuda()
-    return data
-
-
-def normalize(data):
-    '''
-    normalize to -1 ~ 1
-    '''
-    return (data.astype(np.float32)/255.0-0.5)/0.5
-
-
 def tensor2im(image_tensor, gray=False, rgb2bgr=True, is0_1=False, batch_index=0):
     image_tensor = image_tensor.data
     image_numpy = image_tensor[batch_index].cpu().float().numpy()

@@ -9,6 +9,20 @@ from mosaic.free.utils import data
 from mosaic.free.utils import image_processing as impro
 
 
+def to_tensor(data, gpu_id):
+    data = torch.from_numpy(data)
+    if gpu_id != '-1':
+        data = data.cuda()
+    return data
+
+
+def normalize(data):
+    '''
+    normalize to -1 ~ 1
+    '''
+    return (data.astype(np.float32)/255.0-0.5)/0.5
+
+
 def remove_mosaic(x: int, y: int, size: int,
                   previous_frame: torch.Tensor | None,
                   *,
@@ -30,8 +44,8 @@ def remove_mosaic(x: int, y: int, size: int,
 
     input_stream = np.array(input_stream).reshape(
         1, T, INPUT_SIZE, INPUT_SIZE, 3).transpose((0, 4, 1, 2, 3))
-    input_stream = data.to_tensor(
-        data.normalize(input_stream), gpu_id=gpu_id)
+    input_stream = to_tensor(
+        normalize(input_stream), gpu_id=gpu_id)
 
     with torch.no_grad():
         unmosaic_pred = netG(input_stream, previous_frame)
