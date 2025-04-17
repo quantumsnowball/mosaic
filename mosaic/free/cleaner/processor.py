@@ -1,6 +1,8 @@
 import os
-from multiprocessing import Process, Queue
+import time
 from pathlib import Path
+from queue import Queue
+from threading import Thread
 from typing import Self
 
 import numpy as np
@@ -17,7 +19,7 @@ class Processor:
     def __init__(self, source: Packer) -> None:
         self.origin = source.origin
         self._input = source
-        self._proc = Process(target=self._worker)
+        self._thread = Thread(target=self._worker)
 
     @property
     def input(self) -> Input:
@@ -46,7 +48,7 @@ class Processor:
                 output.write(out_bytes)
 
     def run(self) -> None:
-        self._proc.start()
+        self._thread.start()
 
     def wait(self) -> None:
-        self._proc.join()
+        self._thread.join()
