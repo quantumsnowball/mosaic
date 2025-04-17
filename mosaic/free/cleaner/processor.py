@@ -5,10 +5,13 @@ from typing import Self
 
 import numpy as np
 
-from mosaic.free.cleaner.packer import Packer
+from mosaic.free.cleaner.packer import Package, Packer
 
 
 class Processor:
+    type InputItem = Package | None
+    type Input = Queue[InputItem]
+
     _output_pipe = Path('/tmp/mosaic-free-processor-output')
 
     def __init__(self, source: Packer) -> None:
@@ -17,7 +20,7 @@ class Processor:
         self._proc = Process(target=self._worker)
 
     @property
-    def input(self) -> Queue:
+    def input(self) -> Input:
         return self._input.output
 
     @property
@@ -36,10 +39,10 @@ class Processor:
     def _worker(self) -> None:
         with open(self.output, 'wb') as output:
             while True:
-                frame = self.input.get()
-                if frame is None:
+                package = self.input.get()
+                if package is None:
                     break
-                out_bytes = frame.astype(np.uint8).tobytes()
+                out_bytes = package.img_origin.astype(np.uint8).tobytes()
                 output.write(out_bytes)
 
     def run(self) -> None:

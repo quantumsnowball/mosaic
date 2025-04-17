@@ -7,7 +7,16 @@ import numpy as np
 from mosaic.free.cleaner.splitter import Splitter
 
 
+class Package:
+    def __init__(self,
+                 img_origin: np.ndarray) -> None:
+        self.img_origin = img_origin
+
+
 class Packer:
+    type OutputItem = Package | None
+    type Output = Queue[OutputItem]
+
     def __init__(self,
                  source: Splitter,
                  *,
@@ -25,7 +34,7 @@ class Packer:
         return self._input.output
 
     @property
-    def output(self) -> Queue:
+    def output(self) -> Output:
         return self._queue
 
     def __enter__(self) -> Self:
@@ -41,9 +50,10 @@ class Packer:
                 if not in_bytes:
                     self.output.put(None)
                     break
-                frame = np.frombuffer(in_bytes, np.uint8).reshape(
+                img_origin = np.frombuffer(in_bytes, np.uint8).reshape(
                     (self._height, self._width, 3))
-                self.output.put(frame)
+                package = Package(img_origin)
+                self.output.put(package)
 
     def run(self) -> None:
         self._proc.start()
