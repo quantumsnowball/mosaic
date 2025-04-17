@@ -2,7 +2,7 @@ from collections import deque
 from pathlib import Path
 from queue import Queue
 from threading import Thread
-from typing import Self
+from typing import Self, cast
 
 import numpy as np
 
@@ -26,7 +26,9 @@ class Package:
         for i in range(-LEFT_FRAME-1, -len(l)-1, -1):
             if l[i] is None:
                 l[i] = l[i+1]
-        return l
+        # the list should be None value free by now
+        filled = cast(list[np.ndarray], l)
+        return filled
 
 
 class Packer:
