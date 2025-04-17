@@ -37,17 +37,22 @@ def remove_mosaic(x: int, y: int, size: int,
     for pos in FRAME_POS:
         input_stream.append(impro.resize(
             img_pool[pos][y-size:y+size, x-size:x+size], INPUT_SIZE, interpolation=cv2.INTER_CUBIC)[:, :, ::-1])
+
     if previous_frame is None:
         previous_frame = data.im2tensor(
             input_stream[N], bgr2rgb=True, gpu_id=str(gpu_id))
+
     input_stream = np.array(input_stream).reshape(
         1, T, INPUT_SIZE, INPUT_SIZE, 3).transpose((0, 4, 1, 2, 3))
     input_stream = data.to_tensor(
         data.normalize(input_stream), gpu_id=gpu_id)
+
     with torch.no_grad():
         unmosaic_pred = netG(input_stream, previous_frame)
+
     img_fake = data.tensor2im(unmosaic_pred, rgb2bgr=True)
     previous_frame = unmosaic_pred
+
     return (previous_frame, img_origin.copy(), img_fake.copy())
 
 
@@ -59,12 +64,15 @@ class Processor:
 
     def __init__(self,
                  source: Packer,
+                 *,
                  netM: BiSeNet,
-                 netG: BVDNet) -> None:
+                 netG: BVDNet,
+                 min_mask_size: int = 50) -> None:
         self.origin = source.origin
         self._input = source
         self._netM = netM
         self._netG = netG
+        self._min_mask_size = min_mask_size
         self._thread = Thread(target=self._worker)
 
     @property
@@ -98,6 +106,13 @@ class Processor:
                 # detect mosaic position
                 x, y, size, mask = runmodel.get_mosaic_position(
                     package.img_origin, self._netM, all_mosaic_area=True)
+
+                # if area is small skip to next frame
+                if size < self._min_mask_size:
+                    img_output = package.img_origin.copy()
+                    out_bytes = img_output.astype(np.uint8).tobytes()
+                    output.write(out_bytes)
+                    continue
 
                 # remove mosaic area
                 previous_frame, img_origin, img_fake = remove_mosaic(
