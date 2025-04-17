@@ -9,9 +9,9 @@ import numpy as np
 from mosaic.free.cleaner.packer import Package, Packer
 from mosaic.free.cleaner.processor.position import get_mosaic_position
 from mosaic.free.cleaner.processor.remove import remove_mosaic
+from mosaic.free.cleaner.processor.replace import replace_mosaic
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
-from mosaic.free_old.utils import image_processing as impro
 
 
 class Processor:
@@ -77,7 +77,7 @@ class Processor:
                     x, y, size, previous_frame, p=package, netG=self._netG)
 
                 # replace with uncensored image
-                img_output = impro.replace_mosaic(
+                img_output = replace_mosaic(
                     img_origin, img_fake, mask, x, y, size, no_feather=False)
 
                 # write bytes to output
