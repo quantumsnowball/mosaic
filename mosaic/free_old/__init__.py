@@ -2,12 +2,13 @@ from pathlib import Path
 
 import click
 
-import mosaic.free.cleaner as cleaner
-from mosaic.free.net.netG import video
-from mosaic.free.net.netM import bisenet
+from mosaic.free_old.cleaner import cleanmosaic_video_fusion
+from mosaic.free_old.net.netG import video
+from mosaic.free_old.net.netM import bisenet
 from mosaic.utils import HMS, HMSParamType, VideoPathParamType
 
 PACKAGE_DIR = Path(__file__).parent
+TEMP_DIRNAME = '.mosaic'
 
 
 @click.command()
@@ -17,14 +18,13 @@ PACKAGE_DIR = Path(__file__).parent
 @click.option('-y', '--force', is_flag=True, default=False, help='overwrite output file without asking')
 @click.option('--time-tag', is_flag=True, default=False, help='auto append time tag at end of filename')
 @click.argument('output-file', required=True, type=VideoPathParamType())
-def free(
-    input_file: Path,
-    start_time: HMS | None,
-    end_time: HMS | None,
-    force: bool,
-    time_tag: bool,
-    output_file: Path,
-) -> None:
+def free_old(input_file: Path,
+             start_time: HMS | None,
+             end_time: HMS | None,
+             force: bool,
+             time_tag: bool,
+             output_file: Path,
+             ) -> None:
     # verify inputs
     assert input_file.exists(), f'{input_file} does not exists'
     if start_time and end_time:
@@ -48,11 +48,13 @@ def free(
             f'{end_time.time_tag if end_time else ""}')
 
     # run
-    cleaner.run(
-        input_file=input_file,
+    cleanmosaic_video_fusion(
+        media_path=input_file,
+        temp_dir=output_file.parent/TEMP_DIRNAME,
         start_time=start_time,
         end_time=end_time,
         output_file=output_file,
-        netM=netM,
         netG=netG,
+        netM=netM
     )
+    click.echo('Finished!')

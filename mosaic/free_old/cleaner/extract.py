@@ -8,11 +8,11 @@ import numpy as np
 from alive_progress import alive_it
 from numpy.typing import NDArray
 
-from mosaic.free import utils
-from mosaic.free.cleaner import runmodel
-from mosaic.free.net.netM.BiSeNet import BiSeNet
-from mosaic.free.utils import filt
-from mosaic.free.utils import image_processing as impro
+from mosaic.free_old import utils
+from mosaic.free_old.cleaner import runmodel
+from mosaic.free_old.net.netM.BiSeNet import BiSeNet
+from mosaic.free_old.utils import filt
+from mosaic.free_old.utils import image_processing as impro
 
 
 def detect_mosaic_positions(netM: BiSeNet,

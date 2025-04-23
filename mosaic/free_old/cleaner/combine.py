@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from mosaic.free.utils import ffmpeg
+from mosaic.free_old.utils import ffmpeg
 
 
 def combine_result_to_video(fps,

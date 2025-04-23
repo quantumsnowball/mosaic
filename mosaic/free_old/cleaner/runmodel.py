@@ -3,8 +3,8 @@ from typing import Any
 
 import numpy as np
 
-import mosaic.free.utils.image_processing as impro
-from mosaic.free.utils import data
+import mosaic.free_old.utils.image_processing as impro
+from mosaic.free_old.utils import data
 
 sys.path.append("..")
 

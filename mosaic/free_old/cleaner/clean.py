@@ -8,9 +8,9 @@ import torch
 from alive_progress import alive_it
 from numpy.typing import NDArray
 
-from mosaic.free.net.netG.BVDNet import BVDNet
-from mosaic.free.utils import data
-from mosaic.free.utils import image_processing as impro
+from mosaic.free_old.net.netG.BVDNet import BVDNet
+from mosaic.free_old.utils import data
+from mosaic.free_old.utils import image_processing as impro
 
 
 def start_result_writer(result_pool: Queue,

@@ -2,8 +2,8 @@ import os
 from pathlib import Path
 from typing import Any
 
-from mosaic.free import utils
-from mosaic.free.utils import ffmpeg
+from mosaic.free_old import utils
+from mosaic.free_old.utils import ffmpeg
 from mosaic.utils import HMS
 
 

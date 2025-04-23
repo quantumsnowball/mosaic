@@ -1,7 +1,7 @@
 import torch.nn as nn
 
-import mosaic.free.net.utils as utils
-from mosaic.free.net.utils import ResnetBlockSpectralNorm, SpectralNorm
+import mosaic.free_old.net.utils as utils
+from mosaic.free_old.net.utils import ResnetBlockSpectralNorm, SpectralNorm
 
 
 def show_paramsnumber(net, netname='net'):
@@ -32,14 +32,12 @@ class Encoder2d(nn.Module):
     def __init__(self, input_nc, ngf=64, n_downsampling=3, activation=nn.LeakyReLU(0.2)):
         super(Encoder2d, self).__init__()
 
-        model = [nn.ReflectionPad2d(3), SpectralNorm(
-            nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0)), activation]
+        model = [nn.ReflectionPad2d(3), SpectralNorm(nn.Conv2d(input_nc, ngf, kernel_size=7, padding=0)), activation]
         # downsample
         for i in range(n_downsampling):
             mult = 2**i
             model += [nn.ReflectionPad2d(1),
-                      SpectralNorm(nn.Conv2d(ngf * mult, ngf * mult * 2,
-                                   kernel_size=3, stride=2, padding=0)),
+                      SpectralNorm(nn.Conv2d(ngf * mult, ngf * mult * 2, kernel_size=3, stride=2, padding=0)),
                       activation]
 
         self.model = nn.Sequential(*model)
@@ -52,8 +50,7 @@ class Encoder3d(nn.Module):
     def __init__(self, input_nc, ngf=64, n_downsampling=3, activation=nn.LeakyReLU(0.2)):
         super(Encoder3d, self).__init__()
 
-        model = [SpectralNorm(
-            nn.Conv3d(input_nc, ngf, kernel_size=3, padding=1)), activation]
+        model = [SpectralNorm(nn.Conv3d(input_nc, ngf, kernel_size=3, padding=1)), activation]
         # downsample
         for i in range(n_downsampling):
             mult = 2**i
@@ -80,8 +77,7 @@ class BVDNet(nn.Module):
         self.blocks = []
         mult = 2**n_downsampling
         for i in range(n_blocks):
-            self.blocks += [ResnetBlockSpectralNorm(
-                ngf * mult, padding_type=padding_type, activation=activation)]
+            self.blocks += [ResnetBlockSpectralNorm(ngf * mult, padding_type=padding_type, activation=activation)]
         self.blocks = nn.Sequential(*self.blocks)
 
         # decoder
@@ -89,16 +85,14 @@ class BVDNet(nn.Module):
         for i in range(n_downsampling):
             mult = 2**(n_downsampling - i)
             self.decoder += [UpBlock(ngf * mult, int(ngf * mult / 2))]
-        self.decoder += [nn.ReflectionPad2d(3), nn.Conv2d(
-            ngf, output_nc, kernel_size=7, padding=0)]
+        self.decoder += [nn.ReflectionPad2d(3), nn.Conv2d(ngf, output_nc, kernel_size=7, padding=0)]
         self.decoder = nn.Sequential(*self.decoder)
         self.limiter = nn.Tanh()
 
     def forward(self, stream, previous):
         this_shortcut = stream[:, :, self.N]
         stream = self.encoder3d(stream)
-        stream = stream.reshape(stream.size(0), stream.size(
-            1), stream.size(3), stream.size(4))
+        stream = stream.reshape(stream.size(0), stream.size(1), stream.size(3), stream.size(4))
         previous = self.encoder2d(previous)
         x = stream + previous
         x = self.blocks(x)
