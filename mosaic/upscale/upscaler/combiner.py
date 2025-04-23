@@ -18,12 +18,14 @@ class Combiner:
                 ffmpeg.input(str(self.input),
                              format='rawvideo',
                              pix_fmt='rgb24',
-                             s=f'{s.width}x{s.height}',
-                             framerate=s.framerate).video,
+                             # s=f'{s.width}x{s.height}',
+                             s=f'2580x1940',
+                             # framerate=s.framerate
+                             ).video,
                 ffmpeg.input(str(s), **s.ffmpeg_input_kwargs).audio,
                 str(output_file),
                 vcodec='libx264',
-                pix_fmt='yuv420p')
+                pix_fmt='rgb24')
             .global_args('-hide_banner')
             .overwrite_output()
         )

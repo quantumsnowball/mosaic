@@ -4,8 +4,10 @@ from threading import Thread
 from typing import Self
 
 import numpy as np
+import torch
 
 from mosaic.upscale.filter import sharpen
+from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler.splitter import Splitter
 
 
@@ -13,12 +15,14 @@ class Processor:
     _output_pipe = Path('/tmp/mosaic-upscale-processor-output')
 
     def __init__(self,
-                 source: Splitter) -> None:
+                 source: Splitter,
+                 upsampler: RealESRGANer) -> None:
         self.origin = o = source.origin
         self._input = source
         self._height = o.height
         self._width = o.width
         self._frame_size = o.width * o.height * 3
+        self._upsampler = upsampler
         self._thread = Thread(target=self._worker)
 
     @property
@@ -41,7 +45,7 @@ class Processor:
     def _worker(self) -> None:
         with (
             open(self.input, 'rb') as input,
-            open(self.output, 'wb') as output
+            open(self.output, 'wb') as output,
         ):
             while True:
                 # read from input pipe for bytes
@@ -56,10 +60,11 @@ class Processor:
 
                 # apply a filter in python
                 # TODO: do you upscaling magic here
-                frame = sharpen(frame)
+                # frame = sharpen(frame)
+                upsampled_frame, _ = self._upsampler.enhance(frame)
 
                 # write bytes to output
-                out_bytes = frame.astype(np.uint8).tobytes()
+                out_bytes = upsampled_frame.astype(np.uint8).tobytes()
                 output.write(out_bytes)
 
     def run(self) -> None:

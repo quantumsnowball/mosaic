@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler.combiner import Combiner
 from mosaic.upscale.upscaler.processor import Processor
 from mosaic.upscale.upscaler.source import VideoSource
@@ -12,6 +13,7 @@ def run(
     start_time: HMS | None,
     end_time: HMS | None,
     output_file: Path,
+    upsampler: RealESRGANer,
 ) -> None:
     # extract video info
     source = VideoSource(input_file, start_time, end_time)
@@ -19,7 +21,7 @@ def run(
     # processing pipeline
     with (
         Splitter(source) as splitter,
-        Processor(splitter) as processor,
+        Processor(splitter, upsampler) as processor,
         Combiner(processor, output_file) as combiner
     ):
         # run

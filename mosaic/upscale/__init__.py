@@ -3,7 +3,10 @@ from pathlib import Path
 import click
 
 from mosaic.upscale import upscaler
+from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.utils import HMS, HMSParamType, VideoPathParamType
+
+PACKAGE_DIR = Path(__file__).parent
 
 
 @click.command()
@@ -27,9 +30,17 @@ def upscale(input_file: Path,
         if input(f'Output file {output_file} already exist, overwrite? y/[N] ').lower() != 'y':
             return
 
+    # load upsampler
+    upsampler = RealESRGANer(
+        scale=2,
+        model_path=PACKAGE_DIR/'net/state_dicts/RealESRGAN_x4plus.pth',
+        gpu_id=0,
+    )
+
     upscaler.run(
         input_file=input_file,
         start_time=start_time,
         end_time=end_time,
         output_file=output_file,
+        upsampler=upsampler,
     )
