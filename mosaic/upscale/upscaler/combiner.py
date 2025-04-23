@@ -13,22 +13,7 @@ class Combiner:
                  output_file: Path) -> None:
         self.origin = s = source.origin
         self._input = source
-        self._stream = (
-            ffmpeg.output(
-                ffmpeg.input(str(self.input),
-                             format='rawvideo',
-                             pix_fmt='rgb24',
-                             # s=f'{s.width}x{s.height}',
-                             s=f'2580x1940',
-                             # framerate=s.framerate
-                             ).video,
-                ffmpeg.input(str(s), **s.ffmpeg_input_kwargs).audio,
-                str(output_file),
-                vcodec='libx264',
-                pix_fmt='rgb24')
-            .global_args('-hide_banner')
-            .overwrite_output()
-        )
+        self._output_file = output_file
         self._proc: Popen | None = None
 
     @property
@@ -42,7 +27,28 @@ class Combiner:
         pass
 
     def run(self) -> None:
-        self._proc = self._stream.run_async(pipe_stdin=True)
+        # block until upsampled info available
+        info = self._input.upsampled_info.get()
+
+        # create the ffmpeg stream command using correct info
+        stream = (
+            ffmpeg.output(
+                ffmpeg.input(str(self.input),
+                             format='rawvideo',
+                             pix_fmt='rgb24',
+                             s=info.s,
+                             # framerate=s.framerate
+                             ).video,
+                ffmpeg.input(str(self.origin), **self.origin.ffmpeg_input_kwargs).audio,
+                str(self._output_file),
+                vcodec='libx264',
+                pix_fmt=info.pix_fmt)
+            .global_args('-hide_banner')
+            .overwrite_output()
+        )
+
+        # run
+        self._proc = stream.run_async(pipe_stdin=True)
 
     def wait(self) -> None:
         assert self._proc is not None

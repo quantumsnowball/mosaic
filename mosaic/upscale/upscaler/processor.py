@@ -1,14 +1,32 @@
+import multiprocessing as mp
 import os
 import queue
+from dataclasses import dataclass
 from pathlib import Path
 from threading import Thread
 from typing import Self
 
 import numpy as np
 
-from mosaic.upscale.filter import sharpen
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler.splitter import Splitter
+
+
+@dataclass
+class UpsampleInfo:
+    width: int
+    height: int
+    channel: int
+    mode: str
+
+    @property
+    def s(self) -> str:
+        return f'{self.width}x{self.height}'
+
+    @property
+    def pix_fmt(self) -> str:
+        # TODO: which output format should I use?
+        return 'yuv420p'
 
 
 class Processor:
@@ -28,6 +46,7 @@ class Processor:
         self._writer_thread = Thread(target=self._writer_worker)
         self._reader_out_queue = queue.Queue[np.ndarray | None](maxsize=30)
         self._processor_out_queue = queue.Queue[np.ndarray | None](maxsize=30)
+        self._upsampled_info: 'mp.Queue[UpsampleInfo]' = mp.Queue(maxsize=1)
 
     @property
     def input(self) -> Path:
@@ -36,6 +55,10 @@ class Processor:
     @property
     def output(self) -> Path:
         return self._output_pipe
+
+    @property
+    def upsampled_info(self) -> 'mp.Queue[UpsampleInfo]':
+        return self._upsampled_info
 
     def __enter__(self) -> Self:
         if not self.output.exists():
@@ -64,18 +87,23 @@ class Processor:
             self._reader_out_queue.put(None)
 
     def _processor_worker(self) -> None:
+        info_known = False
         while True:
             # get frame from reader out queue
-            if (frame := self._reader_out_queue.get()) is None:
+            if (original_frame := self._reader_out_queue.get()) is None:
                 break
 
             # apply a filter in python
-            # TODO: do you upscaling magic here
-            # frame = sharpen(frame)
-            upscaled_frame, _ = self._upsampler.enhance(frame)
+            frame, mode = self._upsampler.enhance(original_frame)
+
+            # determine upsampled frame info
+            if not info_known:
+                height, width, channel = frame.shape
+                self._upsampled_info.put(UpsampleInfo(width, height, channel, mode))
+                info_known = True
 
             # write frame to out queue
-            self._processor_out_queue.put(upscaled_frame)
+            self._processor_out_queue.put(frame)
 
         # signal the end of frame stream
         self._processor_out_queue.put(None)
