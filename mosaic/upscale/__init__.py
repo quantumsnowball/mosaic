@@ -13,11 +13,13 @@ PACKAGE_DIR = Path(__file__).parent
 @click.option('-i', '--input-file', required=True, type=VideoPathParamType(), help='input media path')
 @click.option('-ss', '--start-time', default=None, type=HMSParamType(), help='start time in HH:MM:SS')
 @click.option('-to', '--end-time', default=None, type=HMSParamType(), help='end time in HH:MM:SS')
+@click.option('-x', '--scale', default='2', type=click.Choice(('2', '4')), help='up sampling scaling, can be 2x or 4x')
 @click.option('-y', '--force', is_flag=True, default=False, help='overwrite output file without asking')
 @click.argument('output-file', required=True, type=VideoPathParamType())
 def upscale(input_file: Path,
             start_time: HMS | None,
             end_time: HMS | None,
+            scale: str,
             force: bool,
             output_file: Path,
             ) -> None:
@@ -32,8 +34,8 @@ def upscale(input_file: Path,
 
     # load upsampler
     upsampler = RealESRGANer(
-        scale=2,
-        model_path=PACKAGE_DIR/'net/state_dicts/RealESRGAN_x4plus.pth',
+        scale=int(scale),
+        model_path=PACKAGE_DIR/f'net/state_dicts/RealESRGAN_x{scale}plus.pth',
         gpu_id=0,
     )
 

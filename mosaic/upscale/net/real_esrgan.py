@@ -45,7 +45,7 @@ class RealESRGANer:
             num_feat=64,
             num_block=23,
             num_grow_ch=32,
-            scale=4
+            scale=scale,
         )
 
         # initialize model
