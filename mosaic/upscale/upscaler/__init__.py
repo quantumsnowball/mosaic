@@ -1,4 +1,6 @@
+import sys
 from pathlib import Path
+from threading import Event
 
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler.combiner import Combiner
@@ -29,7 +31,13 @@ def run(
         processor.run()
         combiner.run()
 
-        # wait all procs
-        splitter.wait()
-        processor.wait()
-        combiner.wait()
+        try:
+            # wait all procs
+            splitter.wait()
+            processor.wait()
+            combiner.wait()
+        except KeyboardInterrupt:
+            processor.stop()
+            splitter.stop()
+            combiner.stop()
+            sys.exit()

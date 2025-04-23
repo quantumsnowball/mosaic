@@ -3,7 +3,7 @@ import os
 import queue
 from dataclasses import dataclass
 from pathlib import Path
-from threading import Thread
+from threading import Event, Thread
 from typing import Self
 
 import numpy as np
@@ -47,6 +47,7 @@ class Processor:
         self._reader_out_queue = queue.Queue[np.ndarray | None](maxsize=30)
         self._processor_out_queue = queue.Queue[np.ndarray | None](maxsize=30)
         self._upsampled_info: 'mp.Queue[UpsampleInfo]' = mp.Queue(maxsize=1)
+        self._keep_running = Event()
 
     @property
     def input(self) -> Path:
@@ -55,6 +56,10 @@ class Processor:
     @property
     def output(self) -> Path:
         return self._output_pipe
+
+    @property
+    def keep_running(self) -> bool:
+        return self._keep_running.is_set()
 
     @property
     def upsampled_info(self) -> 'mp.Queue[UpsampleInfo]':
@@ -71,8 +76,9 @@ class Processor:
 
     def _reader_worker(self) -> None:
         with open(self.input, 'rb') as input:
-            while True:
+            while self.keep_running:
                 # read from input pipe for bytes
+                # FIXME: read() cannot quit gracefully, blocked even if output is unlinked
                 if not (in_bytes := input.read(self._frame_size)):
                     break
 
@@ -88,7 +94,7 @@ class Processor:
 
     def _processor_worker(self) -> None:
         info_known = False
-        while True:
+        while self.keep_running:
             # get frame from reader out queue
             if (original_frame := self._reader_out_queue.get()) is None:
                 break
@@ -110,16 +116,20 @@ class Processor:
 
     def _writer_worker(self) -> None:
         with open(self.output, 'wb') as output:
-            while True:
+            while self.keep_running:
                 # get frame from processor out queue
                 if (frame := self._processor_out_queue.get()) is None:
                     break
 
                 # write bytes to output
                 out_bytes = frame.astype(np.uint8).tobytes()
-                output.write(out_bytes)
+                try:
+                    output.write(out_bytes)
+                except BrokenPipeError:
+                    break
 
     def run(self) -> None:
+        self._keep_running.set()
         self._reader_thread.start()
         self._processor_thread.start()
         self._writer_thread.start()
@@ -128,3 +138,6 @@ class Processor:
         self._reader_thread.join()
         self._processor_thread.join()
         self._writer_thread.join()
+
+    def stop(self) -> None:
+        self._keep_running.clear()
