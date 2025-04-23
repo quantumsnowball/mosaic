@@ -37,7 +37,6 @@ def run(
             processor.wait()
             combiner.wait()
         except KeyboardInterrupt:
-            processor.stop()
             splitter.stop()
+            processor.stop()
             combiner.stop()
-            sys.exit()
