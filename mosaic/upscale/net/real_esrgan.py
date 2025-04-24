@@ -25,6 +25,7 @@ class RealESRGANer:
                  scale,
                  model_path,
                  dni_weight=None,
+                 model=None,
                  tile=0,
                  tile_pad=10,
                  pre_pad=10,
@@ -37,16 +38,6 @@ class RealESRGANer:
         self.pre_pad = pre_pad
         self.mod_scale = None
         self.half = half
-
-        # default model
-        model = RRDBNet(
-            num_in_ch=3,
-            num_out_ch=3,
-            num_feat=64,
-            num_block=23,
-            num_grow_ch=32,
-            scale=scale,
-        )
 
         # initialize model
         if gpu_id:
