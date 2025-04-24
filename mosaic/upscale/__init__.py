@@ -14,7 +14,7 @@ PACKAGE_DIR = Path(__file__).parent
 @click.option('-i', '--input-file', required=True, type=VideoPathParamType(), help='input media path')
 @click.option('-ss', '--start-time', default=None, type=HMSParamType(), help='start time in HH:MM:SS')
 @click.option('-to', '--end-time', default=None, type=HMSParamType(), help='end time in HH:MM:SS')
-@click.option('-m', '--model', default='RealESRGAN_x2plus', type=click.Choice(PRESETS), help='Real-ESRGAN model choices')
+@click.option('-m', '--model', default='realesr_animevideov3', type=click.Choice(PRESETS), help='Real-ESRGAN model choices')
 @click.option('-y', '--force', is_flag=True, default=False, help='overwrite output file without asking')
 @click.argument('output-file', required=True, type=VideoPathParamType())
 def upscale(input_file: Path,
