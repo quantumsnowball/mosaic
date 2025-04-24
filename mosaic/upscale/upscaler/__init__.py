@@ -1,6 +1,4 @@
-import sys
 from pathlib import Path
-from threading import Event
 
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler.combiner import Combiner
@@ -32,11 +30,12 @@ def run(
         combiner.run()
 
         try:
-            # wait all procs
+            # wait for splitter the first proc in pipeline
             splitter.wait()
+        except KeyboardInterrupt:
+            # upon kbint, only stop splitter
+            splitter.stop()
+        finally:
+            # wait for others to quit gracefully
             processor.wait()
             combiner.wait()
-        except KeyboardInterrupt:
-            splitter.stop()
-            processor.stop()
-            combiner.stop()
