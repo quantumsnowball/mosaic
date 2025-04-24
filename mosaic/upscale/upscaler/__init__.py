@@ -3,7 +3,7 @@ from pathlib import Path
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler.combiner import Combiner
 from mosaic.upscale.upscaler.processor import Processor
-from mosaic.upscale.upscaler.source import VideoSource
+from mosaic.upscale.upscaler.spec import VideoSource
 from mosaic.upscale.upscaler.splitter import Splitter
 from mosaic.utils import HMS
 
