@@ -39,3 +39,11 @@ class VideoSource:
                            for k, v in raw_kwargs.items()
                            if v is not None}
         return filtered_kwargs
+
+
+class VideoDest:
+    def __init__(self,
+                 output_file: Path,
+                 scale: str) -> None:
+        self.output_file = output_file
+        self.scale = scale.replace('p', '')

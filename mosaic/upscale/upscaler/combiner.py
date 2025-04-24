@@ -5,17 +5,17 @@ from typing import Self
 import ffmpeg
 
 from mosaic.upscale.upscaler.processor import Processor
+from mosaic.upscale.upscaler.spec import VideoDest
 
 
 class Combiner:
     def __init__(self,
                  source: Processor,
-                 scale: str,
-                 output_file: Path) -> None:
+                 dest: VideoDest) -> None:
         self.origin = s = source.origin
         self._input = source
-        self._scale = scale
-        self._output_file = output_file
+        self._scale = dest.scale
+        self._output_file = dest.output_file
         self._proc: Popen | None = None
 
     @property
