@@ -3,7 +3,7 @@ from pathlib import Path
 import click
 
 from mosaic.upscale import upscaler
-from mosaic.upscale.net import PRESETS, Preset, presets
+from mosaic.upscale.net import PRESETS, presets
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.utils import HMS, HMSParamType, VideoPathParamType
 
@@ -15,12 +15,14 @@ PACKAGE_DIR = Path(__file__).parent
 @click.option('-ss', '--start-time', default=None, type=HMSParamType(), help='start time in HH:MM:SS')
 @click.option('-to', '--end-time', default=None, type=HMSParamType(), help='end time in HH:MM:SS')
 @click.option('-m', '--model', default='realesr_animevideov3', type=click.Choice(PRESETS), help='Real-ESRGAN model choices')
+@click.option('-s', '--scale', default='1080p', type=click.Choice(('720p', '1080p', '1440p', '2160p')), help='output scale')
 @click.option('-y', '--force', is_flag=True, default=False, help='overwrite output file without asking')
 @click.argument('output-file', required=True, type=VideoPathParamType())
 def upscale(input_file: Path,
             start_time: HMS | None,
             end_time: HMS | None,
             model: str,
+            scale: str,
             force: bool,
             output_file: Path,
             ) -> None:
@@ -47,5 +49,6 @@ def upscale(input_file: Path,
         start_time=start_time,
         end_time=end_time,
         output_file=output_file,
+        scale=scale,
         upsampler=upsampler,
     )

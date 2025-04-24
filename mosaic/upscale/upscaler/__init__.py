@@ -12,6 +12,7 @@ def run(
     input_file: Path,
     start_time: HMS | None,
     end_time: HMS | None,
+    scale: str,
     output_file: Path,
     upsampler: RealESRGANer,
 ) -> None:
@@ -22,7 +23,7 @@ def run(
     with (
         Splitter(source) as splitter,
         Processor(splitter, upsampler) as processor,
-        Combiner(processor, output_file) as combiner
+        Combiner(processor, scale, output_file) as combiner
     ):
         # run
         splitter.run()

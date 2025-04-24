@@ -10,9 +10,11 @@ from mosaic.upscale.upscaler.processor import Processor
 class Combiner:
     def __init__(self,
                  source: Processor,
+                 scale: str,
                  output_file: Path) -> None:
         self.origin = s = source.origin
         self._input = source
+        self._scale = scale
         self._output_file = output_file
         self._proc: Popen | None = None
 
@@ -42,6 +44,7 @@ class Combiner:
                 ffmpeg.input(str(self.origin), **self.origin.ffmpeg_input_kwargs).audio,
                 str(self._output_file),
                 vcodec='libx264',
+                vf=f'scale=-1:{self._scale.replace("p", "")}',
                 pix_fmt=info.pix_fmt)
             .global_args('-hide_banner')
             .overwrite_output()
