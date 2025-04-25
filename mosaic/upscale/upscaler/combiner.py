@@ -39,7 +39,7 @@ class Combiner:
                              format='rawvideo',
                              pix_fmt='rgb24',
                              s=info.s,
-                             # framerate=s.framerate
+                             framerate=s.framerate
                              ).video,
                 ffmpeg.input(str(self.origin), **self.origin.ffmpeg_input_kwargs).audio,
                 str(self._output_file),
