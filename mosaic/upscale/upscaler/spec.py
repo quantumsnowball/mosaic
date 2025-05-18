@@ -17,6 +17,9 @@ class VideoSource:
                 self.width = int(stream['width'])
                 self.height = int(stream['height'])
                 self.framerate = str(stream['r_frame_rate'])
+                self.sar = str(stream['sample_aspect_ratio'])
+                self.dar = str(stream['display_aspect_ratio'])
+                self.pix_fmt = str(stream['pix_fmt'])
                 break
         else:
             raise ValueError("No video stream found.")

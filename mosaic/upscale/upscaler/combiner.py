@@ -12,7 +12,7 @@ class Combiner:
     def __init__(self,
                  source: Processor,
                  dest: VideoDest) -> None:
-        self.origin = s = source.origin
+        self.origin = source.origin
         self._input = source
         self._scale = dest.scale
         self._output_file = dest.output_file
@@ -39,12 +39,13 @@ class Combiner:
                              format='rawvideo',
                              pix_fmt='rgb24',
                              s=info.s,
-                             framerate=s.framerate
+                             framerate=self.origin.framerate,
                              ).video,
                 ffmpeg.input(str(self.origin), **self.origin.ffmpeg_input_kwargs).audio,
                 str(self._output_file),
                 vcodec='libx264',
                 vf=f'scale=-1:{self._scale.replace("p", "")}',
+                aspect=self.origin.dar,
                 pix_fmt=info.pix_fmt)
             .global_args('-hide_banner')
             .overwrite_output()
