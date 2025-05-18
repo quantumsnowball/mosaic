@@ -1,79 +1,54 @@
 from pathlib import Path
 
 import click
-import ffmpeg
-import numpy as np
 
-from mosaic.upscale.filter import sharpen
-from mosaic.utils import VideoPathParamType
+from mosaic.upscale import upscaler
+from mosaic.upscale.net import PRESETS, presets
+from mosaic.upscale.net.real_esrgan import RealESRGANer
+from mosaic.utils import HMS, HMSParamType, VideoPathParamType
+
+PACKAGE_DIR = Path(__file__).parent
 
 
 @click.command()
 @click.option('-i', '--input-file', required=True, type=VideoPathParamType(), help='input media path')
+@click.option('-ss', '--start-time', default=None, type=HMSParamType(), help='start time in HH:MM:SS')
+@click.option('-to', '--end-time', default=None, type=HMSParamType(), help='end time in HH:MM:SS')
+@click.option('-m', '--model', default='realesr_animevideov3', type=click.Choice(PRESETS), help='Real-ESRGAN model choices')
+@click.option('-s', '--scale', default='1080p', type=click.Choice(('720p', '1080p', '1440p', '2160p')), help='output scale')
+@click.option('-y', '--force', is_flag=True, default=False, help='overwrite output file without asking')
 @click.argument('output-file', required=True, type=VideoPathParamType())
 def upscale(input_file: Path,
+            start_time: HMS | None,
+            end_time: HMS | None,
+            model: str,
+            scale: str,
+            force: bool,
             output_file: Path,
             ) -> None:
-    # extract first video stream info
-    ffprobe_info = ffmpeg.probe(str(input_file))
-    for stream in ffprobe_info['streams']:
-        if stream['codec_type'] == 'video':
-            width = int(stream['width'])
-            height = int(stream['height'])
-            framerate = str(stream['r_frame_rate'])
-            frame_size = width * height * 3
-            break
-    else:
-        raise ValueError("No video stream found.")
+    # verify inputs
+    assert input_file.exists(), f'{input_file} does not exists'
+    if start_time and end_time:
+        if not end_time > start_time:
+            raise ValueError('Invalid start time or end time')
+    if not force and output_file.exists():
+        if input(f'Output file {output_file} already exist, overwrite? y/[N] ').lower() != 'y':
+            return
 
-    # ffmpeg input and output procs
-    in_proc = (
-        ffmpeg
-        .input(str(input_file))
-        .output('pipe:',
-                format='rawvideo',
-                pix_fmt='rgb24')
-        .global_args(
-            '-hide_banner',
-            '-loglevel', 'quiet')
-        .run_async(pipe_stdout=True)
+    # load upsampler
+    net = presets[model]
+    upsampler = RealESRGANer(
+        scale=net.scale,
+        model_path=net.model_path,
+        model=net.model,
+        gpu_id=0,
     )
 
-    out_proc = (
-        ffmpeg
-        .output(
-            ffmpeg.input('pipe:',
-                         format='rawvideo',
-                         pix_fmt='rgb24',
-                         s=f'{width}x{height}',
-                         framerate=framerate).video,
-            ffmpeg.input(str(input_file)).audio,
-            str(output_file),
-            vcodec='libx264',
-            pix_fmt='yuv420p')
-        .global_args('-hide_banner')
-        .overwrite_output()
-        .run_async(pipe_stdin=True)
+    upscaler.run(
+        input_file=input_file,
+        start_time=start_time,
+        end_time=end_time,
+        output_file=output_file,
+        scale=scale,
+        upsampler=upsampler,
     )
-
-    # conversion loop
-    while True:
-        in_bytes = in_proc.stdout.read(frame_size)
-        if not in_bytes:
-            break
-
-        # Convert bytes to numpy array
-        frame = np.frombuffer(in_bytes, np.uint8).reshape((height, width, 3))
-
-        # apply a filter in python
-        # TODO: do you upscaling magic here
-        frame = sharpen(frame)
-
-        # Convert back to bytes and send to ffmpeg output
-        out_proc.stdin.write(frame.astype(np.uint8).tobytes())
-
-    # Step 4: Cleanup
-    in_proc.stdout.close()
-    out_proc.stdin.close()
-    in_proc.wait()
-    out_proc.wait()
