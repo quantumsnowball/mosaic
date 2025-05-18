@@ -1,4 +1,5 @@
 import os
+import uuid
 from pathlib import Path
 from queue import Queue
 from threading import Thread
@@ -18,14 +19,13 @@ class Processor:
     type InputItem = Package | None
     type Input = Queue[InputItem]
 
-    _output_pipe = Path('/tmp/mosaic-free-processor-output')
-
     def __init__(self,
                  source: Packer,
                  *,
                  netM: BiSeNet,
                  netG: BVDNet,
                  min_mask_size: int = 50) -> None:
+        self._output_pipe = Path(f'/tmp/mosaic-free-processor-output-{uuid.uuid4()}')
         self.origin = source.origin
         self._input = source
         self._netM = netM

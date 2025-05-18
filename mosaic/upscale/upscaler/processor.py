@@ -1,6 +1,7 @@
 import multiprocessing as mp
 import os
 import queue
+import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from threading import Thread
@@ -30,12 +31,12 @@ class UpsampleInfo:
 
 
 class Processor:
-    _output_pipe = Path('/tmp/mosaic-upscale-processor-output')
     _queue_size = 1
 
     def __init__(self,
                  source: Splitter,
                  upsampler: RealESRGANer) -> None:
+        self._output_pipe = Path(f'/tmp/mosaic-upscale-processor-output-{uuid.uuid4()}')
         self.origin = o = source.origin
         self._input = source
         self._height = o.height
