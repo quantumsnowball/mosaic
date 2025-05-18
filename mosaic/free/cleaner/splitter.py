@@ -1,4 +1,5 @@
 import os
+import uuid
 from pathlib import Path
 from subprocess import Popen
 from typing import Self
@@ -9,9 +10,8 @@ from mosaic.free.cleaner.source import VideoSource
 
 
 class Splitter:
-    _output_pipe = Path('/tmp/mosaic-free-splitter-output')
-
     def __init__(self, source: VideoSource) -> None:
+        self._output_pipe = Path(f'/tmp/mosaic-free-splitter-output-{uuid.uuid4()}')
         self.origin = s = source
         self._stream = (
             ffmpeg
