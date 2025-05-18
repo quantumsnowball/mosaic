@@ -44,7 +44,7 @@ class Combiner:
                 ffmpeg.input(str(self.origin), **self.origin.ffmpeg_input_kwargs).audio,
                 str(self._output_file),
                 vcodec='libx264',
-                vf=f'scale=-1:{self._scale.replace("p", "")}',
+                vf=f'scale=-2:{self._scale.replace("p", "")}',
                 aspect=self.origin.dar,
                 pix_fmt=info.pix_fmt)
             .global_args('-hide_banner')
