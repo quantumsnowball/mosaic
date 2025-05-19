@@ -14,6 +14,7 @@ def run(
     end_time: HMS | None,
     scale: str,
     output_file: Path,
+    raw_info: bool,
     upsampler: RealESRGANer,
 ) -> None:
     # extract video info
@@ -29,7 +30,7 @@ def run(
         # run
         splitter.run()
         processor.run()
-        combiner.run()
+        combiner.run(raw_info)
 
         try:
             # wait for splitter the first proc in pipeline

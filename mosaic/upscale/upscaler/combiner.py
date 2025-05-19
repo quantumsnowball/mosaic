@@ -28,7 +28,7 @@ class Combiner:
     def __exit__(self, type, value, traceback) -> None:
         pass
 
-    def run(self) -> None:
+    def run(self, raw_info: bool) -> None:
         # block until upsampled info available
         info = self._input.upsampled_info.get()
 
@@ -50,6 +50,11 @@ class Combiner:
             .global_args('-hide_banner')
             .overwrite_output()
         )
+
+        # if not showing raw info, ask ffmpeg to print progress info and draw progress bar
+        if not raw_info:
+            stream = stream.global_args('-loglevel', 'fatal')
+            stream = stream.global_args('-progress', 'pipe:1')
 
         # run
         self._proc = stream.run_async(pipe_stdin=True)
