@@ -57,7 +57,7 @@ class Combiner:
             stream = stream.global_args('-progress', 'pipe:1')
 
         # run
-        self._proc = stream.run_async(pipe_stdin=True)
+        self._proc = stream.run_async()
 
     def wait(self) -> None:
         assert self._proc is not None
