@@ -83,15 +83,17 @@ class Combiner:
                     # track ffmpeg rendering speed
                     if line.strip().startswith('speed='):
                         speed_text = line.split('=', maxsplit=1)[1]
-                        # calc and show speed
+                        bar.text(speed_text)
+                    elif line.strip().startswith('out_time_us='):
+                        out_time_us_text = line.split('=', maxsplit=1)[1]
+                        # calc current time
                         try:
-                            speed = float(speed_text.replace('x', ''))
+                            out_time = float(out_time_us_text) / 1e+6
                         except ValueError:
                             continue
-                        bar.text(speed_text)
                         # calc and show progress percentage
                         # TODO: determine the correct step pct, don't hardcode
-                        pct += (speed * 0.1) / 5
+                        pct = out_time / 5
                         bar(min(pct, 1.0))
                     # break on EOF or kbint
                     # if line.startswith('progress=end'):
