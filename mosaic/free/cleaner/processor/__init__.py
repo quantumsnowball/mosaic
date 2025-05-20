@@ -25,7 +25,7 @@ class Processor:
                  netM: BiSeNet,
                  netG: BVDNet,
                  min_mask_size: int = 50) -> None:
-        self._output_pipe = Path(f'/tmp/mosaic-free-processor-output-{uuid.uuid4()}')
+        self._output_pipe = Path(f'/tmp/{__name__}.{uuid.uuid4()}')
         self.origin = source.origin
         self._input = source
         self._netM = netM
