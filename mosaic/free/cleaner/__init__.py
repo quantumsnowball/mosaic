@@ -35,19 +35,26 @@ def run(
         processor.run()
         combiner.run()
 
-        # wait until the last worker
         def wait() -> None:
+            # wait until the last worker
             splitter.wait()
             packer.wait()
             processor.wait()
             combiner.wait()
+
+        def stop() -> None:
+            # stop all workers
+            splitter.stop()
+            packer.stop()
+            processor.stop()
+            combiner.stop()
 
         try:
             # wait for all workers
             wait()
         except KeyboardInterrupt:
             # upon kbint, only stop splitter
-            splitter.stop()
+            stop()
         finally:
             # wait for all workers again
             wait()
