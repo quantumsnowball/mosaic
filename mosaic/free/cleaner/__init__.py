@@ -15,6 +15,7 @@ def run(
     start_time: HMS | None,
     end_time: HMS | None,
     output_file: Path,
+    raw_info: bool,
     netM: BiSeNet,
     netG: BVDNet,
 ):
@@ -26,7 +27,7 @@ def run(
         Splitter(source) as splitter,
         Packer(splitter) as packer,
         Processor(packer, netM=netM, netG=netG) as processor,
-        Combiner(processor, output_file) as combiner
+        Combiner(processor, output_file, raw_info) as combiner
     ):
         # run
         splitter.run()

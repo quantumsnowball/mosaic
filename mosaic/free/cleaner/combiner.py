@@ -8,9 +8,12 @@ from mosaic.free.cleaner.processor import Processor
 
 
 class Combiner:
-    def __init__(self,
-                 source: Processor,
-                 output_file: Path) -> None:
+    def __init__(
+        self,
+        source: Processor,
+        output_file: Path,
+        raw_info: bool,
+    ) -> None:
         self.origin = s = source.origin
         self._input = source
         self._stream = (
