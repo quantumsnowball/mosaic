@@ -25,12 +25,12 @@ def run(
     with (
         Splitter(source) as splitter,
         Processor(splitter, upsampler) as processor,
-        Combiner(processor, dest) as combiner
+        Combiner(processor, dest, raw_info) as combiner
     ):
         # run
         splitter.run()
         processor.run()
-        combiner.run(raw_info)
+        combiner.run()
 
         try:
             # wait for splitter the first proc in pipeline

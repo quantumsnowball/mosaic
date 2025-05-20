@@ -10,15 +10,20 @@ from mosaic.utils.progress import ProgressBar
 
 
 class Combiner:
-    def __init__(self,
-                 source: Processor,
-                 dest: VideoDest) -> None:
+    def __init__(
+        self,
+        source: Processor,
+        dest: VideoDest,
+        raw_info: bool,
+    ) -> None:
         self.origin = source.origin
         self._input = source
         self._scale = dest.scale
         self._output_file = dest.output_file
         self._proc: Popen | None = None
         self._pbar: ProgressBar | None = None
+        self._pbar = (None if raw_info else
+                      ProgressBar('mosaic-upsacle-combiner-progress', self.origin.duration))
 
     @property
     def input(self) -> Path:
@@ -33,7 +38,7 @@ class Combiner:
         if self._pbar:
             self._pbar.stop()
 
-    def run(self, raw_info: bool) -> None:
+    def run(self) -> None:
         # block until upsampled info available
         info = self._input.upsampled_info.get()
 
@@ -56,10 +61,8 @@ class Combiner:
             .overwrite_output()
         )
 
-        # if not showing raw info, ask ffmpeg to print progress info and draw progress bar
-        if not raw_info:
-            self._pbar = ProgressBar('mosaic-upsacle-combiner-progress', self.origin.duration)
-            self._pbar.start()
+        # if not showing raw info, ask ffmpeg to print progress info and run progress bar
+        if self._pbar:
             stream = stream.global_args('-loglevel', 'fatal')
             stream = stream.global_args('-progress', self._pbar.input)
             stream = stream.global_args('-stats_period', '0.5')
