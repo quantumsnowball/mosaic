@@ -4,7 +4,6 @@ import click
 
 from mosaic.free import free
 from mosaic.free_old import free_old
-from mosaic.remove import remove
 from mosaic.upscale import upscale
 
 NAME = 'mosaic'
@@ -24,7 +23,6 @@ def version() -> None:
     print(f'v{meta.version(NAME)}')
 
 
-mosaic.add_command(remove)
 mosaic.add_command(free_old)
 mosaic.add_command(free)
 mosaic.add_command(upscale)
