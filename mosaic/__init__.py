@@ -3,7 +3,6 @@ import importlib.metadata as meta
 import click
 
 from mosaic.free import free
-from mosaic.free_old import free_old
 from mosaic.upscale import upscale
 
 NAME = 'mosaic'
@@ -23,6 +22,5 @@ def version() -> None:
     print(f'v{meta.version(NAME)}')
 
 
-mosaic.add_command(free_old)
 mosaic.add_command(free)
 mosaic.add_command(upscale)
