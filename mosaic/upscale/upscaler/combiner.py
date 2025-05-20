@@ -39,6 +39,34 @@ class Combiner:
         if self.progress.exists():
             self.progress.unlink()
 
+    def _run_progress_bar(self) -> None:
+        with (
+            alive_bar(manual=True) as bar,
+            open(self.progress, 'r') as progress,
+        ):
+            pct = 0.0
+            while line := progress.readline():
+                # track ffmpeg rendering speed
+                if line.strip().startswith('speed='):
+                    speed_text = line.split('=', maxsplit=1)[1]
+                    bar.text(speed_text)
+                # calc current time
+                elif line.strip().startswith('out_time_us='):
+                    out_time_us_text = line.split('=', maxsplit=1)[1]
+                    try:
+                        out_time = float(out_time_us_text) / 1e+6
+                    except ValueError:
+                        continue
+                    # calc and show progress percentage
+                    pct = out_time / self.origin.duration
+                    bar(min(pct, 1.0))
+                # break on EOF or kbint
+                # if line.startswith('progress=end'):
+                #     break
+
+            # finish bar to 100%
+            bar(1.0)
+
     def run(self, raw_info: bool) -> None:
         # block until upsampled info available
         info = self._input.upsampled_info.get()
@@ -74,32 +102,7 @@ class Combiner:
         # if not showing raw info, display the progress bar
         # FIXME: kbint not working here
         if not raw_info:
-            with (
-                alive_bar(manual=True) as bar,
-                open(self.progress, 'r') as progress,
-            ):
-                pct = 0.0
-                while line := progress.readline():
-                    # track ffmpeg rendering speed
-                    if line.strip().startswith('speed='):
-                        speed_text = line.split('=', maxsplit=1)[1]
-                        bar.text(speed_text)
-                    elif line.strip().startswith('out_time_us='):
-                        out_time_us_text = line.split('=', maxsplit=1)[1]
-                        # calc current time
-                        try:
-                            out_time = float(out_time_us_text) / 1e+6
-                        except ValueError:
-                            continue
-                        # calc and show progress percentage
-                        pct = out_time / self.origin.duration
-                        bar(min(pct, 1.0))
-                    # break on EOF or kbint
-                    # if line.startswith('progress=end'):
-                    #     break
-
-                # finish bar to 100%
-                bar(1.0)
+            self._run_progress_bar()
 
     def wait(self) -> None:
         assert self._proc is not None
