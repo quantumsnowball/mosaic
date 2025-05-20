@@ -22,7 +22,7 @@ class Splitter:
             .global_args(
                 '-y',
                 '-hide_banner',
-                '-loglevel', 'quiet')
+                '-loglevel', 'fatal')
         )
         self._proc: Popen | None = None
 
