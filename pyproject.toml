@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mosaic"
-version = "0.4.0"
+version = "0.5.0"
 description = "mosaic - handle mosaic in video"
 authors = [
     { name = "Quantum Snowball", email = "quantum.snowball@gmail.com" }
@@ -13,7 +13,8 @@ dependencies = [
     'click',
     'torch',
     'torchvision',
-    'opencv-python'
+    'opencv-python',
+    'alive-progress',
 ]
 
 [project.urls]
