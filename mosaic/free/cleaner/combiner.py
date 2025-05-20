@@ -5,6 +5,7 @@ from typing import Self
 import ffmpeg
 
 from mosaic.free.cleaner.processor import Processor
+from mosaic.utils.progress import ProgressBar
 
 
 class Combiner:
@@ -31,6 +32,7 @@ class Combiner:
             .overwrite_output()
         )
         self._proc: Popen | None = None
+        self._pbar = None if raw_info else ProgressBar(self.origin.duration)
 
     @property
     def input(self) -> Path:
