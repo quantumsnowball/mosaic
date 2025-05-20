@@ -64,3 +64,5 @@ class Combiner:
     def wait(self) -> None:
         assert self._proc is not None
         self._proc.wait()
+        if self._pbar is not None:
+            self._pbar.wait()
