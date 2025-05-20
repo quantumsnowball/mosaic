@@ -113,13 +113,10 @@ class Combiner:
             stream = stream.global_args('-loglevel', 'fatal')
             stream = stream.global_args('-progress', self.progress)
             stream = stream.global_args('-stats_period', '0.5')
+            self._run_progress_bar()
 
         # run
         self._proc = stream.run_async()
-
-        # if not showing raw info, display the progress bar
-        if not raw_info:
-            self._run_progress_bar()
 
     def wait(self) -> None:
         assert self._proc is not None
