@@ -5,8 +5,8 @@ from typing import Self
 import ffmpeg
 
 from mosaic.upscale.upscaler.processor import Processor
-from mosaic.upscale.upscaler.spec import VideoDest
 from mosaic.utils.progress import ProgressBar
+from mosaic.utils.spec import VideoDest
 
 
 class Combiner:

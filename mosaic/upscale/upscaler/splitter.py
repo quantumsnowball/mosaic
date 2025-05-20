@@ -6,7 +6,7 @@ from typing import Self
 
 import ffmpeg
 
-from mosaic.upscale.upscaler.spec import VideoSource
+from mosaic.utils.spec import VideoSource
 
 
 class Splitter:
