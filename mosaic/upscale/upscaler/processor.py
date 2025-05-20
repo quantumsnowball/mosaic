@@ -36,7 +36,7 @@ class Processor:
     def __init__(self,
                  source: Splitter,
                  upsampler: RealESRGANer) -> None:
-        self._output_pipe = Path(f'/tmp/mosaic-upscale-processor-output-{uuid.uuid4()}')
+        self._output_pipe = Path(f'/tmp/{__name__}.{uuid.uuid4()}')
         self.origin = o = source.origin
         self._input = source
         self._height = o.height

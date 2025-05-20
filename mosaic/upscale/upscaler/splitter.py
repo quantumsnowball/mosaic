@@ -11,7 +11,7 @@ from mosaic.upscale.upscaler.spec import VideoSource
 
 class Splitter:
     def __init__(self, source: VideoSource) -> None:
-        self._output_pipe = Path(f'/tmp/mosaic-upsacle-splitter-output-{uuid.uuid4()}')
+        self._output_pipe = Path(f'/tmp/{__name__}.{uuid.uuid4()}')
         self.origin = s = source
         self._stream = (
             ffmpeg
