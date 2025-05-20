@@ -82,7 +82,10 @@ class Processor:
 
                 # write bytes to output
                 out_bytes = img_output.astype(np.uint8).tobytes()
-                output.write(out_bytes)
+                try:
+                    output.write(out_bytes)
+                except BrokenPipeError:
+                    break
 
     def run(self) -> None:
         self._thread.start()
