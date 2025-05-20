@@ -2,6 +2,7 @@ import os
 import uuid
 from pathlib import Path
 from subprocess import Popen
+from threading import Thread
 from typing import Self
 
 import ffmpeg
@@ -21,6 +22,7 @@ class Combiner:
         self._output_file = dest.output_file
         self._proc: Popen | None = None
         self._progress_pipe = Path(f'/tmp/mosaic-upsacle-combiner-progress-{uuid.uuid4()}')
+        self._progress_thread: Thread | None = None
 
     @property
     def input(self) -> Path:
@@ -40,43 +42,48 @@ class Combiner:
             self.progress.unlink()
 
     def _run_progress_bar(self) -> None:
-        with (
-            alive_bar(manual=True) as bar,
-            open(self.progress, 'r') as progress,
-        ):
-            pct = 0.0
-            speed_text = ''
-            fps_text = ''
+        def worker() -> None:
+            with (
+                alive_bar(manual=True) as bar,
+                open(self.progress, 'r') as progress,
+            ):
+                pct = 0.0
+                speed_text = ''
+                fps_text = ''
 
-            def info() -> str:
-                return f'{speed_text}, {fps_text}'
+                def info() -> str:
+                    return f'{speed_text}, {fps_text}'
 
-            while line := progress.readline():
-                line = line.strip()
-                # track speed
-                if line.startswith('speed='):
-                    speed_text = line
-                    bar.text(info())
-                # track fps
-                elif line.startswith('fps='):
-                    fps_text = line
-                    bar.text(info())
-                # calc current time
-                elif line.startswith('out_time_us='):
-                    out_time_us_text = line.split('=', maxsplit=1)[1]
-                    try:
-                        out_time = float(out_time_us_text) / 1e+6
-                    except ValueError:
-                        continue
-                    # calc and show progress percentage
-                    pct = out_time / self.origin.duration
-                    bar(min(pct, 1.0))
-                # break on EOF or kbint
-                # if line.startswith('progress=end'):
-                #     break
+                while line := progress.readline():
+                    line = line.strip()
+                    # track speed
+                    if line.startswith('speed='):
+                        speed_text = line
+                        bar.text(info())
+                    # track fps
+                    elif line.startswith('fps='):
+                        fps_text = line
+                        bar.text(info())
+                    # calc current time
+                    elif line.startswith('out_time_us='):
+                        out_time_us_text = line.split('=', maxsplit=1)[1]
+                        try:
+                            out_time = float(out_time_us_text) / 1e+6
+                        except ValueError:
+                            continue
+                        # calc and show progress percentage
+                        pct = out_time / self.origin.duration
+                        bar(min(pct, 1.0))
+                    # break on EOF or kbint
+                    # if line.startswith('progress=end'):
+                    #     break
 
-            # finish bar to 100%
-            bar(1.0)
+                # finish bar to 100%
+                bar(1.0)
+
+        # run in own thread
+        self._progress_thread = Thread(target=worker)
+        self._progress_thread.start()
 
     def run(self, raw_info: bool) -> None:
         # block until upsampled info available
@@ -111,10 +118,11 @@ class Combiner:
         self._proc = stream.run_async()
 
         # if not showing raw info, display the progress bar
-        # FIXME: kbint not working here
         if not raw_info:
             self._run_progress_bar()
 
     def wait(self) -> None:
         assert self._proc is not None
         self._proc.wait()
+        if self._progress_thread is not None:
+            self._progress_thread.join()
