@@ -1,15 +1,12 @@
-import os
-import uuid
 from pathlib import Path
 from subprocess import Popen
-from threading import Thread
 from typing import Self
 
 import ffmpeg
-from alive_progress import alive_bar
 
 from mosaic.upscale.upscaler.processor import Processor
 from mosaic.upscale.upscaler.spec import VideoDest
+from mosaic.utils.progress import ProgressBar
 
 
 class Combiner:
@@ -21,70 +18,20 @@ class Combiner:
         self._scale = dest.scale
         self._output_file = dest.output_file
         self._proc: Popen | None = None
-        self._progress_pipe = Path(f'/tmp/mosaic-upsacle-combiner-progress-{uuid.uuid4()}')
-        self._progress_thread: Thread | None = None
+        self._pbar: ProgressBar | None = None
 
     @property
     def input(self) -> Path:
         return self._input.output
 
-    @property
-    def progress(self) -> Path:
-        return self._progress_pipe
-
     def __enter__(self) -> Self:
-        if not self.progress.exists():
-            os.mkfifo(self.progress)
+        if self._pbar:
+            self._pbar.start()
         return self
 
     def __exit__(self, type, value, traceback) -> None:
-        if self.progress.exists():
-            self.progress.unlink()
-
-    def _run_progress_bar(self) -> None:
-        def worker() -> None:
-            with (
-                alive_bar(manual=True) as bar,
-                open(self.progress, 'r') as progress,
-            ):
-                pct = 0.0
-                speed_text = ''
-                fps_text = ''
-
-                def info() -> str:
-                    return f'{speed_text}, {fps_text}'
-
-                while line := progress.readline():
-                    # break gracefully even before EOF
-                    if line.startswith('progress=end'):
-                        break
-
-                    line = line.strip()
-                    # track speed
-                    if line.startswith('speed='):
-                        speed_text = line
-                        bar.text(info())
-                    # track fps
-                    elif line.startswith('fps='):
-                        fps_text = line
-                        bar.text(info())
-                    # calc current time
-                    elif line.startswith('out_time_us='):
-                        out_time_us_text = line.split('=', maxsplit=1)[1]
-                        try:
-                            out_time = float(out_time_us_text) / 1e+6
-                        except ValueError:
-                            continue
-                        # calc and show progress percentage
-                        pct = out_time / self.origin.duration
-                        bar(min(pct, 1.0))
-
-                # finish bar to 100%
-                bar(1.0)
-
-        # run in own thread
-        self._progress_thread = Thread(target=worker)
-        self._progress_thread.start()
+        if self._pbar:
+            self._pbar.stop()
 
     def run(self, raw_info: bool) -> None:
         # block until upsampled info available
@@ -111,10 +58,12 @@ class Combiner:
 
         # if not showing raw info, ask ffmpeg to print progress info and draw progress bar
         if not raw_info:
+            self._pbar = ProgressBar('mosaic-upsacle-combiner-progress', self.origin.duration)
+            self._pbar.start()
             stream = stream.global_args('-loglevel', 'fatal')
-            stream = stream.global_args('-progress', self.progress)
+            stream = stream.global_args('-progress', self._pbar.input)
             stream = stream.global_args('-stats_period', '0.5')
-            self._run_progress_bar()
+            self._pbar.run()
 
         # run
         self._proc = stream.run_async()
@@ -122,5 +71,5 @@ class Combiner:
     def wait(self) -> None:
         assert self._proc is not None
         self._proc.wait()
-        if self._progress_thread is not None:
-            self._progress_thread.join()
+        if self._pbar is not None:
+            self._pbar.wait()
