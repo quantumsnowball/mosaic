@@ -26,10 +26,13 @@ class Combiner:
         return self._input.output
 
     def __enter__(self) -> Self:
+        if self._pbar:
+            self._pbar.start()
         return self
 
     def __exit__(self, type, value, traceback) -> None:
-        pass
+        if self._pbar:
+            self._pbar.stop()
 
     def run(self) -> None:
         # create the ffmpeg stream command using correct info
@@ -47,6 +50,13 @@ class Combiner:
             .global_args('-hide_banner')
             .overwrite_output()
         )
+
+        # if not showing raw info, ask ffmpeg to print progress info and run progress bar
+        if self._pbar:
+            stream = stream.global_args('-loglevel', 'fatal')
+            stream = stream.global_args('-progress', self._pbar.input)
+            stream = stream.global_args('-stats_period', '0.5')
+            self._pbar.run()
 
         # run
         self._proc = stream.run_async()
