@@ -66,7 +66,7 @@ class Combiner:
         if not raw_info:
             stream = stream.global_args('-loglevel', 'fatal')
             stream = stream.global_args('-progress', self.progress)
-            stream = stream.global_args('-stats_period', '0.1')
+            stream = stream.global_args('-stats_period', '0.5')
 
         # run
         self._proc = stream.run_async()
@@ -92,8 +92,7 @@ class Combiner:
                         except ValueError:
                             continue
                         # calc and show progress percentage
-                        # TODO: determine the correct step pct, don't hardcode
-                        pct = out_time / 5
+                        pct = out_time / self.origin.duration
                         bar(min(pct, 1.0))
                     # break on EOF or kbint
                     # if line.startswith('progress=end'):

@@ -20,6 +20,7 @@ class VideoSource:
                 self.sar = str(stream['sample_aspect_ratio'])
                 self.dar = str(stream['display_aspect_ratio'])
                 self.pix_fmt = str(stream['pix_fmt'])
+                self._duration = str(stream['duration'])
                 break
         else:
             raise ValueError("No video stream found.")
@@ -34,6 +35,23 @@ class VideoSource:
     @property
     def frame_size(self) -> int:
         return self.width * self.height * 3
+
+    @property
+    def duration(self) -> float:
+        # duration is end_time seconds or full vidoe seconds
+        try:
+            duration = self.end_time.total_seconds() if self.end_time else float(self._duration)
+        except Exception:
+            # default fail safe duration 5 min
+            return 300
+        # then deducted by start_time seconds if available
+        try:
+            if self.start_time:
+                duration -= self.start_time.total_seconds()
+        except Exception:
+            pass
+        #
+        return duration
 
     @property
     def ffmpeg_input_kwargs(self) -> dict[str, Any]:
