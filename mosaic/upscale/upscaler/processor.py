@@ -141,3 +141,7 @@ class Processor:
         self._reader_thread.join()
         self._processor_thread.join()
         self._writer_thread.join()
+
+    def stop(self) -> None:
+        if self.output.exists():
+            self.output.unlink()

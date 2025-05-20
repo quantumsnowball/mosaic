@@ -74,3 +74,7 @@ class Combiner:
         self._proc.wait()
         if self._pbar is not None:
             self._pbar.wait()
+
+    def stop(self) -> None:
+        if self._proc is not None:
+            self._proc.terminate()
