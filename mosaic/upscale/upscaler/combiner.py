@@ -45,12 +45,22 @@ class Combiner:
             open(self.progress, 'r') as progress,
         ):
             pct = 0.0
+            speed_text = ''
+            fps_text = ''
+
+            def info() -> str:
+                return f'{speed_text}, {fps_text}'
+
             while line := progress.readline():
                 line = line.strip()
-                # track ffmpeg rendering speed
+                # track speed
                 if line.startswith('speed='):
-                    speed_text = line.split('=', maxsplit=1)[1]
-                    bar.text(speed_text)
+                    speed_text = line
+                    bar.text(info())
+                # track fps
+                elif line.startswith('fps='):
+                    fps_text = line
+                    bar.text(info())
                 # calc current time
                 elif line.startswith('out_time_us='):
                     out_time_us_text = line.split('=', maxsplit=1)[1]
