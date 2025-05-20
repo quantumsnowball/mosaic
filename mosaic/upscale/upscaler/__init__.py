@@ -14,6 +14,7 @@ def run(
     end_time: HMS | None,
     scale: str,
     output_file: Path,
+    raw_info: bool,
     upsampler: RealESRGANer,
 ) -> None:
     # extract video info
@@ -24,7 +25,7 @@ def run(
     with (
         Splitter(source) as splitter,
         Processor(splitter, upsampler) as processor,
-        Combiner(processor, dest) as combiner
+        Combiner(processor, dest, raw_info) as combiner
     ):
         # run
         splitter.run()

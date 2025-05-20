@@ -6,27 +6,37 @@ import ffmpeg
 
 from mosaic.upscale.upscaler.processor import Processor
 from mosaic.upscale.upscaler.spec import VideoDest
+from mosaic.utils.progress import ProgressBar
 
 
 class Combiner:
-    def __init__(self,
-                 source: Processor,
-                 dest: VideoDest) -> None:
+    def __init__(
+        self,
+        source: Processor,
+        dest: VideoDest,
+        raw_info: bool,
+    ) -> None:
         self.origin = source.origin
         self._input = source
         self._scale = dest.scale
         self._output_file = dest.output_file
         self._proc: Popen | None = None
+        self._pbar: ProgressBar | None = None
+        self._pbar = (None if raw_info else
+                      ProgressBar('mosaic-upsacle-combiner-progress', self.origin.duration))
 
     @property
     def input(self) -> Path:
         return self._input.output
 
     def __enter__(self) -> Self:
+        if self._pbar:
+            self._pbar.start()
         return self
 
     def __exit__(self, type, value, traceback) -> None:
-        pass
+        if self._pbar:
+            self._pbar.stop()
 
     def run(self) -> None:
         # block until upsampled info available
@@ -51,9 +61,18 @@ class Combiner:
             .overwrite_output()
         )
 
+        # if not showing raw info, ask ffmpeg to print progress info and run progress bar
+        if self._pbar:
+            stream = stream.global_args('-loglevel', 'fatal')
+            stream = stream.global_args('-progress', self._pbar.input)
+            stream = stream.global_args('-stats_period', '0.5')
+            self._pbar.run()
+
         # run
-        self._proc = stream.run_async(pipe_stdin=True)
+        self._proc = stream.run_async()
 
     def wait(self) -> None:
         assert self._proc is not None
         self._proc.wait()
+        if self._pbar is not None:
+            self._pbar.wait()

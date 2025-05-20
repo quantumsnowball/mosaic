@@ -17,15 +17,18 @@ PACKAGE_DIR = Path(__file__).parent
 @click.option('-m', '--model', default='realesr_animevideov3', type=click.Choice(PRESETS), help='Real-ESRGAN model choices')
 @click.option('-s', '--scale', default='1080p', type=click.Choice(('720p', '1080p', '1440p', '2160p')), help='output scale')
 @click.option('-y', '--force', is_flag=True, default=False, help='overwrite output file without asking')
+@click.option('--raw-info', is_flag=True, default=False, help='display raw ffmpeg info')
 @click.argument('output-file', required=True, type=VideoPathParamType())
-def upscale(input_file: Path,
-            start_time: HMS | None,
-            end_time: HMS | None,
-            model: str,
-            scale: str,
-            force: bool,
-            output_file: Path,
-            ) -> None:
+def upscale(
+    input_file: Path,
+    start_time: HMS | None,
+    end_time: HMS | None,
+    model: str,
+    scale: str,
+    force: bool,
+    raw_info: bool,
+    output_file: Path,
+) -> None:
     # verify inputs
     assert input_file.exists(), f'{input_file} does not exists'
     if start_time and end_time:
@@ -50,5 +53,6 @@ def upscale(input_file: Path,
         end_time=end_time,
         output_file=output_file,
         scale=scale,
+        raw_info=raw_info,
         upsampler=upsampler,
     )
