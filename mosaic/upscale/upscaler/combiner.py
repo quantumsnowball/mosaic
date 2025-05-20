@@ -21,7 +21,6 @@ class Combiner:
         self._scale = dest.scale
         self._output_file = dest.output_file
         self._proc: Popen | None = None
-        self._pbar: ProgressBar | None = None
         self._pbar = None if raw_info else ProgressBar(self.origin.duration)
 
     @property

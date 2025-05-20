@@ -9,7 +9,7 @@ def bisenet(model_path: Path) -> BiSeNet:
     net = BiSeNet(num_classes=1,
                   context_path='resnet18',
                   train_flag=False)
-    show_paramsnumber(net, 'segment')
+    # show_paramsnumber(net, 'segment')
     # if type == 'roi':
     #     net.load_state_dict(torch.load(opt.model_path))
     # elif type == 'mosaic':

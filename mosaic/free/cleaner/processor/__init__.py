@@ -69,7 +69,10 @@ class Processor:
                 if size < self._min_mask_size:
                     img_output = package.img_origin.copy()
                     out_bytes = img_output.astype(np.uint8).tobytes()
-                    output.write(out_bytes)
+                    try:
+                        output.write(out_bytes)
+                    except BrokenPipeError:
+                        break
                     continue
 
                 # remove mosaic area

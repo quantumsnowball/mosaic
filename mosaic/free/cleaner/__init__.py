@@ -3,11 +3,11 @@ from pathlib import Path
 from mosaic.free.cleaner.combiner import Combiner
 from mosaic.free.cleaner.packer import Packer
 from mosaic.free.cleaner.processor import Processor
-from mosaic.free.cleaner.source import VideoSource
 from mosaic.free.cleaner.splitter import Splitter
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.utils import HMS
+from mosaic.utils.spec import VideoSource
 
 
 def run(
@@ -15,6 +15,7 @@ def run(
     start_time: HMS | None,
     end_time: HMS | None,
     output_file: Path,
+    raw_info: bool,
     netM: BiSeNet,
     netG: BVDNet,
 ):
@@ -26,7 +27,7 @@ def run(
         Splitter(source) as splitter,
         Packer(splitter) as packer,
         Processor(packer, netM=netM, netG=netG) as processor,
-        Combiner(processor, output_file) as combiner
+        Combiner(processor, output_file, raw_info) as combiner
     ):
         # run
         splitter.run()
