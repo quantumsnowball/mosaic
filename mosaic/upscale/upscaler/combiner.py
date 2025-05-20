@@ -46,12 +46,13 @@ class Combiner:
         ):
             pct = 0.0
             while line := progress.readline():
+                line = line.strip()
                 # track ffmpeg rendering speed
-                if line.strip().startswith('speed='):
+                if line.startswith('speed='):
                     speed_text = line.split('=', maxsplit=1)[1]
                     bar.text(speed_text)
                 # calc current time
-                elif line.strip().startswith('out_time_us='):
+                elif line.startswith('out_time_us='):
                     out_time_us_text = line.split('=', maxsplit=1)[1]
                     try:
                         out_time = float(out_time_us_text) / 1e+6
