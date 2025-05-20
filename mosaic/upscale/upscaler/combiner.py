@@ -55,6 +55,10 @@ class Combiner:
                     return f'{speed_text}, {fps_text}'
 
                 while line := progress.readline():
+                    # break gracefully even before EOF
+                    if line.startswith('progress=end'):
+                        break
+
                     line = line.strip()
                     # track speed
                     if line.startswith('speed='):
@@ -74,9 +78,6 @@ class Combiner:
                         # calc and show progress percentage
                         pct = out_time / self.origin.duration
                         bar(min(pct, 1.0))
-                    # break on EOF or kbint
-                    # if line.startswith('progress=end'):
-                    #     break
 
                 # finish bar to 100%
                 bar(1.0)
