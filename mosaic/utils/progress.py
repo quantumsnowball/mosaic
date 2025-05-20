@@ -11,7 +11,7 @@ class ProgressBar:
     def __init__(self, name: str, duration: float) -> None:
         self.name = name
         self.duration = duration
-        self._pipe = Path(f'/tmp/{name}-{uuid.uuid4()}')
+        self._pipe = Path(f'/tmp/{__name__}.{uuid.uuid4()}')
         self._thread: Thread | None = None
 
     @property
