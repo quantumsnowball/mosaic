@@ -55,6 +55,7 @@ def free(
         start_time=start_time,
         end_time=end_time,
         output_file=output_file,
+        raw_info=raw_info,
         netM=netM,
         netG=netG,
     )
