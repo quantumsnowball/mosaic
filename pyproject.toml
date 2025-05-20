@@ -13,7 +13,8 @@ dependencies = [
     'click',
     'torch',
     'torchvision',
-    'opencv-python'
+    'opencv-python',
+    'alive-progress',
 ]
 
 [project.urls]
