@@ -99,3 +99,6 @@ class Packer:
 
     def wait(self) -> None:
         self._thread.join()
+
+    def stop(self) -> None:
+        self.output.put(None)

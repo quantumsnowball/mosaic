@@ -95,3 +95,7 @@ class Processor:
 
     def wait(self) -> None:
         self._thread.join()
+
+    def stop(self) -> None:
+        if self.output.exists():
+            self.output.unlink()

@@ -35,14 +35,26 @@ def run(
         processor.run()
         combiner.run()
 
-        try:
-            # wait for splitter the first proc in pipeline
+        def wait() -> None:
+            # wait until the last worker
             splitter.wait()
-        except KeyboardInterrupt:
-            # upon kbint, only stop splitter
-            splitter.stop()
-        finally:
-            # wait for others to quit gracefully
             packer.wait()
             processor.wait()
             combiner.wait()
+
+        def stop() -> None:
+            # stop all workers
+            splitter.stop()
+            packer.stop()
+            processor.stop()
+            combiner.stop()
+
+        try:
+            # wait for all workers
+            wait()
+        except KeyboardInterrupt:
+            # upon kbint, only stop splitter
+            stop()
+        finally:
+            # wait for all workers again
+            wait()

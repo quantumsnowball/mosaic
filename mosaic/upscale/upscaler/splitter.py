@@ -22,7 +22,7 @@ class Splitter:
             .global_args(
                 '-y',
                 '-hide_banner',
-                '-loglevel', 'quiet')
+                '-loglevel', 'fatal')
         )
         self._proc: Popen | None = None
 
@@ -40,7 +40,7 @@ class Splitter:
             self.output.unlink()
 
     def run(self) -> None:
-        self._proc = self._stream.run_async(pipe_stdout=False)
+        self._proc = self._stream.run_async()
 
     def wait(self) -> None:
         assert self._proc is not None
