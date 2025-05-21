@@ -1,3 +1,5 @@
+import json
+import uuid
 from pathlib import Path
 
 import click
@@ -18,5 +20,19 @@ def free(
     input_file: Path,
     output_file: Path,
 ) -> None:
-    # create the mosaic temp dir if not exists
-    Path.mkdir(MOSAIC_TEMP_DIR, exist_ok=True)
+    # create a new job directory
+    job_id = uuid.uuid4()
+    job_dirname = f'{job_id}'
+    job_dirpath = MOSAIC_TEMP_DIR / job_dirname
+    Path.mkdir(job_dirpath, parents=True)
+
+    # create the meta data json file
+    info_fname = 'job.json'
+    info_fpath = job_dirpath / info_fname
+    info = dict(
+        command='free',
+        input_file=str(input_file),
+        output_file=str(output_file),
+    )
+    with open(info_fpath, 'w') as f:
+        json.dump(info, f, indent=4)
