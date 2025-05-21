@@ -2,6 +2,7 @@ from pathlib import Path
 
 import click
 
+from mosaic.jobs.utils import MOSAIC_TEMP_DIR
 from mosaic.utils import VideoPathParamType
 
 
@@ -17,4 +18,5 @@ def free(
     input_file: Path,
     output_file: Path,
 ) -> None:
-    print(f'mosaic jobs create free -i {input_file} {output_file}')
+    # create the mosaic temp dir if not exists
+    Path.mkdir(MOSAIC_TEMP_DIR, exist_ok=True)
