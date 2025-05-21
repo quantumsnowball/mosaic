@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from types import SimpleNamespace as NS
 from typing import Self
 from uuid import UUID, uuid4
 
@@ -8,6 +9,8 @@ from mosaic.jobs.utils import MOSAIC_TEMP_DIR
 
 class Job:
     info_fname = 'job.json'
+    inputs_dirname = 'inputs'
+    outputs_dirname = 'outputs'
 
     def __init__(
         self,
@@ -21,11 +24,13 @@ class Job:
         self.id = id
         self.input_file = input_file
         self.output_file = output_file
-        self._dirname = f'{self.id}'
-        self._dirpath = MOSAIC_TEMP_DIR / self._dirname
+        self._job_dirpath = MOSAIC_TEMP_DIR / f'{self.id}'
+        self._input_dirpath = self._job_dirpath / self.inputs_dirname
+        self._output_dirpath = self._job_dirpath / self.outputs_dirname
 
     def create_dirs(self) -> None:
-        Path.mkdir(self._dirpath, parents=True)
+        Path.mkdir(self._input_dirpath, parents=True)
+        Path.mkdir(self._output_dirpath, parents=True)
 
     def start(self) -> None:
         print(f'\nStarted job {self.id}')
@@ -54,7 +59,7 @@ class Job:
         )
 
     def save(self) -> None:
-        info_fpath = self._dirpath / self.info_fname
+        info_fpath = self._job_dirpath / self.info_fname
         info = {k: str(v) for k, v in dict(
             command=self.command,
             id=self.id,
