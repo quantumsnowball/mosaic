@@ -3,6 +3,7 @@ import importlib.metadata as meta
 import click
 
 from mosaic.free import free
+from mosaic.jobs import jobs
 from mosaic.upscale import upscale
 
 NAME = 'mosaic'
@@ -24,3 +25,4 @@ def version() -> None:
 
 mosaic.add_command(free)
 mosaic.add_command(upscale)
+mosaic.add_command(jobs)
