@@ -24,9 +24,12 @@ def jobs(ctx: click.Context) -> None:
         print(f'\toutput file: {job.output_file}')
 
     # ask to select a job
-    n: int = click.prompt('Please select a job', type=int)
-    selected_job = jobs[n - 1]
-    selected_job.start()
+    if len(jobs) > 0:
+        n: int = click.prompt('Please select a job', type=int)
+        selected_job = jobs[n - 1]
+        selected_job.start()
+    else:
+        print('No jobs available. Please create a job first.')
 
 
 jobs.add_command(create)
