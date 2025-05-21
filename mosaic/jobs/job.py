@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-from types import SimpleNamespace as NS
 from typing import Self
 from uuid import UUID, uuid4
 
@@ -13,6 +12,7 @@ class Job:
     info_fname = 'job.json'
     inputs_dirname = 'inputs'
     outputs_dirname = 'outputs'
+    outputs_list_fname = 'outputs.txt'
 
     def __init__(
         self,
@@ -42,7 +42,6 @@ class Job:
             str(self._input_dirpath / 'input_%06d.ts'),
             f='segment',
             segment_time=300,
-            reset_timestamps=1,
             c='copy'
         ).global_args(
             '-loglevel', 'fatal',
@@ -55,8 +54,13 @@ class Job:
             shutil.move(f, self._output_dirpath / f.name)
 
         # combine the output segments
-        print('combining the output segments')
-        print(f'finally should produce {self.output_file.name}')
+        outputs = [str(p) for p in sorted(self._output_dirpath.glob('*.ts'))]
+        ffmpeg.input(
+            f'concat:{"|".join(outputs)}'
+        ).output(
+            str(self.output_file),
+            c='copy'
+        ).run()
 
     @classmethod
     def create(cls, *, command: str, input_file: Path, output_file: Path) -> Self:
