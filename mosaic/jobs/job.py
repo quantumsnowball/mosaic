@@ -4,6 +4,8 @@ from types import SimpleNamespace as NS
 from typing import Self
 from uuid import UUID, uuid4
 
+import ffmpeg
+
 from mosaic.jobs.utils import MOSAIC_TEMP_DIR
 
 
@@ -33,8 +35,26 @@ class Job:
         Path.mkdir(self._output_dirpath, parents=True)
 
     def start(self) -> None:
-        print(f'\nStarted job {self.id}')
-        print(f'{self.command} -i {self.input_file} {self.output_file}')
+        # split video into segments
+        ffmpeg.input(
+            str(self.input_file),
+        ).output(
+            str(self._input_dirpath / 'input_%06d.ts'),
+            f='segment',
+            segment_time=300,
+            reset_timestamps=1,
+            c='copy'
+        ).global_args(
+            '-loglevel', 'fatal',
+            '-progress', 'pipe:1',
+        ).run()
+
+        # process the segments into output segments
+        print('processing the segments into output segments')
+
+        # combine the output segments
+        print('combining the output segments')
+        print(f'finally should produce {self.output_file.name}')
 
     @classmethod
     def create(cls, *, command: str, input_file: Path, output_file: Path) -> Self:
