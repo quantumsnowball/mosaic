@@ -1,11 +1,8 @@
-import json
-import uuid
 from pathlib import Path
 
 import click
 
-from mosaic.jobs.job import JobInfo
-from mosaic.jobs.utils import MOSAIC_TEMP_DIR
+from mosaic.jobs.job import Job
 from mosaic.utils import VideoPathParamType
 
 
@@ -21,19 +18,15 @@ def free(
     input_file: Path,
     output_file: Path,
 ) -> None:
-    # create a new job directory
-    job_id = uuid.uuid4()
-    job_dirname = f'{job_id}'
-    job_dirpath = MOSAIC_TEMP_DIR / job_dirname
-    Path.mkdir(job_dirpath, parents=True)
-
-    # create the meta data json file
-    info_fname = 'job.json'
-    info_fpath = job_dirpath / info_fname
-    info = JobInfo(
+    # create a new job
+    job = Job.create(
         command='free',
-        id=job_id,
         input_file=input_file,
         output_file=output_file,
     )
-    info.save(info_fpath)
+
+    # create the job directory
+    job.create_dirs()
+
+    # create the meta data json file
+    job.save()
