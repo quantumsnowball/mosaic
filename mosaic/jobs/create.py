@@ -4,6 +4,7 @@ from pathlib import Path
 
 import click
 
+from mosaic.jobs.job import JobInfo
 from mosaic.jobs.utils import MOSAIC_TEMP_DIR
 from mosaic.utils import VideoPathParamType
 
@@ -29,11 +30,10 @@ def free(
     # create the meta data json file
     info_fname = 'job.json'
     info_fpath = job_dirpath / info_fname
-    info = {k: str(v) for k, v in dict(
+    info = JobInfo(
         command='free',
         id=job_id,
         input_file=input_file,
         output_file=output_file,
-    ).items()}
-    with open(info_fpath, 'w') as f:
-        json.dump(info, f, indent=4)
+    )
+    info.save(info_fpath)
