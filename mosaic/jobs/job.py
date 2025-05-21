@@ -49,8 +49,10 @@ class Job:
             '-progress', 'pipe:1',
         ).run()
 
-        # process the segments into output segments
-        print('processing the segments into output segments')
+        # TODO: process the segments into output segments
+        import shutil
+        for f in self._input_dirpath.glob('*.ts'):
+            shutil.move(f, self._output_dirpath / f.name)
 
         # combine the output segments
         print('combining the output segments')
