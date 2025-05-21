@@ -13,7 +13,8 @@ def start_job(job_dirpath: Path) -> None:
     with open(job_infopath, 'r') as f:
         info = SimpleNamespace(json.load(f))
         # TODO: you should write imple how to do the job around here
-        print(f'\nStarted job: {info.command} -i {info.input_file} {info.output_file}')
+        print(f'\nStarted job {info.id}')
+        print(f'{info.command} -i {info.input_file} {info.output_file}')
 
 
 @click.group(invoke_without_command=True)
@@ -28,11 +29,10 @@ def jobs(ctx: click.Context) -> None:
 
     # display a job list
     for i, dirpath in enumerate(jobs):
-        dirname = dirpath.name
-        print(f'{i+1}: {dirname}')
         job_infopath = dirpath / 'job.json'
         with open(job_infopath, 'r') as f:
             info = SimpleNamespace(json.load(f))
+            print(f'{i+1}: {info.id}')
             print(f'\tcommand: {info.command}')
             print(f'\tinput file: {info.input_file}')
             print(f'\toutput file: {info.output_file}')

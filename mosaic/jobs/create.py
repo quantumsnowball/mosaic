@@ -29,10 +29,11 @@ def free(
     # create the meta data json file
     info_fname = 'job.json'
     info_fpath = job_dirpath / info_fname
-    info = dict(
+    info = {k: str(v) for k, v in dict(
         command='free',
-        input_file=str(input_file),
-        output_file=str(output_file),
-    )
+        id=job_id,
+        input_file=input_file,
+        output_file=output_file,
+    ).items()}
     with open(info_fpath, 'w') as f:
         json.dump(info, f, indent=4)
