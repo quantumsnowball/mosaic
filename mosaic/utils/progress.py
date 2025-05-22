@@ -13,6 +13,15 @@ class ProgressBar:
         self._pipe = Path(f'/tmp/{__name__}.{uuid.uuid4()}')
         self._thread: Thread | None = None
 
+    def __enter__(self) -> Self:
+        self.start()
+        self.run()
+        return self
+
+    def __exit__(self, type, value, traceback) -> None:
+        self.stop()
+        self.wait()
+
     @property
     def input(self) -> Path:
         return self._pipe

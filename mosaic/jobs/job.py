@@ -6,6 +6,8 @@ from uuid import UUID, uuid4
 import ffmpeg
 
 from mosaic.jobs.utils import MOSAIC_TEMP_DIR
+from mosaic.utils.progress import ProgressBar
+from mosaic.utils.spec import VideoSource
 
 
 class Job:
@@ -26,6 +28,7 @@ class Job:
         self.id = id
         self.input_file = input_file
         self.output_file = output_file
+        self.origin = VideoSource(self.input_file)
         self._job_dirpath = MOSAIC_TEMP_DIR / f'{self.id}'
         self._input_dirpath = self._job_dirpath / self.inputs_dirname
         self._output_dirpath = self._job_dirpath / self.outputs_dirname
@@ -36,17 +39,19 @@ class Job:
         Path.mkdir(self._output_dirpath, parents=True)
 
         # split video into segments
-        ffmpeg.input(
-            str(self.input_file),
-        ).output(
-            str(self._input_dirpath / 'input_%06d.ts'),
-            f='segment',
-            segment_time=300,
-            c='copy'
-        ).global_args(
-            '-loglevel', 'fatal',
-            '-progress', 'pipe:1',
-        ).run()
+        with ProgressBar(self.origin.duration) as pbar:
+            ffmpeg.input(
+                str(self.input_file),
+            ).output(
+                str(self._input_dirpath / 'input_%06d.ts'),
+                f='segment',
+                segment_time=300,
+                c='copy'
+            ).global_args(
+                '-loglevel', 'fatal',
+                '-progress', pbar.input,
+                '-stats_period', '0.5',
+            ).run()
 
         # TODO: create a sqlite db as the checklist
 
