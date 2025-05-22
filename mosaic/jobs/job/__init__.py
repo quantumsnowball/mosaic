@@ -68,7 +68,7 @@ class Job:
             ).global_args(
                 '-loglevel', 'fatal',
                 '-progress', pbar.input,
-                '-stats_period', '0.5',
+                '-stats_period', ProgressBar.REFRESH_RATE,
             ).run()
 
         # create a sqlite db as the checklist
