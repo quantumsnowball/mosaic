@@ -24,7 +24,7 @@ class Job:
     checklist_fname = 'checklist.db'
     concat_index_fname = 'concat.txt'
     segment_time = '00:05:00'
-    segment_ext = 'ts'
+    segment_ext = 'mp4'
     segment_pattern = f'%06d.{segment_ext}'
 
     def __init__(
@@ -68,7 +68,8 @@ class Job:
                 str(self._input_dirpath / self.segment_pattern),
                 f='segment',
                 segment_time=self.segment_time,
-                c='copy',
+                vcodec='libx264',
+                acodec='copy',
             ).global_args(
                 '-loglevel', 'fatal',
                 '-progress', pbar.input,
@@ -99,7 +100,7 @@ class Job:
     def finalize(self) -> None:
         # create concat index
         index = self._output_dirpath / self.concat_index_fname
-        parts = [p for p in sorted(self._output_dirpath.glob('*.ts'))]
+        parts = [p for p in sorted(self._output_dirpath.glob(f'*.{self.segment_ext}'))]
         with open(index, 'w') as f:
             for part in parts:
                 f.write(f'file {part.name}\n')
