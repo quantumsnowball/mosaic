@@ -11,13 +11,7 @@ class Task:
         self.done = bool(done)
 
 
-class Tasks:
-    def __init__(self, entries: Entries) -> None:
-        self.items = tuple(Task(*e) for e in entries)
-
-    @property
-    def count(self) -> int:
-        return len(self.items)
+Tasks = tuple[Task, ...]
 
 
 class Checklist:
@@ -38,7 +32,29 @@ class Checklist:
         sql = f'SELECT name, done FROM {self.name}'
         with self.database as db:
             entries = db.execute(sql).fetchall()
-            return Tasks(entries)
+            return tuple(Task(*e) for e in entries)
+
+    def _count(self, cond: str = '') -> int:
+        sql = f'SELECT COUNT(*) FROM {self.name} {cond}'.strip()
+        with self.database as db:
+            (count, ) = db.execute(sql).fetchone()
+            return int(count)
+
+    @property
+    def count(self) -> int:
+        return self._count()
+
+    @property
+    def count_finished(self) -> int:
+        return self._count('WHERE done = 1')
+
+    @property
+    def count_unfinished(self) -> int:
+        return self._count('WHERE done = 0')
+
+    @property
+    def is_finished(self) -> bool:
+        return self.count_unfinished == 0
 
     def create(self) -> None:
         sql = (
@@ -62,7 +78,6 @@ class Checklist:
             for f in sorted(target_dir.glob(f'*.{ext}')):
                 db.execute(sql, (f.name, val))
 
-    # helpers
     def next_task(self) -> Task | None:
         sql = f'SELECT * FROM {self.name} WHERE done = 0 ORDER BY name LIMIT 1'
         with self.database as db:

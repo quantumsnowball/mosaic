@@ -68,10 +68,13 @@ class Job:
 
     def proceed(self) -> None:
         import shutil
+        import time
 
         while task := self.checklist.next_task():
             print(f'I am doing task {task.name}')
             # TODO: process the segments into output segments
+            # simulate long running task
+            time.sleep(5)
             shutil.move(
                 self._input_dirpath / task.name,
                 self._output_dirpath / task.name
@@ -91,11 +94,12 @@ class Job:
         ).run()
 
     def run(self) -> None:
-        # TODO: decide which operation to do or skip
         if not self._checklist_fpath.exists():
             self.initialize()
-        self.proceed()
-        self.finalize()
+        if not self.checklist.is_finished:
+            self.proceed()
+        if self.checklist.is_finished:
+            self.finalize()
 
     def save(self) -> None:
         info_fpath = self._job_dirpath / self.info_fname

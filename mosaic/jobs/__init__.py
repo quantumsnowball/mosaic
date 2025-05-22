@@ -22,6 +22,7 @@ def jobs(ctx: click.Context) -> None:
     # display a job list
     for i, job in enumerate(jobs):
         print(f'{i+1}: {job.id}')
+        print(f'\tprogress: {job.checklist.count_finished} / {job.checklist.count} completed')
         print(f'\tcommand: {job.command}')
         print(f'\tinput file: {job.input_file}')
         print(f'\toutput file: {job.output_file}')
