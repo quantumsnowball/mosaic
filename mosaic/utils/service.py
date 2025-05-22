@@ -10,10 +10,9 @@ class service(ContextDecorator):
         TEMP_DIR.mkdir(exist_ok=True)
         return self
 
-    def __exit__(self, *_) -> bool:
+    def __exit__(self, *_) -> None:
         try:
             TEMP_DIR.rmdir()
             ROOT_DIR.rmdir()
         except OSError:
             pass
-        return False

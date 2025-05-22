@@ -34,7 +34,6 @@ class ProgressBar:
 
     def start(self) -> Self:
         if not self._pipe.exists():
-            self._pipe.parent.mkdir(parents=True, exist_ok=True)
             os.mkfifo(self._pipe)
         return self
 
