@@ -73,18 +73,29 @@ class Checklist:
         ext: str,
         val: bool,
     ) -> None:
-        sql = 'INSERT INTO checklist (name, done) VALUES (?, ?)'
+        sql = (
+            'INSERT INTO checklist (name, done) '
+            'VALUES (?, ?)'
+        )
         with self.database as db:
             for f in sorted(target_dir.glob(f'*.{ext}')):
                 db.execute(sql, (f.name, val))
 
     def next_task(self) -> Task | None:
-        sql = f'SELECT * FROM {self.name} WHERE done = 0 ORDER BY name LIMIT 1'
+        sql = (
+            f'SELECT * FROM {self.name} '
+            'WHERE done = 0 '
+            'ORDER BY name LIMIT 1'
+        )
         with self.database as db:
             entry: Entry | None = db.execute(sql).fetchone()
         return Task(*entry) if entry else None
 
     def mark_done(self, task: Task) -> None:
-        sql = f'UPDATE {self.name} SET done = 1 WHERE name = ?'
+        sql = (
+            f'UPDATE {self.name} '
+            'SET done = 1 '
+            'WHERE name = ?'
+        )
         with self.database as db:
             db.execute(sql, (task.name, ))
