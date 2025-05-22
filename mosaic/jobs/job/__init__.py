@@ -18,6 +18,7 @@ class Job:
     outputs_dirname = 'outputs'
     outputs_list_fname = 'outputs.txt'
     checklist_fname = 'checklist.db'
+    concat_index_fname = 'concat.txt'
 
     def __init__(
         self,
@@ -59,8 +60,8 @@ class Job:
             ).output(
                 str(self._input_dirpath / '%06d.ts'),
                 f='segment',
-                segment_time=300,
-                c='copy'
+                segment_time='00:05:00',
+                c='copy',
             ).global_args(
                 '-loglevel', 'fatal',
                 '-progress', pbar.input,
@@ -79,7 +80,7 @@ class Job:
             print(f'I am doing task {task.name}')
             # TODO: process the segments into output segments
             # simulate long running task
-            time.sleep(5)
+            # time.sleep(5)
             shutil.move(
                 self._input_dirpath / task.name,
                 self._output_dirpath / task.name
@@ -87,10 +88,16 @@ class Job:
             self.checklist.mark_done(task)
 
     def finalize(self) -> None:
+        # create concat index
+        index = self._output_dirpath / self.concat_index_fname
+        parts = [p for p in sorted(self._output_dirpath.glob('*.ts'))]
+        with open(index, 'w') as f:
+            for part in parts:
+                f.write(f'file {part.name}\n')
         # combine the output segments
-        outputs = [str(p) for p in sorted(self._output_dirpath.glob('*.ts'))]
         ffmpeg.input(
-            f'concat:{"|".join(outputs)}'
+            str(index),
+            f='concat',
         ).output(
             str(self.output_file),
             c='copy'
