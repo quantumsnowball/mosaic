@@ -4,6 +4,9 @@ from pathlib import Path
 
 import click
 
+ROOT_DIR = Path('.mosaic')
+TEMP_DIR = ROOT_DIR / '.temp'
+
 
 class HMS:
     def __init__(self,

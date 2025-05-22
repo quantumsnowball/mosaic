@@ -2,7 +2,7 @@ from shutil import rmtree
 
 import click
 
-from mosaic.jobs.utils import MOSAIC_TEMP_DIR
+from mosaic.jobs.utils import JOBS_DIR
 
 
 @click.command
@@ -16,8 +16,8 @@ def clean(clear_all_jobs: bool) -> None:
             default='n',
             show_default=False,
         ).lower() == 'y':
-            rmtree(MOSAIC_TEMP_DIR, ignore_errors=True)
-            if not MOSAIC_TEMP_DIR.exists():
+            rmtree(JOBS_DIR, ignore_errors=True)
+            if not JOBS_DIR.exists():
                 click.echo('All jobs has been cleared')
         else:
             click.echo('Operation cancelled')
