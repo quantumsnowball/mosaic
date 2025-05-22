@@ -13,11 +13,11 @@ class Task:
 
 class Tasks:
     def __init__(self, entries: Entries) -> None:
-        self._items = tuple(Task(*e) for e in entries)
+        self.items = tuple(Task(*e) for e in entries)
 
     @property
     def count(self) -> int:
-        return len(self._items)
+        return len(self.items)
 
 
 class Checklist:
@@ -61,3 +61,15 @@ class Checklist:
         with self.database as db:
             for f in sorted(target_dir.glob(f'*.{ext}')):
                 db.execute(sql, (f.name, val))
+
+    # helpers
+    def next_task(self) -> Task | None:
+        sql = f'SELECT * FROM {self.name} WHERE done = 0 ORDER BY name LIMIT 1'
+        with self.database as db:
+            entry: Entry | None = db.execute(sql).fetchone()
+        return Task(*entry) if entry else None
+
+    def mark_done(self, task: Task) -> None:
+        sql = f'UPDATE {self.name} SET done = 1 WHERE name = ?'
+        with self.database as db:
+            db.execute(sql, (task.name, ))

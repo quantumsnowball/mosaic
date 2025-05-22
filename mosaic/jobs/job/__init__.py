@@ -1,5 +1,4 @@
 import json
-import sqlite3
 from pathlib import Path
 from typing import Self
 from uuid import UUID, uuid4
@@ -53,7 +52,7 @@ class Job:
             ffmpeg.input(
                 str(self.input_file),
             ).output(
-                str(self._input_dirpath / 'input_%06d.ts'),
+                str(self._input_dirpath / '%06d.ts'),
                 f='segment',
                 segment_time=300,
                 c='copy'
@@ -68,10 +67,16 @@ class Job:
         self.checklist.initialize(self._input_dirpath, ext='ts', val=False)
 
     def proceed(self) -> None:
-        # TODO: process the segments into output segments
         import shutil
-        for f in self._input_dirpath.glob('*.ts'):
-            shutil.move(f, self._output_dirpath / f.name)
+
+        while task := self.checklist.next_task():
+            print(f'I am doing task {task.name}')
+            # TODO: process the segments into output segments
+            shutil.move(
+                self._input_dirpath / task.name,
+                self._output_dirpath / task.name
+            )
+            self.checklist.mark_done(task)
 
     def finalize(self) -> None:
         # combine the output segments
@@ -87,7 +92,8 @@ class Job:
 
     def run(self) -> None:
         # TODO: decide which operation to do or skip
-        self.initialize()
+        if not self._checklist_fpath.exists():
+            self.initialize()
         self.proceed()
         self.finalize()
 
