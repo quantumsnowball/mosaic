@@ -6,8 +6,12 @@ from uuid import UUID, uuid4
 
 import ffmpeg
 
+from mosaic.free import cleaner
+from mosaic.free.net.netG import video
+from mosaic.free.net.netM import bisenet
 from mosaic.jobs.job.checklist import Checklist
 from mosaic.jobs.utils import JOBS_DIR
+from mosaic.utils import PACKAGE_ROOT
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.spec import VideoSource
 
@@ -76,19 +80,21 @@ class Job:
         self.checklist.initialize(self._input_dirpath, ext=self.segment_ext, val=False)
 
     def proceed(self) -> None:
-        import shutil
-        import time
-
+        # loop through available tasks
         while task := self.checklist.next_task():
-            print(f'I am doing task {task.name}')
-            # TODO: process the segments into output segments
-            # simulate long running task
-            # time.sleep(5)
-            shutil.move(
-                self._input_dirpath / task.name,
-                self._output_dirpath / task.name
-            )
-            self.checklist.mark_done(task)
+            # process task with the correct command
+            if self.command == 'free':
+                cleaner.run(
+                    input_file=self._input_dirpath / task.name,
+                    start_time=None,
+                    end_time=None,
+                    output_file=self._output_dirpath / task.name,
+                    raw_info=False,
+                    netM=bisenet(PACKAGE_ROOT/'free/net/netM/state_dicts/mosaic_position.pth'),
+                    netG=video(PACKAGE_ROOT/'free/net/netG/state_dicts/clean_youknow_video.pth'),
+                )
+                # mark task done
+                self.checklist.mark_done(task)
 
     def finalize(self) -> None:
         # create concat index
