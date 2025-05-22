@@ -55,12 +55,13 @@ class Job:
 
         # TODO: create a sqlite db as the checklist
 
-    def run(self) -> None:
+    def proceed(self) -> None:
         # TODO: process the segments into output segments
         import shutil
         for f in self._input_dirpath.glob('*.ts'):
             shutil.move(f, self._output_dirpath / f.name)
 
+    def finalize(self) -> None:
         # combine the output segments
         outputs = [str(p) for p in sorted(self._output_dirpath.glob('*.ts'))]
         ffmpeg.input(
@@ -69,6 +70,12 @@ class Job:
             str(self.output_file),
             c='copy'
         ).run()
+
+    def run(self) -> None:
+        # TODO: decide which operation to do or skip
+        self.initialize()
+        self.proceed()
+        self.finalize()
 
     @classmethod
     def create(cls, *, command: str, input_file: Path, output_file: Path) -> Self:
@@ -93,6 +100,7 @@ class Job:
         )
 
     def save(self) -> None:
+        Path.mkdir(self._job_dirpath, parents=True)
         info_fpath = self._job_dirpath / self.info_fname
         info = {k: str(v) for k, v in dict(
             command=self.command,
