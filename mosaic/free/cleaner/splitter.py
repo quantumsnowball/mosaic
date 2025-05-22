@@ -6,12 +6,13 @@ from typing import Self
 
 import ffmpeg
 
+from mosaic.utils import TEMP_DIR
 from mosaic.utils.spec import VideoSource
 
 
 class Splitter:
     def __init__(self, source: VideoSource) -> None:
-        self._output_pipe = Path(f'/tmp/{__name__}.{uuid.uuid4()}')
+        self._output_pipe = TEMP_DIR / f'{__name__}.{uuid.uuid4()}'
         self.origin = s = source
         self._stream = (
             ffmpeg
