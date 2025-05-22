@@ -1,8 +1,28 @@
 from pathlib import Path
 from sqlite3 import Connection, connect
 
+Entry = tuple[str, int]
+Entries = list[Entry]
+
+
+class Task:
+    def __init__(self, name: str, done: int) -> None:
+        self.name = str(name)
+        self.done = bool(done)
+
+
+class Tasks:
+    def __init__(self, entries: Entries) -> None:
+        self._items = tuple(Task(*e) for e in entries)
+
+    @property
+    def count(self) -> int:
+        return len(self._items)
+
 
 class Checklist:
+    name = 'checklist'
+
     def __init__(
         self,
         path: Path
@@ -13,9 +33,16 @@ class Checklist:
     def database(self) -> Connection:
         return connect(self.path)
 
+    @property
+    def tasks(self) -> Tasks:
+        sql = f'SELECT name, done FROM {self.name}'
+        with self.database as db:
+            entries = db.execute(sql).fetchall()
+            return Tasks(entries)
+
     def create(self) -> None:
         sql = (
-            'CREATE TABLE IF NOT EXISTS checklist ('
+            f'CREATE TABLE IF NOT EXISTS {self.name} ('
             '   name TEXT PRIMARY KEY,'
             '   done BOOLEAN NOT NULL'
             ');'
