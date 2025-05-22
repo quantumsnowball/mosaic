@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from pathlib import Path
 from typing import Self
 from uuid import UUID, uuid4
@@ -23,15 +24,19 @@ class Job:
         *,
         command: str,
         id: UUID,
+        timestamp: datetime,
         input_file: Path,
         output_file: Path,
     ) -> None:
         self.command = command
         self.id = id
+        self.timestamp = timestamp
+        self.timestamp_iso = self.timestamp.isoformat()
+        self.timestamp_pp = self.timestamp.strftime("%Y-%m-%d %H:%M:%S")
         self.input_file = input_file
         self.output_file = output_file
         self.origin = VideoSource(self.input_file)
-        self._job_dirpath = JOBS_DIR / f'{self.id}'
+        self._job_dirpath = JOBS_DIR / f'{self.timestamp_iso.replace(':', '.').replace('T', '_')}'
         self._input_dirpath = self._job_dirpath / self.inputs_dirname
         self._output_dirpath = self._job_dirpath / self.outputs_dirname
         self._checklist_fpath = self._job_dirpath / self.checklist_fname
@@ -106,6 +111,7 @@ class Job:
         info = {k: str(v) for k, v in dict(
             command=self.command,
             id=self.id,
+            timestamp=self.timestamp_iso,
             input_file=self.input_file,
             output_file=self.output_file,
         ).items()}
@@ -120,6 +126,7 @@ class Job:
         return cls(
             command=d['command'],
             id=UUID(d['id']),
+            timestamp=datetime.fromisoformat(d['timestamp']),
             input_file=Path(d['input_file']),
             output_file=Path(d['output_file']),
         )
@@ -129,6 +136,7 @@ class Job:
         job = cls(
             command=command,
             id=uuid4(),
+            timestamp=datetime.now(),
             input_file=input_file,
             output_file=output_file,
         )
