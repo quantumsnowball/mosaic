@@ -1,5 +1,6 @@
 import click
 
+from mosaic.jobs.clean import clean
 from mosaic.jobs.create import create
 from mosaic.jobs.job import Job
 from mosaic.jobs.utils import MOSAIC_TEMP_DIR
@@ -33,3 +34,4 @@ def jobs(ctx: click.Context) -> None:
 
 
 jobs.add_command(create)
+jobs.add_command(clean)
