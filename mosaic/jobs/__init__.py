@@ -27,7 +27,7 @@ def jobs(ctx: click.Context) -> None:
     if len(jobs) > 0:
         n: int = click.prompt('Please select a job', type=int)
         selected_job = jobs[n - 1]
-        selected_job.start()
+        selected_job.run()
     else:
         print('No jobs available. Please create a job first.')
 

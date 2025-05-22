@@ -26,7 +26,7 @@ def free(
     )
 
     # create the job directory
-    job.create_dirs()
+    job.initialize()
 
     # create the meta data json file
     job.save()

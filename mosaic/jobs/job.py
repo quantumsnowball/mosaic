@@ -30,11 +30,11 @@ class Job:
         self._input_dirpath = self._job_dirpath / self.inputs_dirname
         self._output_dirpath = self._job_dirpath / self.outputs_dirname
 
-    def create_dirs(self) -> None:
+    def initialize(self) -> None:
+        # create the inputs and outputs dirs
         Path.mkdir(self._input_dirpath, parents=True)
         Path.mkdir(self._output_dirpath, parents=True)
 
-    def start(self) -> None:
         # split video into segments
         ffmpeg.input(
             str(self.input_file),
@@ -48,6 +48,9 @@ class Job:
             '-progress', 'pipe:1',
         ).run()
 
+        # TODO: create a sqlite db as the checklist
+
+    def run(self) -> None:
         # TODO: process the segments into output segments
         import shutil
         for f in self._input_dirpath.glob('*.ts'):
