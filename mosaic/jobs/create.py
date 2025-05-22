@@ -21,14 +21,12 @@ def free(
     output_file: Path,
 ) -> None:
     # create a new job
-    job = Job.create(
+    with Job.create(
         command='free',
         input_file=input_file,
         output_file=output_file,
-    )
-
-    # save
-    job.save()
-
-    # run
-    job.run()
+    ) as job:
+        # save
+        job.save()
+        # run
+        job.run()

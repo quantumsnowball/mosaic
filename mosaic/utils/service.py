@@ -23,7 +23,6 @@ class service(ContextDecorator):
 
     def __exit__(self, *_) -> None:
         if self.rmdir:
-            print('service: do rmdir')
             try:
                 TEMP_DIR.rmdir()
             except OSError:

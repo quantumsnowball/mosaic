@@ -33,11 +33,16 @@ class Job:
         self._input_dirpath = self._job_dirpath / self.inputs_dirname
         self._output_dirpath = self._job_dirpath / self.outputs_dirname
 
-    def initialize(self) -> None:
-        # create the inputs and outputs dirs
-        Path.mkdir(self._input_dirpath, parents=True)
-        Path.mkdir(self._output_dirpath, parents=True)
+    def __enter__(self) -> Self:
+        Path.mkdir(self._job_dirpath, parents=True)
+        Path.mkdir(self._input_dirpath)
+        Path.mkdir(self._output_dirpath)
+        return self
 
+    def __exit__(self, *_) -> None:
+        pass
+
+    def initialize(self) -> None:
         # split video into segments
         with ProgressBar(self.origin.duration) as pbar:
             ffmpeg.input(
@@ -69,6 +74,8 @@ class Job:
         ).output(
             str(self.output_file),
             c='copy'
+        ).global_args(
+            '-y',
         ).run()
 
     def run(self) -> None:
@@ -77,15 +84,16 @@ class Job:
         self.proceed()
         self.finalize()
 
-    @classmethod
-    def create(cls, *, command: str, input_file: Path, output_file: Path) -> Self:
-        job = cls(
-            command=command,
-            id=uuid4(),
-            input_file=input_file,
-            output_file=output_file,
-        )
-        return job
+    def save(self) -> None:
+        info_fpath = self._job_dirpath / self.info_fname
+        info = {k: str(v) for k, v in dict(
+            command=self.command,
+            id=self.id,
+            input_file=self.input_file,
+            output_file=self.output_file,
+        ).items()}
+        with open(info_fpath, 'w') as f:
+            json.dump(info, f, indent=4)
 
     @classmethod
     def load(cls, dirpath: Path) -> Self:
@@ -99,14 +107,12 @@ class Job:
             output_file=Path(d['output_file']),
         )
 
-    def save(self) -> None:
-        Path.mkdir(self._job_dirpath, parents=True)
-        info_fpath = self._job_dirpath / self.info_fname
-        info = {k: str(v) for k, v in dict(
-            command=self.command,
-            id=self.id,
-            input_file=self.input_file,
-            output_file=self.output_file,
-        ).items()}
-        with open(info_fpath, 'w') as f:
-            json.dump(info, f, indent=4)
+    @classmethod
+    def create(cls, *, command: str, input_file: Path, output_file: Path) -> Self:
+        job = cls(
+            command=command,
+            id=uuid4(),
+            input_file=input_file,
+            output_file=output_file,
+        )
+        return job
