@@ -1,3 +1,3 @@
-from pathlib import Path
+from mosaic.utils import ROOT_DIR
 
-MOSAIC_TEMP_DIR = Path('.mosaic')
+JOBS_DIR = ROOT_DIR / 'jobs'

@@ -6,11 +6,13 @@ from typing import Self
 
 from alive_progress import alive_bar
 
+from mosaic.utils import TEMP_DIR
+
 
 class ProgressBar:
     def __init__(self, duration: float) -> None:
         self.duration = duration
-        self._pipe = Path(f'/tmp/{__name__}.{uuid.uuid4()}')
+        self._pipe = TEMP_DIR / f'{__name__}.{uuid.uuid4()}'
         self._thread: Thread | None = None
 
     def __enter__(self) -> Self:

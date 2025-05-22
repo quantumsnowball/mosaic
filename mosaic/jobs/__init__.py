@@ -3,11 +3,13 @@ import click
 from mosaic.jobs.clean import clean
 from mosaic.jobs.create import create
 from mosaic.jobs.job import Job
-from mosaic.jobs.utils import MOSAIC_TEMP_DIR
+from mosaic.jobs.utils import JOBS_DIR
+from mosaic.utils.service import service
 
 
 @click.group(invoke_without_command=True)
 @click.pass_context
+@service(mkdir=False)
 def jobs(ctx: click.Context) -> None:
     # jobs can be a standalone command
     if ctx.invoked_subcommand:
@@ -15,7 +17,7 @@ def jobs(ctx: click.Context) -> None:
 
     # detect all jobs available
     jobs = [Job.load(dirpath)
-            for dirpath in tuple(MOSAIC_TEMP_DIR.glob('./*/'))]
+            for dirpath in tuple(JOBS_DIR.glob('./*/'))]
 
     # display a job list
     for i, job in enumerate(jobs):

@@ -5,7 +5,7 @@ from uuid import UUID, uuid4
 
 import ffmpeg
 
-from mosaic.jobs.utils import MOSAIC_TEMP_DIR
+from mosaic.jobs.utils import JOBS_DIR
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.spec import VideoSource
 
@@ -29,7 +29,7 @@ class Job:
         self.input_file = input_file
         self.output_file = output_file
         self.origin = VideoSource(self.input_file)
-        self._job_dirpath = MOSAIC_TEMP_DIR / f'{self.id}'
+        self._job_dirpath = JOBS_DIR / f'{self.id}'
         self._input_dirpath = self._job_dirpath / self.inputs_dirname
         self._output_dirpath = self._job_dirpath / self.outputs_dirname
 
