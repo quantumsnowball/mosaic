@@ -1,10 +1,12 @@
 import json
+import sqlite3
 from pathlib import Path
 from typing import Self
 from uuid import UUID, uuid4
 
 import ffmpeg
 
+from mosaic.jobs.job.checklist import Checklist
 from mosaic.jobs.utils import JOBS_DIR
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.spec import VideoSource
@@ -15,6 +17,7 @@ class Job:
     inputs_dirname = 'inputs'
     outputs_dirname = 'outputs'
     outputs_list_fname = 'outputs.txt'
+    checklist_fname = 'checklist.db'
 
     def __init__(
         self,
@@ -32,6 +35,8 @@ class Job:
         self._job_dirpath = JOBS_DIR / f'{self.id}'
         self._input_dirpath = self._job_dirpath / self.inputs_dirname
         self._output_dirpath = self._job_dirpath / self.outputs_dirname
+        self._checklist_fpath = self._job_dirpath / self.checklist_fname
+        self.checklist = Checklist(self._checklist_fpath)
 
     def __enter__(self) -> Self:
         Path.mkdir(self._job_dirpath, parents=True)
@@ -58,7 +63,9 @@ class Job:
                 '-stats_period', '0.5',
             ).run()
 
-        # TODO: create a sqlite db as the checklist
+        # create a sqlite db as the checklist
+        self.checklist.create()
+        self.checklist.initialize(self._input_dirpath, ext='ts', val=False)
 
     def proceed(self) -> None:
         # TODO: process the segments into output segments
