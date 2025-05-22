@@ -19,6 +19,9 @@ class Job:
     outputs_list_fname = 'outputs.txt'
     checklist_fname = 'checklist.db'
     concat_index_fname = 'concat.txt'
+    segment_time = '00:05:00'
+    segment_ext = 'ts'
+    segment_pattern = f'%06d.{segment_ext}'
 
     def __init__(
         self,
@@ -58,9 +61,9 @@ class Job:
             ffmpeg.input(
                 str(self.input_file),
             ).output(
-                str(self._input_dirpath / '%06d.ts'),
+                str(self._input_dirpath / self.segment_pattern),
                 f='segment',
-                segment_time='00:05:00',
+                segment_time=self.segment_time,
                 c='copy',
             ).global_args(
                 '-loglevel', 'fatal',
@@ -70,7 +73,7 @@ class Job:
 
         # create a sqlite db as the checklist
         self.checklist.create()
-        self.checklist.initialize(self._input_dirpath, ext='ts', val=False)
+        self.checklist.initialize(self._input_dirpath, ext=self.segment_ext, val=False)
 
     def proceed(self) -> None:
         import shutil
