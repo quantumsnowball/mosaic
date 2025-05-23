@@ -10,8 +10,8 @@ class VideoSource:
     def __init__(
         self,
         input_file: Path,
-        start_time: HMS | None,
-        end_time: HMS | None
+        start_time: HMS | None = None,
+        end_time: HMS | None = None,
     ) -> None:
         ffprobe_info = ffmpeg.probe(str(input_file))
         for stream in ffprobe_info['streams']:

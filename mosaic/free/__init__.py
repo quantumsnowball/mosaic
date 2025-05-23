@@ -6,6 +6,7 @@ import mosaic.free.cleaner as cleaner
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.utils import HMS, HMSParamType, VideoPathParamType
+from mosaic.utils.service import service
 
 PACKAGE_DIR = Path(__file__).parent
 
@@ -18,6 +19,7 @@ PACKAGE_DIR = Path(__file__).parent
 @click.option('--time-tag', is_flag=True, default=False, help='auto append time tag at end of filename')
 @click.option('--raw-info', is_flag=True, default=False, help='display raw ffmpeg info')
 @click.argument('output-file', required=True, type=VideoPathParamType())
+@service()
 def free(
     input_file: Path,
     start_time: HMS | None,

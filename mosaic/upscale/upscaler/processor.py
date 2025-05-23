@@ -11,6 +11,7 @@ import numpy as np
 
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler.splitter import Splitter
+from mosaic.utils import TEMP_DIR
 
 
 @dataclass
@@ -36,7 +37,7 @@ class Processor:
     def __init__(self,
                  source: Splitter,
                  upsampler: RealESRGANer) -> None:
-        self._output_pipe = Path(f'/tmp/{__name__}.{uuid.uuid4()}')
+        self._output_pipe = TEMP_DIR / f'{__name__}.{uuid.uuid4()}'
         self.origin = o = source.origin
         self._input = source
         self._height = o.height

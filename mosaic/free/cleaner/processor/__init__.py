@@ -13,6 +13,7 @@ from mosaic.free.cleaner.processor.remove import remove_mosaic
 from mosaic.free.cleaner.processor.replace import replace_mosaic
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
+from mosaic.utils import TEMP_DIR
 
 
 class Processor:
@@ -25,7 +26,7 @@ class Processor:
                  netM: BiSeNet,
                  netG: BVDNet,
                  min_mask_size: int = 50) -> None:
-        self._output_pipe = Path(f'/tmp/{__name__}.{uuid.uuid4()}')
+        self._output_pipe = TEMP_DIR / f'{__name__}.{uuid.uuid4()}'
         self.origin = source.origin
         self._input = source
         self._netM = netM

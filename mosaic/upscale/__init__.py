@@ -6,6 +6,7 @@ from mosaic.upscale import upscaler
 from mosaic.upscale.net import PRESETS, presets
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.utils import HMS, HMSParamType, VideoPathParamType
+from mosaic.utils.service import service
 
 PACKAGE_DIR = Path(__file__).parent
 
@@ -19,6 +20,7 @@ PACKAGE_DIR = Path(__file__).parent
 @click.option('-y', '--force', is_flag=True, default=False, help='overwrite output file without asking')
 @click.option('--raw-info', is_flag=True, default=False, help='display raw ffmpeg info')
 @click.argument('output-file', required=True, type=VideoPathParamType())
+@service()
 def upscale(
     input_file: Path,
     start_time: HMS | None,

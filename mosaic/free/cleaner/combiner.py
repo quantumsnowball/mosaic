@@ -55,7 +55,7 @@ class Combiner:
         if self._pbar:
             stream = stream.global_args('-loglevel', 'fatal')
             stream = stream.global_args('-progress', self._pbar.input)
-            stream = stream.global_args('-stats_period', '0.5')
+            stream = stream.global_args('-stats_period', ProgressBar.REFRESH_RATE)
             self._pbar.run()
 
         # run
