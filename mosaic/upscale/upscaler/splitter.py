@@ -46,7 +46,7 @@ class Splitter:
             self.output.unlink()
 
     def run(self) -> None:
-        self._proc = Popen(self._ffmpeg.args)
+        self._proc = self._ffmpeg.run_async()
 
     def wait(self) -> None:
         assert self._proc is not None
