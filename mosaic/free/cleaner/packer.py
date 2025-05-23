@@ -70,7 +70,7 @@ class Packer:
             while True:
                 # read from input pipe for a frame
                 in_bytes = input.read(self._frame_size)
-                if in_bytes:
+                if in_bytes and len(in_bytes) == self._frame_size:
                     shape = (self._height, self._width, 3)
                     frame = np.frombuffer(in_bytes, np.uint8).reshape(shape)
                     buffer.append(frame)
