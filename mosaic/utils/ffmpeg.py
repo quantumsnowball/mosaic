@@ -50,28 +50,3 @@ class FFmpeg:
 
     def run(self) -> int:
         return self.run_async().wait()
-
-
-if __name__ == "__main__":
-    ff = (
-        FFmpeg()
-        .global_args(
-            '-y',
-            '-loglevel', 'fatal',
-        )
-        .input(
-            '-i', 'input.mp4',
-        )
-        .output(
-            '-map', '0:v:0',
-            '-c', 'copy',
-            'output.mp4',
-        )
-    )
-    print(ff)
-    ff.global_args(
-        '-hide_banner',
-        '-abc', 'abc',
-        at=-2,
-    )
-    print(ff)
