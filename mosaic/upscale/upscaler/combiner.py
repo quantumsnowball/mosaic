@@ -73,7 +73,7 @@ class Combiner:
         if self._pbar:
             ffmpeg.global_args(
                 '-loglevel', 'fatal',
-                '-progress', str(self._pbar.input),
+                '-progress', self._pbar.input,
                 '-stats_period', ProgressBar.REFRESH_RATE,
             )
             self._pbar.run()
