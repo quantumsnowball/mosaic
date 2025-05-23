@@ -47,10 +47,10 @@ class Combiner:
                 '-framerate', self.origin.framerate,
                 '-pix_fmt', 'rgb24',
                 '-s', f'{self.origin.width}x{self.origin.height}',
-                '-i', str(self.input),
+                '-i', self.input,
                 # 1:a
                 *self.origin.ffmpeg_input_args,
-                '-i', str(self.origin),
+                '-i', self.origin,
             )
             .output(
                 '-map', '0:v',
@@ -58,7 +58,7 @@ class Combiner:
                 #
                 '-pix_fmt', 'yuv420p',
                 '-vcodec', 'libx264',
-                str(self._output_file),
+                self._output_file,
             )
         )
 
@@ -66,7 +66,7 @@ class Combiner:
         if self._pbar:
             ffmpeg.global_args(
                 '-loglevel', 'fatal',
-                '-progress', str(self._pbar.input),
+                '-progress', self._pbar.input,
                 '-stats_period', ProgressBar.REFRESH_RATE,
             )
             self._pbar.run()

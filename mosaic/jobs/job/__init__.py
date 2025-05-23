@@ -64,16 +64,16 @@ class Job:
             FFmpeg(
             ).global_args(
                 '-loglevel', 'fatal',
-                '-progress', str(pbar.input),
+                '-progress', pbar.input,
                 '-stats_period', ProgressBar.REFRESH_RATE,
             ).input(
-                '-i', str(self.input_file),
+                '-i', self.input_file,
             ).output(
                 '-f', 'segment',
                 '-segment_time', self.segment_time,
                 '-vcodec', 'libx264',
                 '-acodec', 'copy',
-                str(self._input_dirpath / self.segment_pattern),
+                self._input_dirpath / self.segment_pattern,
             ).run()
 
         # create a sqlite db as the checklist
@@ -110,10 +110,10 @@ class Job:
             '-y',
         ).input(
             '-f', 'concat',
-            '-i', str(index),
+            '-i', index,
         ).output(
             '-c', 'copy',
-            str(self.output_file),
+            self.output_file,
         ).run()
 
     def run(self) -> None:
