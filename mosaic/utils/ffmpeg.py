@@ -25,23 +25,29 @@ class FFmpeg:
 
     def global_args(self, *args: str, at: int | None = None) -> Self:
         if at is None:
-            at = len(self._global_args)
-        for arg in reversed(args):
-            self._global_args.insert(at, arg)
+            self._global_args += args
+        else:
+            assert 0 <= at < len(self._global_args)
+            for arg in reversed(args):
+                self._global_args.insert(at, arg)
         return self
 
     def input(self, *args: str, at: int | None = None) -> Self:
         if at is None:
-            at = len(self._input)
-        for arg in reversed(args):
-            self._input.insert(at, arg)
+            self._input += args
+        else:
+            assert 0 <= at < len(self._input)
+            for arg in reversed(args):
+                self._input.insert(at, arg)
         return self
 
     def output(self, *args: str, at: int | None = None) -> Self:
         if at is None:
-            at = len(self._output)
-        for arg in reversed(args):
-            self._output.insert(at, arg)
+            self._output += args
+        else:
+            assert 0 <= at < len(self._output)
+            for arg in reversed(args):
+                self._output.insert(at, arg)
         return self
 
     def run(self, *args, **kwargs) -> Popen:
@@ -66,5 +72,9 @@ if __name__ == "__main__":
         )
     )
     print(ff)
-    ff.global_args('-hide_banner', at=1)
+    ff.global_args(
+        '-hide_banner',
+        '-abc', 'abc',
+        at=1,
+    )
     print(ff)
