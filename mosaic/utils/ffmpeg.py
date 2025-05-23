@@ -1,6 +1,4 @@
-from functools import wraps
-from subprocess import Popen
-from typing import Callable, Self
+from typing import Self
 
 
 class FFmpeg:
@@ -46,12 +44,8 @@ class FFmpeg:
         self._insert_to(self._output, *args, at=at)
         return self
 
-    def run(self, *args, **kwargs) -> Popen:
-        return Popen(self.args, *args, **kwargs)
-
 
 if __name__ == "__main__":
-
     ff = (
         FFmpeg()
         .global_args(
