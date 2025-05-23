@@ -9,7 +9,7 @@ from mosaic.utils.service import service
 
 @click.group(invoke_without_command=True)
 @click.pass_context
-@service(mkdir=False)
+@service()
 def jobs(ctx: click.Context) -> None:
     # jobs can be a standalone command
     if ctx.invoked_subcommand:
