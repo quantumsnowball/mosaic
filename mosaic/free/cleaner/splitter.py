@@ -12,7 +12,7 @@ from mosaic.utils.spec import VideoSource
 class Splitter:
     def __init__(self, source: VideoSource) -> None:
         self._output_pipe = TEMP_DIR / f'{__name__}.{uuid.uuid4()}'
-        self.origin = s = source
+        self.origin = source
         self._ffmpeg = (
             FFmpeg()
             .global_args(
@@ -21,13 +21,13 @@ class Splitter:
                 '-loglevel', 'fatal',
             )
             .input(
-                *s.ffmpeg_input_args,
-                '-i', str(s),
+                *source.ffmpeg_input_args,
+                '-i', source,
             )
             .output(
                 '-f', 'rawvideo',
                 '-pix_fmt', 'rgb24',
-                str(self._output_pipe)
+                self._output_pipe,
             )
         )
 
