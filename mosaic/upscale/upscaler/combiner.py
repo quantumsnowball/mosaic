@@ -79,7 +79,7 @@ class Combiner:
             self._pbar.run()
 
         # run
-        self._proc = Popen(ffmpeg.args)
+        self._proc = ffmpeg.run_async()
 
     def wait(self) -> None:
         assert self._proc is not None
