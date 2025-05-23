@@ -1,5 +1,6 @@
+from functools import wraps
 from subprocess import Popen
-from typing import Self
+from typing import Callable, Self
 
 
 class FFmpeg:
@@ -23,31 +24,24 @@ class FFmpeg:
     def __str__(self) -> str:
         return ' '.join(self.args)
 
-    def global_args(self, *args: str, at: int | None = None) -> Self:
+    def _insert_args(self, target: list[str], *args, at: int | None = None) -> None:
         if at is None:
-            self._global_args += args
+            target += args
         else:
-            assert 0 <= at < len(self._global_args)
+            assert 0 <= at < len(target)
             for arg in reversed(args):
-                self._global_args.insert(at, arg)
+                target.insert(at, arg)
+
+    def global_args(self, *args: str, at: int | None = None) -> Self:
+        self._insert_args(self._global_args, *args, at=at)
         return self
 
     def input(self, *args: str, at: int | None = None) -> Self:
-        if at is None:
-            self._input += args
-        else:
-            assert 0 <= at < len(self._input)
-            for arg in reversed(args):
-                self._input.insert(at, arg)
+        self._insert_args(self._input, *args, at=at)
         return self
 
     def output(self, *args: str, at: int | None = None) -> Self:
-        if at is None:
-            self._output += args
-        else:
-            assert 0 <= at < len(self._output)
-            for arg in reversed(args):
-                self._output.insert(at, arg)
+        self._insert_args(self._output, *args, at=at)
         return self
 
     def run(self, *args, **kwargs) -> Popen:
