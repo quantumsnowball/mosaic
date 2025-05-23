@@ -24,24 +24,26 @@ class FFmpeg:
     def __str__(self) -> str:
         return ' '.join(self.args)
 
-    def _insert_args(self, target: list[str], *args, at: int | None = None) -> None:
-        if at is None:
-            target += args
-        else:
-            assert 0 <= at < len(target)
-            for arg in reversed(args):
-                target.insert(at, arg)
+    @staticmethod
+    def _insert_to(target: list[str], *args, at: int | None = None) -> None:
+        try:
+            # on correct index value, try insert args at that index position
+            assert isinstance(at, int)
+            target[at:at] = args
+        except Exception:
+            # default is to extend all args to target's end
+            target.extend(args)
 
     def global_args(self, *args: str, at: int | None = None) -> Self:
-        self._insert_args(self._global_args, *args, at=at)
+        self._insert_to(self._global_args, *args, at=at)
         return self
 
     def input(self, *args: str, at: int | None = None) -> Self:
-        self._insert_args(self._input, *args, at=at)
+        self._insert_to(self._input, *args, at=at)
         return self
 
     def output(self, *args: str, at: int | None = None) -> Self:
-        self._insert_args(self._output, *args, at=at)
+        self._insert_to(self._output, *args, at=at)
         return self
 
     def run(self, *args, **kwargs) -> Popen:
@@ -69,6 +71,6 @@ if __name__ == "__main__":
     ff.global_args(
         '-hide_banner',
         '-abc', 'abc',
-        at=1,
+        at=-2,
     )
     print(ff)
