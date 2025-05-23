@@ -1,3 +1,4 @@
+from subprocess import Popen
 from typing import Self
 
 
@@ -43,6 +44,12 @@ class FFmpeg:
     def output(self, *args: str, at: int | None = None) -> Self:
         self._insert_to(self._output, *args, at=at)
         return self
+
+    def run_async(self) -> Popen:
+        return Popen(self.args)
+
+    def run(self) -> int:
+        return self.run_async().wait()
 
 
 if __name__ == "__main__":
