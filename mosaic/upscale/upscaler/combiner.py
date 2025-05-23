@@ -52,10 +52,10 @@ class Combiner:
                 '-framerate', self.origin.framerate,
                 '-pix_fmt', 'rgb24',
                 '-s', info.s,
-                '-i', str(self.input),
+                '-i', self.input,
                 # 1:a
                 *self.origin.ffmpeg_input_args,
-                '-i', str(self.origin),
+                '-i', self.origin,
             )
             .output(
                 '-map', '0:v',
@@ -65,7 +65,7 @@ class Combiner:
                 '-vcodec', 'libx264',
                 '-vf', f'scale=-2:{self._scale.replace("p", "")}',
                 '-aspect', self.origin.dar,
-                str(self._output_file),
+                self._output_file,
             )
         )
 
