@@ -1,9 +1,8 @@
 from pathlib import Path
 from typing import Any
 
-import ffmpeg
-
 from mosaic.utils import HMS
+from mosaic.utils.ffprobe import FFprobe
 
 
 class VideoSource:
@@ -13,20 +12,15 @@ class VideoSource:
         start_time: HMS | None = None,
         end_time: HMS | None = None,
     ) -> None:
-        ffprobe_info = ffmpeg.probe(str(input_file))
-        for stream in ffprobe_info['streams']:
-            if stream['codec_type'] == 'video':
-                self.width = int(stream['width'])
-                self.height = int(stream['height'])
-                self.framerate = str(stream['r_frame_rate'])
-                self.sar = str(stream['sample_aspect_ratio'])
-                self.dar = str(stream['display_aspect_ratio'])
-                self.pix_fmt = str(stream['pix_fmt'])
-                self._duration = str(stream['duration'])
-                break
-        else:
-            raise ValueError("No video stream found.")
-
+        # probe for the first video stream
+        d = FFprobe(input_file).video[0]
+        self.width = d.width
+        self.height = d.height
+        self.framerate = d.framerate
+        self.sar = d.sar
+        self.dar = d.dar
+        self.pix_fmt = d.pix_fmt
+        self._duration = d.duration
         self.input_file = input_file
         self.start_time = start_time
         self.end_time = end_time
