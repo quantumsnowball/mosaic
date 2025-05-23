@@ -1,10 +1,9 @@
 import json
 from datetime import datetime
 from pathlib import Path
+from subprocess import Popen
 from typing import Self
 from uuid import UUID, uuid4
-
-import ffmpeg
 
 from mosaic.free import cleaner
 from mosaic.free.net.netG import video
@@ -12,6 +11,7 @@ from mosaic.free.net.netM import bisenet
 from mosaic.jobs.job.checklist import Checklist
 from mosaic.jobs.utils import JOBS_DIR
 from mosaic.utils import PACKAGE_ROOT
+from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.spec import VideoSource
 
@@ -62,19 +62,24 @@ class Job:
     def initialize(self) -> None:
         # split video into segments
         with ProgressBar(self.origin.duration) as pbar:
-            ffmpeg.input(
-                str(self.input_file),
-            ).output(
-                str(self._input_dirpath / self.segment_pattern),
-                f='segment',
-                segment_time=self.segment_time,
-                vcodec='libx264',
-                acodec='copy',
-            ).global_args(
-                '-loglevel', 'fatal',
-                '-progress', pbar.input,
-                '-stats_period', ProgressBar.REFRESH_RATE,
-            ).run()
+            Popen(
+                FFmpeg()
+                .global_args(
+                    '-loglevel', 'fatal',
+                    '-progress', str(pbar.input),
+                    '-stats_period', ProgressBar.REFRESH_RATE,
+                )
+                .input(
+                    '-i', str(self.input_file),
+                )
+                .output(
+                    '-f', 'segment',
+                    '-segment_time', self.segment_time,
+                    '-vcodec', 'libx264',
+                    '-acodec', 'copy',
+                    str(self._input_dirpath / self.segment_pattern),
+                ).args,
+            ).wait()
 
         # create a sqlite db as the checklist
         self.checklist.create()
@@ -105,15 +110,20 @@ class Job:
             for part in parts:
                 f.write(f'file {part.name}\n')
         # combine the output segments
-        ffmpeg.input(
-            str(index),
-            f='concat',
-        ).output(
-            str(self.output_file),
-            c='copy'
-        ).global_args(
-            '-y',
-        ).run()
+        Popen(
+            FFmpeg()
+            .global_args(
+                '-y',
+            )
+            .input(
+                '-f', 'concat',
+                '-i', str(index),
+            )
+            .output(
+                '-c', 'copy',
+                str(self.output_file),
+            ).args,
+        ).wait()
 
     def run(self) -> None:
         if not self._checklist_fpath.exists():

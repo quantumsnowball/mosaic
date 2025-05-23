@@ -65,11 +65,11 @@ class VideoSource:
 
     @property
     def ffmpeg_input_args(self) -> list[str]:
-        raw_args: list[str | HMS | None] = ['-ss', self.start_time,
-                                            '-to', self.end_time]
-        filtered_args = [str(v)
-                         for v in raw_args
-                         if v is not None]
+        filtered_args: list[str] = []
+        for name, val in [('-ss', self.start_time),
+                          ('-to', self.end_time)]:
+            if val is not None:
+                filtered_args += [name, str(val)]
         return filtered_args
 
 

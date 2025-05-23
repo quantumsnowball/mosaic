@@ -4,9 +4,8 @@ from pathlib import Path
 from subprocess import Popen
 from typing import Self
 
-import ffmpeg
-
 from mosaic.utils import TEMP_DIR
+from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.spec import VideoSource
 
 
@@ -14,17 +13,24 @@ class Splitter:
     def __init__(self, source: VideoSource) -> None:
         self._output_pipe = TEMP_DIR / f'{__name__}.{uuid.uuid4()}'
         self.origin = s = source
-        self._stream = (
-            ffmpeg
-            .input(str(s), **s.ffmpeg_input_kwargs)
-            .output(str(self._output_pipe),
-                    format='rawvideo',
-                    pix_fmt='rgb24')
+        self._ffmpeg = (
+            FFmpeg()
             .global_args(
                 '-y',
                 '-hide_banner',
-                '-loglevel', 'fatal')
+                '-loglevel', 'fatal',
+            )
+            .input(
+                *s.ffmpeg_input_args,
+                '-i', str(s),
+            )
+            .output(
+                '-f', 'rawvideo',
+                '-pix_fmt', 'rgb24',
+                str(self._output_pipe)
+            )
         )
+
         self._proc: Popen | None = None
 
     @property
@@ -41,7 +47,7 @@ class Splitter:
             self.output.unlink()
 
     def run(self) -> None:
-        self._proc = self._stream.run_async()
+        self._proc = Popen(self._ffmpeg.args)
 
     def wait(self) -> None:
         assert self._proc is not None
