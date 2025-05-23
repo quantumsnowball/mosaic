@@ -63,6 +63,15 @@ class VideoSource:
                            if v is not None}
         return filtered_kwargs
 
+    @property
+    def ffmpeg_input_args(self) -> list[str]:
+        raw_args: list[str | HMS | None] = ['-ss', self.start_time,
+                                            '-to', self.end_time]
+        filtered_args = [str(v)
+                         for v in raw_args
+                         if v is not None]
+        return filtered_args
+
 
 class VideoDest:
     def __init__(
