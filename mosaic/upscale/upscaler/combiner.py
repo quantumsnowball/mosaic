@@ -2,9 +2,8 @@ from pathlib import Path
 from subprocess import Popen
 from typing import Self
 
-import ffmpeg
-
 from mosaic.upscale.upscaler.processor import Processor
+from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.spec import VideoDest
 
@@ -41,33 +40,46 @@ class Combiner:
         info = self._input.upsampled_info.get()
 
         # create the ffmpeg stream command using correct info
-        stream = (
-            ffmpeg.output(
-                ffmpeg.input(str(self.input),
-                             format='rawvideo',
-                             pix_fmt='rgb24',
-                             s=info.s,
-                             framerate=self.origin.framerate,
-                             ).video,
-                ffmpeg.input(str(self.origin), **self.origin.ffmpeg_input_kwargs).audio,
+        ffmpeg = (
+            FFmpeg()
+            .global_args(
+                '-y',
+                '-hide_banner',
+            )
+            .input(
+                # 0:v
+                '-f', 'rawvideo',
+                '-framerate', self.origin.framerate,
+                '-pix_fmt', 'rgb24',
+                '-s', info.s,
+                '-i', str(self.input),
+                # 1:a
+                *self.origin.ffmpeg_input_args,
+                '-i', str(self.origin),
+            )
+            .output(
+                '-map', '0:v',
+                '-map', '1:a',
+                #
+                '-pix_fmt', 'yuv420p',
+                '-vcodec', 'libx264',
+                '-vf', f'scale=-2:{self._scale.replace("p", "")}',
+                '-aspect', self.origin.dar,
                 str(self._output_file),
-                vcodec='libx264',
-                vf=f'scale=-2:{self._scale.replace("p", "")}',
-                aspect=self.origin.dar,
-                pix_fmt=info.pix_fmt)
-            .global_args('-hide_banner')
-            .overwrite_output()
+            )
         )
 
         # if not showing raw info, ask ffmpeg to print progress info and run progress bar
         if self._pbar:
-            stream = stream.global_args('-loglevel', 'fatal')
-            stream = stream.global_args('-progress', self._pbar.input)
-            stream = stream.global_args('-stats_period', ProgressBar.REFRESH_RATE)
+            ffmpeg.global_args(
+                '-loglevel', 'fatal',
+                '-progress', str(self._pbar.input),
+                '-stats_period', ProgressBar.REFRESH_RATE,
+            )
             self._pbar.run()
 
         # run
-        self._proc = stream.run_async()
+        self._proc = Popen(ffmpeg.args)
 
     def wait(self) -> None:
         assert self._proc is not None
