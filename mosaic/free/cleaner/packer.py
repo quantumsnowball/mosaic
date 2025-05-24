@@ -86,13 +86,14 @@ class Packer:
                 # img_origin is the buffer center item
                 img_origin = img_pool[LEFT_FRAME]
 
-                # when img_origin exists, it is a valid window
+                # when the center img_origin exists, it is a valid window
                 if img_origin is not None:
                     # hand it to Package and put to output queue
                     self.output.put(Package(img_origin, img_pool))
-
-                # when center to right item are None, sliding window has ended
-                if all(val is None for val in img_pool[LEFT_FRAME:]):
+                # else, it can only be the starting or ending stage
+                elif all(val is None for val in img_pool[LEFT_FRAME:]):
+                    # when center to right all items are None, sliding window has ended
+                    # it can only be after the ending stage, time to break the loop
                     break
 
             # signal the end of Output queue
