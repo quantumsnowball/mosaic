@@ -6,6 +6,10 @@ from typing import Callable, ParamSpec, TypeVar
 P = ParamSpec("P")
 R = TypeVar("R")
 
+ToBeWrapped = Callable[P, R]
+Wrapped = Callable[P, R]
+Wrapper = Callable[[ToBeWrapped[P, R]], Wrapped[P, R]]
+
 
 # basicConfig, to be called on the root __init__
 def setup_logger() -> None:
@@ -23,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 # decorator
-def log(func: Callable[P, R]) -> Callable[P, R]:
+def log(func: ToBeWrapped[P, R]) -> Wrapped[P, R]:
     # wrapped function
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> R:
