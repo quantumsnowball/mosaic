@@ -12,6 +12,7 @@ import numpy as np
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler.splitter import Splitter
 from mosaic.utils import TEMP_DIR
+from mosaic.utils.logging import log
 
 
 @dataclass
@@ -68,15 +69,18 @@ class Processor:
     def upsampled_info(self) -> 'mp.Queue[UpsampleInfo]':
         return self._upsampled_info
 
+    @log
     def __enter__(self) -> Self:
         if not self.output.exists():
             os.mkfifo(self.output)
         return self
 
+    @log
     def __exit__(self, type, value, traceback) -> None:
         if self.output.exists():
             self.output.unlink()
 
+    @log
     def _reader_worker(self) -> None:
         with open(self.input, 'rb') as input:
             while True:
@@ -97,6 +101,7 @@ class Processor:
             # signal the end of frame stream
             self._reader_out_queue.put(None)
 
+    @log
     def _processor_worker(self) -> None:
         info_known = False
         while True:
@@ -119,6 +124,7 @@ class Processor:
         # signal the end of frame stream
         self._processor_out_queue.put(None)
 
+    @log
     def _writer_worker(self) -> None:
         with open(self.output, 'wb') as output:
             while True:
@@ -133,16 +139,19 @@ class Processor:
                 except BrokenPipeError:
                     break
 
+    @log
     def run(self) -> None:
         self._reader_thread.start()
         self._processor_thread.start()
         self._writer_thread.start()
 
+    @log
     def wait(self) -> None:
         self._reader_thread.join()
         self._processor_thread.join()
         self._writer_thread.join()
 
+    @log
     def stop(self) -> None:
         if self.output.exists():
             self.output.unlink()
