@@ -2,7 +2,7 @@ import functools
 import logging
 import os
 from logging import CRITICAL, DEBUG, ERROR, INFO, NOTSET, WARNING
-from typing import Callable, Literal, ParamSpec, TypeVar
+from typing import Callable, ParamSpec, TypeVar
 
 P = ParamSpec("P")
 R = TypeVar("R")
@@ -52,4 +52,11 @@ def log_at_level(level: int) -> Wrapper[P, R]:
     return wrapper
 
 
-log = log_at_level(INFO)
+# namespace
+class log:
+    critical = log_at_level(CRITICAL)
+    error = log_at_level(ERROR)
+    warning = log_at_level(WARNING)
+    info = log_at_level(INFO)
+    debug = log_at_level(DEBUG)
+    notset = log_at_level(NOTSET)

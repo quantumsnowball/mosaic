@@ -25,18 +25,18 @@ class Combiner:
     def input(self) -> Path:
         return self._input.output
 
-    @log
+    @log.info
     def __enter__(self) -> Self:
         if self._pbar:
             self._pbar.start()
         return self
 
-    @log
+    @log.info
     def __exit__(self, type, value, traceback) -> None:
         if self._pbar:
             self._pbar.stop()
 
-    @log
+    @log.info
     def run(self) -> None:
         # create the ffmpeg stream command using correct info
         ffmpeg = (
@@ -78,14 +78,14 @@ class Combiner:
         # run
         self._proc = ffmpeg.run_async()
 
-    @log
+    @log.info
     def wait(self) -> None:
         assert self._proc is not None
         self._proc.wait()
         if self._pbar is not None:
             self._pbar.wait()
 
-    @log
+    @log.info
     def stop(self) -> None:
         if self._proc is not None:
             self._proc.terminate()

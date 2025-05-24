@@ -43,18 +43,18 @@ class Processor:
     def output(self) -> Path:
         return self._output_pipe
 
-    @log
+    @log.info
     def __enter__(self) -> Self:
         if not self.output.exists():
             os.mkfifo(self.output)
         return self
 
-    @log
+    @log.info
     def __exit__(self, type, value, traceback) -> None:
         if self.output.exists():
             self.output.unlink()
 
-    @log
+    @log.info
     def _worker(self) -> None:
         with open(self.output, 'wb') as output:
             previous_frame = None
@@ -95,15 +95,15 @@ class Processor:
                 except BrokenPipeError:
                     break
 
-    @log
+    @log.info
     def run(self) -> None:
         self._thread.start()
 
-    @log
+    @log.info
     def wait(self) -> None:
         self._thread.join()
 
-    @log
+    @log.info
     def stop(self) -> None:
         if self.output.exists():
             self.output.unlink()
