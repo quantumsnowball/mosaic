@@ -17,12 +17,46 @@ LOGGER_SELECTION_ENV = 'MOSAIC_LOGGER'
 
 # create logger
 class logger:
-    base = logging.getLogger('base')
-    exception = logging.getLogger('exception')
+    _loggers = dict(
+        base=logging.getLogger('base'),
+        exception=logging.getLogger('exception'),
+    )
+    base = _loggers['base']
+    exception = _loggers['exception']
+
+    @classmethod
+    def select(cls, selection: str) -> None:
+        # parse inputs
+        parts = map(str.strip, selection.split(','))
+        names = list(filter(lambda x: len(x) > 0, parts))
+
+        # if nothing selected, return
+        if len(names) == 0:
+            return
+
+        selected = [logger
+                    for key, logger in cls._loggers.items()
+                    if key in names]
+
+        # if invlid selection, return
+        if len(selected) == 0:
+            return
+
+        ignored = [logger
+                   for key, logger in cls._loggers.items()
+                   if key not in names]
+
+        # display the selected, suppress the ignored
+        for l in selected:
+            l.setLevel(DEBUG)
+        for l in ignored:
+            l.setLevel(CRITICAL)
 
 
 # basicConfig, to be called on the root __init__
 def setup_logger() -> None:
+    # level selection
+    # e.g. usage: MOSAIC_LOG_LEVEL=DEBUG
     logging.basicConfig(
         # use PYTHON_LOG_LEVEL shell env var to set level
         level=os.getenv(LEVEL_CONTROL_ENV, 'WARNING').upper(),
@@ -32,7 +66,8 @@ def setup_logger() -> None:
     )
 
     # logger selection
-    #
+    # e.g. usage: MOSAIC_LOGGER=base,exception
+    logger.select(os.getenv(LOGGER_SELECTION_ENV, ''))
 
 
 # decorator
