@@ -14,6 +14,7 @@ from mosaic.free.cleaner.processor.replace import replace_mosaic
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.utils import TEMP_DIR
+from mosaic.utils.exception import catch
 from mosaic.utils.logging import log
 
 
@@ -55,16 +56,14 @@ class Processor:
             self.output.unlink()
 
     @log.info
+    @catch(ShutDown)
     def _worker(self) -> None:
         with open(self.output, 'wb') as output:
             previous_frame = None
             while True:
                 # read a frame package from input queue
-                try:
-                    package = self.input.get()
-                except ShutDown:
-                    # break on queue shutdown immediately
-                    break
+                # on queue shutdown, ShutDown is raised and break the loop
+                package = self.input.get()
 
                 # if no more further data, quit loop
                 if package is None:
