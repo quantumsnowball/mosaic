@@ -7,9 +7,11 @@ from mosaic.free.cleaner.splitter import Splitter
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.utils import HMS
+from mosaic.utils.logging import log
 from mosaic.utils.spec import VideoSource
 
 
+@log
 def run(
     input_file: Path,
     start_time: HMS | None,
