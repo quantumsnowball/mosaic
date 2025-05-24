@@ -4,6 +4,7 @@ import queue
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
+from queue import ShutDown
 from threading import Thread
 from typing import Self
 
@@ -12,6 +13,7 @@ import numpy as np
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler.splitter import Splitter
 from mosaic.utils import TEMP_DIR
+from mosaic.utils.exception import catch
 from mosaic.utils.logging import log
 
 
@@ -81,6 +83,7 @@ class Processor:
             self.output.unlink()
 
     @log.info
+    @catch(ShutDown)
     def _reader_worker(self) -> None:
         with open(self.input, 'rb') as input:
             while True:
@@ -102,6 +105,7 @@ class Processor:
             self._reader_out_queue.put(None)
 
     @log.info
+    @catch(ShutDown, ValueError)
     def _processor_worker(self) -> None:
         info_known = False
         while True:
@@ -125,6 +129,7 @@ class Processor:
         self._processor_out_queue.put(None)
 
     @log.info
+    @catch(ShutDown)
     def _writer_worker(self) -> None:
         with open(self.output, 'wb') as output:
             while True:
@@ -156,5 +161,11 @@ class Processor:
 
     @log.info
     def stop(self) -> None:
+        # raises ShutDown
+        self._reader_out_queue.shutdown(immediate=True)
+        self._processor_out_queue.shutdown(immediate=True)
+        # raises ValueError
+        self._upsampled_info.close()
+        # raises BrokenPipeError
         if self.output.exists():
             self.output.unlink()

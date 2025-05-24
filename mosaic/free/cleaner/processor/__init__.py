@@ -109,5 +109,6 @@ class Processor:
 
     @log.info
     def stop(self) -> None:
+        # raises BrokenPipeError
         if self.output.exists():
             self.output.unlink()

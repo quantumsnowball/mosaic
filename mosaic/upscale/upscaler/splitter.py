@@ -61,3 +61,6 @@ class Splitter:
     def stop(self) -> None:
         if self._proc is not None:
             self._proc.terminate()
+        # raises BrokenPipeError
+        if self.output.exists():
+            self.output.unlink()
