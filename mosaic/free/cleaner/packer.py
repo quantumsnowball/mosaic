@@ -8,6 +8,7 @@ import numpy as np
 
 from mosaic.free.cleaner.constants import LEFT_FRAME, POOL_NUM
 from mosaic.free.cleaner.splitter import Splitter
+from mosaic.utils.exception import catch
 from mosaic.utils.logging import log
 
 
@@ -65,6 +66,7 @@ class Packer:
         pass
 
     @log.info
+    @catch(ShutDown)
     def _worker(self) -> None:
         with open(self.input, 'rb') as input:
             # buffer is first prefilled with None values
@@ -86,20 +88,17 @@ class Packer:
                 # img_origin is the buffer center item
                 img_origin = img_pool[LEFT_FRAME]
 
-                try:
-                    # when the center img_origin exists, it is a valid window
-                    if img_origin is not None:
-                        # hand it to Package and put to output queue
-                        self.output.put(Package(img_origin, img_pool))
-                    # else, it can only be the starting or ending stage
-                    elif all(val is None for val in img_pool[LEFT_FRAME:]):
-                        # when center to right all items are None, sliding window has ended
-                        # can only be after the ending stage, signal the end of Output queue
-                        self.output.put(None)
-                        # also time to break the loop
-                        break
-                except ShutDown:
-                    # break on queue shutdown immediately
+                # when the center img_origin exists, it is a valid window
+                # on queue shutdown, ShutDown is raised and break the loop
+                if img_origin is not None:
+                    # hand it to Package and put to output queue
+                    self.output.put(Package(img_origin, img_pool))
+                # else, it can only be the starting or ending stage
+                elif all(val is None for val in img_pool[LEFT_FRAME:]):
+                    # when center to right all items are None, sliding window has ended
+                    # can only be after the ending stage, signal the end of Output queue
+                    self.output.put(None)
+                    # also time to break the loop
                     break
 
     @log.info
