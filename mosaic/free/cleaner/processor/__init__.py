@@ -56,7 +56,7 @@ class Processor:
             self.output.unlink()
 
     @log.info
-    @catch(ShutDown)
+    @catch(ShutDown, BrokenPipeError)
     def _worker(self) -> None:
         with open(self.output, 'wb') as output:
             previous_frame = None
@@ -77,10 +77,7 @@ class Processor:
                 if size < self._min_mask_size:
                     img_output = package.img_origin.copy()
                     out_bytes = img_output.astype(np.uint8).tobytes()
-                    try:
-                        output.write(out_bytes)
-                    except BrokenPipeError:
-                        break
+                    output.write(out_bytes)
                     continue
 
                 # remove mosaic area
@@ -93,10 +90,7 @@ class Processor:
 
                 # write bytes to output
                 out_bytes = img_output.astype(np.uint8).tobytes()
-                try:
-                    output.write(out_bytes)
-                except BrokenPipeError:
-                    break
+                output.write(out_bytes)
 
     @log.info
     def run(self) -> None:
