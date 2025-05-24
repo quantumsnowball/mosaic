@@ -8,6 +8,7 @@ import numpy as np
 
 from mosaic.free.cleaner.constants import LEFT_FRAME, POOL_NUM
 from mosaic.free.cleaner.splitter import Splitter
+from mosaic.utils.logging import log
 
 
 class Package:
@@ -55,12 +56,15 @@ class Packer:
     def output(self) -> Output:
         return self._queue
 
+    @log
     def __enter__(self) -> Self:
         return self
 
+    @log
     def __exit__(self, type, value, traceback) -> None:
         pass
 
+    @log
     def _worker(self) -> None:
         with open(self.input, 'rb') as input:
             # buffer is first prefilled with None values
@@ -94,11 +98,14 @@ class Packer:
             # signal the end of Output queue
             self.output.put(None)
 
+    @log
     def run(self) -> None:
         self._thread.start()
 
+    @log
     def wait(self) -> None:
         self._thread.join()
 
+    @log
     def stop(self) -> None:
         self.output.put(None)
