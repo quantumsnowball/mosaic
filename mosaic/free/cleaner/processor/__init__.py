@@ -1,7 +1,7 @@
 import os
 import uuid
 from pathlib import Path
-from queue import Queue
+from queue import Queue, ShutDown
 from threading import Thread
 from typing import Self
 
@@ -60,7 +60,11 @@ class Processor:
             previous_frame = None
             while True:
                 # read a frame package from input queue
-                package = self.input.get()
+                try:
+                    package = self.input.get()
+                except ShutDown:
+                    # break on queue shutdown immediately
+                    break
 
                 # if no more further data, quit loop
                 if package is None:
