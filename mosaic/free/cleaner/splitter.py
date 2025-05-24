@@ -55,8 +55,8 @@ class Splitter:
 
     @log.info
     def wait(self) -> None:
-        assert self._proc is not None
-        self._proc.wait()
+        if self._proc is not None:
+            self._proc.wait()
 
     @log.info
     def stop(self) -> None:
