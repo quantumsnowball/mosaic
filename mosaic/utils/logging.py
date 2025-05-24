@@ -11,12 +11,14 @@ ToBeWrapped = Callable[P, R]
 Wrapped = Callable[P, R]
 Wrapper = Callable[[ToBeWrapped[P, R]], Wrapped[P, R]]
 
+LEVEL_CONTROL_ENV = 'MOSAIC_LOG_LEVEL'
+
 
 # basicConfig, to be called on the root __init__
 def setup_logger() -> None:
     logging.basicConfig(
         # use PYTHON_LOG_LEVEL shell env var to set level
-        level=os.getenv('PYTHON_LOG_LEVEL', 'WARNING').upper(),
+        level=os.getenv(LEVEL_CONTROL_ENV, 'WARNING').upper(),
         # formatting
         format='%(asctime)s [%(levelname)s] %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
