@@ -31,19 +31,18 @@ class logger:
         names = set(filter(lambda x: len(x) > 0, parts))
 
         # find valid selection
-        all = set(cls._loggers)
         selected = names & set(cls._loggers)
-        ignored = all - selected
 
-        # if nothing valid selected, reeturn
+        # if nothing valid selected, return
         if len(selected) == 0:
             return
 
         # display the selected, suppress the ignored
-        for l in selected:
-            cls._loggers[l].setLevel(DEBUG)
-        for l in ignored:
-            cls._loggers[l].setLevel(CRITICAL)
+        for name, logger in cls._loggers.items():
+            if name in selected:
+                logger.setLevel(DEBUG)
+            else:
+                logger.setLevel(CRITICAL)
 
 
 # basicConfig, to be called on the root __init__
