@@ -126,7 +126,7 @@ class Processor:
         self._processor_out_queue.put(None)
 
     @log.info
-    @catch(ShutDown)
+    @catch(ShutDown, BrokenPipeError)
     def _writer_worker(self) -> None:
         with open(self.output, 'wb') as output:
             while True:
@@ -136,10 +136,7 @@ class Processor:
 
                 # write bytes to output
                 out_bytes = frame.astype(np.uint8).tobytes()
-                try:
-                    output.write(out_bytes)
-                except BrokenPipeError:
-                    break
+                output.write(out_bytes)
 
     @log.info
     def run(self) -> None:
