@@ -85,7 +85,7 @@ class Job:
         while task := self.checklist.next_task():
             # process task with the correct command
             if self.command == 'free':
-                cleaner.run(
+                result = cleaner.run(
                     input_file=self._input_dirpath / task.name,
                     start_time=None,
                     end_time=None,
@@ -94,6 +94,11 @@ class Job:
                     netM=bisenet(PACKAGE_ROOT/'free/net/netM/state_dicts/mosaic_position.pth'),
                     netG=video(PACKAGE_ROOT/'free/net/netG/state_dicts/clean_youknow_video.pth'),
                 )
+
+                # break on kbint
+                if not result:
+                    break
+
                 # mark task done
                 self.checklist.mark_done(task)
 
