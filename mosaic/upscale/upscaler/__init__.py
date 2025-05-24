@@ -5,9 +5,11 @@ from mosaic.upscale.upscaler.combiner import Combiner
 from mosaic.upscale.upscaler.processor import Processor
 from mosaic.upscale.upscaler.splitter import Splitter
 from mosaic.utils import HMS
+from mosaic.utils.logging import log
 from mosaic.utils.spec import VideoDest, VideoSource
 
 
+@log
 def run(
     input_file: Path,
     start_time: HMS | None,
