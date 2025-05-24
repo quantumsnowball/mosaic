@@ -147,9 +147,12 @@ class Processor:
 
     @log.info
     def wait(self) -> None:
-        self._reader_thread.join()
-        self._processor_thread.join()
-        self._writer_thread.join()
+        if self._reader_thread.is_alive():
+            self._reader_thread.join()
+        if self._processor_thread.is_alive():
+            self._processor_thread.join()
+        if self._writer_thread.is_alive():
+            self._writer_thread.join()
 
     @log.info
     def stop(self) -> None:

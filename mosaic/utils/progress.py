@@ -44,7 +44,7 @@ class ProgressBar:
             self._pipe.unlink()
 
     def wait(self) -> None:
-        if self._thread:
+        if self._thread and self._thread.is_alive():
             self._thread.join()
 
     def run(self) -> None:

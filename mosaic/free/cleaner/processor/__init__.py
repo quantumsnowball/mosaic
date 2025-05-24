@@ -101,7 +101,8 @@ class Processor:
 
     @log.info
     def wait(self) -> None:
-        self._thread.join()
+        if self._thread.is_alive():
+            self._thread.join()
 
     @log.info
     def stop(self) -> None:
