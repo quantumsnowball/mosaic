@@ -83,7 +83,7 @@ class Processor:
             self.output.unlink()
 
     @log.info
-    @catch(ShutDown)
+    @catch(ShutDown, ValueError)
     def _reader_worker(self) -> None:
         with open(self.input, 'rb') as input:
             while True:
@@ -91,12 +91,9 @@ class Processor:
                 if not (in_bytes := input.read(self._frame_size)):
                     break
 
-                # Convert bytes to numpy array, break on incomplete frame
+                # Convert bytes to numpy array, break on incomplete frame raises ValueError
                 shape = (self._height, self._width, 3)
-                try:
-                    frame = np.frombuffer(in_bytes, np.uint8).reshape(shape)
-                except ValueError:
-                    break
+                frame = np.frombuffer(in_bytes, np.uint8).reshape(shape)
 
                 # write frame to out queue
                 self._reader_out_queue.put(frame)
