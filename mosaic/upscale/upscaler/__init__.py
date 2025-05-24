@@ -9,7 +9,7 @@ from mosaic.utils.logging import log
 from mosaic.utils.spec import VideoDest, VideoSource
 
 
-@log
+@log.info
 def run(
     input_file: Path,
     start_time: HMS | None,
