@@ -56,15 +56,15 @@ class Packer:
     def output(self) -> Output:
         return self._queue
 
-    @log
+    @log.info
     def __enter__(self) -> Self:
         return self
 
-    @log
+    @log.info
     def __exit__(self, type, value, traceback) -> None:
         pass
 
-    @log
+    @log.info
     def _worker(self) -> None:
         with open(self.input, 'rb') as input:
             # buffer is first prefilled with None values
@@ -98,14 +98,14 @@ class Packer:
             # signal the end of Output queue
             self.output.put(None)
 
-    @log
+    @log.info
     def run(self) -> None:
         self._thread.start()
 
-    @log
+    @log.info
     def wait(self) -> None:
         self._thread.join()
 
-    @log
+    @log.info
     def stop(self) -> None:
         self.output.put(None)

@@ -38,27 +38,27 @@ class Splitter:
     def output(self) -> Path:
         return self._output_pipe
 
-    @log
+    @log.info
     def __enter__(self) -> Self:
         if not self.output.exists():
             os.mkfifo(self.output)
         return self
 
-    @log
+    @log.info
     def __exit__(self, type, value, traceback) -> None:
         if self.output.exists():
             self.output.unlink()
 
-    @log
+    @log.info
     def run(self) -> None:
         self._proc = self._ffmpeg.run_async()
 
-    @log
+    @log.info
     def wait(self) -> None:
         assert self._proc is not None
         self._proc.wait()
 
-    @log
+    @log.info
     def stop(self) -> None:
         if self._proc is not None:
             self._proc.terminate()
