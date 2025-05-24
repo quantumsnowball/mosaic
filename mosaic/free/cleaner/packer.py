@@ -93,11 +93,10 @@ class Packer:
                 # else, it can only be the starting or ending stage
                 elif all(val is None for val in img_pool[LEFT_FRAME:]):
                     # when center to right all items are None, sliding window has ended
-                    # it can only be after the ending stage, time to break the loop
+                    # can only be after the ending stage, signal the end of Output queue
+                    self.output.put(None)
+                    # also time to break the loop
                     break
-
-            # signal the end of Output queue
-            self.output.put(None)
 
     @log.info
     def run(self) -> None:
