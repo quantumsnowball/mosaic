@@ -1,20 +1,30 @@
 import functools
 import logging
+import os
 from typing import Callable, ParamSpec, TypeVar
 
 P = ParamSpec("P")
 R = TypeVar("R")
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
 
+# basicConfig, to be called on the root __init__
+def setup_logger() -> None:
+    logging.basicConfig(
+        # use PYTHON_LOG_LEVEL shell env var to set level
+        level=os.getenv('PYTHON_LOG_LEVEL', 'WARNING').upper(),
+        # formatting
+        format='%(asctime)s [%(levelname)s] %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+
+
+# create logger
 logger = logging.getLogger(__name__)
 
 
+# decorator
 def log(func: Callable[P, R]) -> Callable[P, R]:
+    # wrapped function
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> R:
         # log info before funning the function
