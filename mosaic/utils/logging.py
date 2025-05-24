@@ -28,29 +28,22 @@ class logger:
     def select(cls, selection: str) -> None:
         # parse inputs
         parts = map(str.strip, selection.split(','))
-        names = list(filter(lambda x: len(x) > 0, parts))
+        names = set(filter(lambda x: len(x) > 0, parts))
 
-        # if nothing selected, return
-        if len(names) == 0:
-            return
+        # find valid selection
+        all = set(cls._loggers)
+        selected = names & set(cls._loggers)
+        ignored = all - selected
 
-        selected = [logger
-                    for key, logger in cls._loggers.items()
-                    if key in names]
-
-        # if invlid selection, return
+        # if nothing valid selected, reeturn
         if len(selected) == 0:
             return
 
-        ignored = [logger
-                   for key, logger in cls._loggers.items()
-                   if key not in names]
-
         # display the selected, suppress the ignored
         for l in selected:
-            l.setLevel(DEBUG)
+            cls._loggers[l].setLevel(DEBUG)
         for l in ignored:
-            l.setLevel(CRITICAL)
+            cls._loggers[l].setLevel(CRITICAL)
 
 
 # basicConfig, to be called on the root __init__
