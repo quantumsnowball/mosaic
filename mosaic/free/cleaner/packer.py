@@ -1,6 +1,6 @@
 from collections import deque
 from pathlib import Path
-from queue import Queue
+from queue import Queue, ShutDown
 from threading import Thread
 from typing import Self, cast
 
@@ -86,17 +86,21 @@ class Packer:
                 # img_origin is the buffer center item
                 img_origin = img_pool[LEFT_FRAME]
 
-                # when img_origin exists, it is a valid window
-                if img_origin is not None:
-                    # hand it to Package and put to output queue
-                    self.output.put(Package(img_origin, img_pool))
-
-                # when center to right item are None, sliding window has ended
-                if all(val is None for val in img_pool[LEFT_FRAME:]):
+                try:
+                    # when the center img_origin exists, it is a valid window
+                    if img_origin is not None:
+                        # hand it to Package and put to output queue
+                        self.output.put(Package(img_origin, img_pool))
+                    # else, it can only be the starting or ending stage
+                    elif all(val is None for val in img_pool[LEFT_FRAME:]):
+                        # when center to right all items are None, sliding window has ended
+                        # can only be after the ending stage, signal the end of Output queue
+                        self.output.put(None)
+                        # also time to break the loop
+                        break
+                except ShutDown:
+                    # break on queue shutdown immediately
                     break
-
-            # signal the end of Output queue
-            self.output.put(None)
 
     @log.info
     def run(self) -> None:
@@ -109,4 +113,6 @@ class Packer:
 
     @log.info
     def stop(self) -> None:
-        self.output.put(None)
+        # shutdown the queue immediate
+        # unblock all put and get call, then raise ShutDown on them
+        self.output.shutdown(immediate=True)
