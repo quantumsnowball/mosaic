@@ -5,6 +5,9 @@ import click
 from mosaic.free import free
 from mosaic.jobs import jobs
 from mosaic.upscale import upscale
+from mosaic.utils.logging import setup_logger
+
+setup_logger()
 
 NAME = 'mosaic'
 

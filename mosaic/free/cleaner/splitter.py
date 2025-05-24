@@ -6,6 +6,7 @@ from typing import Self
 
 from mosaic.utils import TEMP_DIR
 from mosaic.utils.ffmpeg import FFmpeg
+from mosaic.utils.logging import log
 from mosaic.utils.spec import VideoSource
 
 
@@ -37,22 +38,27 @@ class Splitter:
     def output(self) -> Path:
         return self._output_pipe
 
+    @log
     def __enter__(self) -> Self:
         if not self.output.exists():
             os.mkfifo(self.output)
         return self
 
+    @log
     def __exit__(self, type, value, traceback) -> None:
         if self.output.exists():
             self.output.unlink()
 
+    @log
     def run(self) -> None:
         self._proc = self._ffmpeg.run_async()
 
+    @log
     def wait(self) -> None:
         assert self._proc is not None
         self._proc.wait()
 
+    @log
     def stop(self) -> None:
         if self._proc is not None:
             self._proc.terminate()

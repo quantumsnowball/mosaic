@@ -14,6 +14,7 @@ from mosaic.free.cleaner.processor.replace import replace_mosaic
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.utils import TEMP_DIR
+from mosaic.utils.logging import log
 
 
 class Processor:
@@ -42,15 +43,18 @@ class Processor:
     def output(self) -> Path:
         return self._output_pipe
 
+    @log
     def __enter__(self) -> Self:
         if not self.output.exists():
             os.mkfifo(self.output)
         return self
 
+    @log
     def __exit__(self, type, value, traceback) -> None:
         if self.output.exists():
             self.output.unlink()
 
+    @log
     def _worker(self) -> None:
         with open(self.output, 'wb') as output:
             previous_frame = None
@@ -91,12 +95,15 @@ class Processor:
                 except BrokenPipeError:
                     break
 
+    @log
     def run(self) -> None:
         self._thread.start()
 
+    @log
     def wait(self) -> None:
         self._thread.join()
 
+    @log
     def stop(self) -> None:
         if self.output.exists():
             self.output.unlink()
