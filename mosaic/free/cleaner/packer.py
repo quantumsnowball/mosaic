@@ -112,6 +112,5 @@ class Packer:
 
     @log.info
     def stop(self) -> None:
-        # shutdown the queue immediate
-        # unblock all put and get call, then raise ShutDown on them
+        # raises ShutDown
         self.output.shutdown(immediate=True)
