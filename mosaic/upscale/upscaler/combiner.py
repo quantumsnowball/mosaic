@@ -39,7 +39,7 @@ class Combiner:
             self._pbar.stop()
 
     @trace
-    def run(self) -> None:
+    def start(self) -> None:
         # block until upsampled info available
         info = self._input.upsampled_info.get()
 
@@ -84,6 +84,11 @@ class Combiner:
 
         # run
         self._proc = ffmpeg.run_async()
+
+    @trace
+    def run(self) -> None:
+        self.start()
+        self.wait()
 
     @trace
     def wait(self) -> None:

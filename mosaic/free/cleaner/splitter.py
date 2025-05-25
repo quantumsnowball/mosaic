@@ -50,8 +50,13 @@ class Splitter:
             self.output.unlink()
 
     @trace
-    def run(self) -> None:
+    def start(self) -> None:
         self._proc = self._ffmpeg.run_async()
+
+    @trace
+    def run(self) -> None:
+        self.start()
+        self.wait()
 
     @trace
     def wait(self) -> None:
