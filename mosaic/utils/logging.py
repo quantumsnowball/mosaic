@@ -1,7 +1,7 @@
 import functools
 import logging
 import os
-from logging import CRITICAL, DEBUG, ERROR, INFO, NOTSET, WARNING
+from logging import CRITICAL, DEBUG, ERROR, INFO, NOTSET, WARNING, Logger
 from typing import Callable, ParamSpec, TypeVar
 
 P = ParamSpec("P")
@@ -63,13 +63,13 @@ def setup_logger() -> None:
 
 
 # decorator
-def log_at_level(level: int) -> Wrapper[P, R]:
+def trace_function(logger: Logger, level: int) -> Wrapper[P, R]:
     def wrapper(func: ToBeWrapped[P, R]) -> Wrapped[P, R]:
         # wrapped function
         @functools.wraps(func)
         def wrapped(*args: P.args, **kwargs: P.kwargs) -> R:
             # log info before funning the function
-            logger.base.log(
+            logger.log(
                 level,
                 f"CALLED >> {func.__module__}.{func.__name__}()"
             )
@@ -78,7 +78,7 @@ def log_at_level(level: int) -> Wrapper[P, R]:
             result = func(*args, **kwargs)
 
             # log info after funning the function
-            logger.base.log(
+            logger.log(
                 level,
                 f"          {func.__module__}.{func.__name__}() >> RETURN"
             )
@@ -93,11 +93,10 @@ def log_at_level(level: int) -> Wrapper[P, R]:
     return wrapper
 
 
+# helper
+trace = trace_function(logger.base, DEBUG)
+
+
 # namespace
 class log:
-    critical = log_at_level(CRITICAL)
-    error = log_at_level(ERROR)
-    warning = log_at_level(WARNING)
-    info = log_at_level(INFO)
-    debug = log_at_level(DEBUG)
-    notset = log_at_level(NOTSET)
+    pass
