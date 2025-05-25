@@ -72,7 +72,7 @@ def trace_function(level: int) -> Wrapper[P, R]:
             # log info before funning the function
             logger.function.log(
                 level,
-                f"CALLED >> {func.__module__}.{func.__name__}()"
+                f"CALLED >> {func.__module__}::{func.__qualname__}()"
             )
 
             # run the actual function
@@ -81,7 +81,7 @@ def trace_function(level: int) -> Wrapper[P, R]:
             # log info after funning the function
             logger.function.log(
                 level,
-                f"          {func.__module__}.{func.__name__}() >> RETURN"
+                f"          {func.__module__}::{func.__qualname__}() >> RETURN"
             )
 
             # return the run result
