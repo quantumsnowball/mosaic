@@ -45,11 +45,16 @@ class Cleaner:
         self.cm.close()
 
     @trace
-    def run(self) -> None:
+    def start(self) -> None:
         self.splitter.run()
         self.packer.run()
         self.processor.run()
         self.combiner.run()
+
+    @trace
+    def run(self) -> None:
+        self.start()
+        self.wait()
 
     @trace
     def wait(self) -> None:

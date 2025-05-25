@@ -66,7 +66,6 @@ def free(
     ) as cleaner:
         try:
             cleaner.run()
-            cleaner.wait()
         except KeyboardInterrupt as e:
             log.info(e.__class__)
             cleaner.stop()
