@@ -99,4 +99,9 @@ trace = trace_function(logger.base, DEBUG)
 
 # namespace
 class log:
-    pass
+    # general log function at base logger
+    critical = logger.base.critical
+    error = logger.base.error
+    warning = logger.base.warning
+    info = logger.base.info
+    debug = logger.base.debug
