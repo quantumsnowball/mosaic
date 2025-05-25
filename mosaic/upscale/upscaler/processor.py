@@ -139,10 +139,15 @@ class Processor:
                 output.write(out_bytes)
 
     @trace
-    def run(self) -> None:
+    def start(self) -> None:
         self._reader_thread.start()
         self._processor_thread.start()
         self._writer_thread.start()
+
+    @trace
+    def run(self) -> None:
+        self.start()
+        self.wait()
 
     @trace
     def wait(self) -> None:

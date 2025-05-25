@@ -43,9 +43,9 @@ class Upscaler:
 
     @trace
     def start(self) -> None:
-        self.splitter.run()
-        self.processor.run()
-        self.combiner.run()
+        self.splitter.start()
+        self.processor.start()
+        self.combiner.start()
 
     @trace
     def run(self) -> None:
