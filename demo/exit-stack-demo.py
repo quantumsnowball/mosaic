@@ -18,7 +18,7 @@ class Splitter:
         pass
 
     @trace
-    def run(self):
+    def start(self):
         def worker():
             i = 0
             while not self.event.is_set() and i < 10:
@@ -27,6 +27,11 @@ class Splitter:
                 i += 1
         self.thread = Thread(target=worker)
         self.thread.start()
+
+    @trace
+    def run(self) -> None:
+        self.start()
+        self.wait()
 
     @trace
     def wait(self):
@@ -51,7 +56,7 @@ class Combiner:
         pass
 
     @trace
-    def run(self):
+    def start(self):
         def worker():
             i = 0
             while not self.event.is_set() and i < 10:
@@ -60,6 +65,11 @@ class Combiner:
                 i += 1
         self.thread = Thread(target=worker)
         self.thread.start()
+
+    @trace
+    def run(self) -> None:
+        self.start()
+        self.wait()
 
     @trace
     def wait(self):
@@ -89,8 +99,8 @@ class Master:
 
     @trace
     def start(self):
-        self.splitter.run()
-        self.combiner.run()
+        self.splitter.start()
+        self.combiner.start()
 
     @trace
     def run(self):
