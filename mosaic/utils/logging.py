@@ -1,7 +1,6 @@
 import functools
 import logging
 import os
-from logging import CRITICAL, DEBUG, ERROR, INFO, NOTSET, WARNING, Logger
 from typing import Callable, ParamSpec, TypeVar
 
 P = ParamSpec("P")
@@ -42,9 +41,9 @@ class logger:
         # display the selected, suppress the ignored
         for name, logger in cls._loggers.items():
             if name in selected:
-                logger.setLevel(DEBUG)
+                logger.setLevel(logging.DEBUG)
             else:
-                logger.setLevel(CRITICAL)
+                logger.setLevel(logging.CRITICAL)
 
 
 # basicConfig, to be called on the root __init__
@@ -96,7 +95,7 @@ def trace_function(level: int) -> Wrapper[P, R]:
 
 
 # helper
-trace = trace_function(DEBUG)
+trace = trace_function(logging.DEBUG)
 
 
 # namespace
