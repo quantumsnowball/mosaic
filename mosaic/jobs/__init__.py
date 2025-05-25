@@ -24,6 +24,7 @@ def jobs(ctx: click.Context) -> None:
         print(f'{i+1}: {job.timestamp_pp} - {job.id}')
         print(f'\tprogress: {job.checklist.count_finished} / {job.checklist.count} completed')
         print(f'\tcommand: {job.command}')
+        print(f'\tsegment time: {job.segment_time}')
         print(f'\tinput file: {job.input_file}')
         print(f'\toutput file: {job.output_file}')
         print('')
