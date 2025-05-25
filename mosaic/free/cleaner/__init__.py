@@ -20,7 +20,7 @@ def run(
     raw_info: bool,
     netM: BiSeNet,
     netG: BVDNet,
-) -> bool:
+) -> None:
     # extract video info
     source = VideoSource(input_file, start_time, end_time)
 
@@ -54,11 +54,11 @@ def run(
         try:
             # wait for all workers
             wait()
-            return True
         except KeyboardInterrupt:
             # upon kbint, only stop splitter
             stop()
-            return False
+            # raise again
+            raise
         finally:
             # wait for all workers again
             wait()
