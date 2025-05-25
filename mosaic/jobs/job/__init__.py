@@ -10,6 +10,7 @@ from mosaic.free.net.netM import bisenet
 from mosaic.jobs.job.checklist import Checklist
 from mosaic.jobs.utils import JOBS_DIR
 from mosaic.utils import PACKAGE_ROOT
+from mosaic.utils.exception import catch
 from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.spec import VideoSource
@@ -80,12 +81,13 @@ class Job:
         self.checklist.create()
         self.checklist.initialize(self._input_dirpath, ext=self.segment_ext, val=False)
 
+    @catch(KeyboardInterrupt)
     def proceed(self) -> None:
         # loop through available tasks
         while task := self.checklist.next_task():
             # process task with the correct command
             if self.command == 'free':
-                result = cleaner.run(
+                cleaner.run(
                     input_file=self._input_dirpath / task.name,
                     start_time=None,
                     end_time=None,
@@ -94,10 +96,6 @@ class Job:
                     netM=bisenet(PACKAGE_ROOT/'free/net/netM/state_dicts/mosaic_position.pth'),
                     netG=video(PACKAGE_ROOT/'free/net/netG/state_dicts/clean_youknow_video.pth'),
                 )
-
-                # break on kbint
-                if not result:
-                    break
 
                 # mark task done
                 self.checklist.mark_done(task)
