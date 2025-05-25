@@ -19,9 +19,11 @@ LOGGER_SELECTION_ENV = 'MOSAIC_LOGGER'
 class logger:
     _loggers = dict(
         base=logging.getLogger('base'),
+        function=logging.getLogger('function'),
         exception=logging.getLogger('exception'),
     )
     base = _loggers['base']
+    function = _loggers['function']
     exception = _loggers['exception']
 
     @classmethod
@@ -63,13 +65,13 @@ def setup_logger() -> None:
 
 
 # decorator
-def trace_function(logger: Logger, level: int) -> Wrapper[P, R]:
+def trace_function(level: int) -> Wrapper[P, R]:
     def wrapper(func: ToBeWrapped[P, R]) -> Wrapped[P, R]:
         # wrapped function
         @functools.wraps(func)
         def wrapped(*args: P.args, **kwargs: P.kwargs) -> R:
             # log info before funning the function
-            logger.log(
+            logger.function.log(
                 level,
                 f"CALLED >> {func.__module__}.{func.__name__}()"
             )
@@ -78,7 +80,7 @@ def trace_function(logger: Logger, level: int) -> Wrapper[P, R]:
             result = func(*args, **kwargs)
 
             # log info after funning the function
-            logger.log(
+            logger.function.log(
                 level,
                 f"          {func.__module__}.{func.__name__}() >> RETURN"
             )
@@ -94,7 +96,7 @@ def trace_function(logger: Logger, level: int) -> Wrapper[P, R]:
 
 
 # helper
-trace = trace_function(logger.base, DEBUG)
+trace = trace_function(DEBUG)
 
 
 # namespace
