@@ -2,11 +2,12 @@ from pathlib import Path
 
 import click
 
-import mosaic.free.cleaner as cleaner
+from mosaic.free.cleaner import Cleaner
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.utils import HMS, HMSParamType, VideoPathParamType
 from mosaic.utils.exception import catch
+from mosaic.utils.logging import log
 from mosaic.utils.service import service
 
 PACKAGE_DIR = Path(__file__).parent
@@ -54,7 +55,7 @@ def free(
             f'{end_time.time_tag if end_time else ""}')
 
     # run
-    cleaner.run(
+    with Cleaner(
         input_file=input_file,
         start_time=start_time,
         end_time=end_time,
@@ -62,4 +63,10 @@ def free(
         raw_info=raw_info,
         netM=netM,
         netG=netG,
-    )
+    ) as cleaner:
+        try:
+            cleaner.run()
+            cleaner.wait()
+        except KeyboardInterrupt as e:
+            log.info(e.__class__)
+            cleaner.stop()
