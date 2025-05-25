@@ -14,7 +14,7 @@ from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler.splitter import Splitter
 from mosaic.utils import TEMP_DIR
 from mosaic.utils.exception import catch
-from mosaic.utils.logging import log
+from mosaic.utils.logging import trace
 
 
 @dataclass
@@ -71,18 +71,18 @@ class Processor:
     def upsampled_info(self) -> 'mp.Queue[UpsampleInfo]':
         return self._upsampled_info
 
-    @log.info
+    @trace
     def __enter__(self) -> Self:
         if not self.output.exists():
             os.mkfifo(self.output)
         return self
 
-    @log.info
+    @trace
     def __exit__(self, type, value, traceback) -> None:
         if self.output.exists():
             self.output.unlink()
 
-    @log.info
+    @trace
     @catch(ShutDown, ValueError)
     def _reader_worker(self) -> None:
         with open(self.input, 'rb') as input:
@@ -101,7 +101,7 @@ class Processor:
             # signal the end of frame stream
             self._reader_out_queue.put(None)
 
-    @log.info
+    @trace
     @catch(ShutDown, ValueError)
     def _processor_worker(self) -> None:
         info_known = False
@@ -125,7 +125,7 @@ class Processor:
         # signal the end of frame stream
         self._processor_out_queue.put(None)
 
-    @log.info
+    @trace
     @catch(ShutDown, BrokenPipeError)
     def _writer_worker(self) -> None:
         with open(self.output, 'wb') as output:
@@ -138,13 +138,13 @@ class Processor:
                 out_bytes = frame.astype(np.uint8).tobytes()
                 output.write(out_bytes)
 
-    @log.info
+    @trace
     def run(self) -> None:
         self._reader_thread.start()
         self._processor_thread.start()
         self._writer_thread.start()
 
-    @log.info
+    @trace
     def wait(self) -> None:
         if self._reader_thread.is_alive():
             self._reader_thread.join()
@@ -153,7 +153,7 @@ class Processor:
         if self._writer_thread.is_alive():
             self._writer_thread.join()
 
-    @log.info
+    @trace
     def stop(self) -> None:
         # raises ShutDown
         self._reader_out_queue.shutdown(immediate=True)

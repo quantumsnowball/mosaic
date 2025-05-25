@@ -15,7 +15,7 @@ from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.utils import TEMP_DIR
 from mosaic.utils.exception import catch
-from mosaic.utils.logging import log
+from mosaic.utils.logging import trace
 
 
 class Processor:
@@ -44,18 +44,18 @@ class Processor:
     def output(self) -> Path:
         return self._output_pipe
 
-    @log.info
+    @trace
     def __enter__(self) -> Self:
         if not self.output.exists():
             os.mkfifo(self.output)
         return self
 
-    @log.info
+    @trace
     def __exit__(self, type, value, traceback) -> None:
         if self.output.exists():
             self.output.unlink()
 
-    @log.info
+    @trace
     @catch(ShutDown, BrokenPipeError)
     def _worker(self) -> None:
         with open(self.output, 'wb') as output:
@@ -92,16 +92,16 @@ class Processor:
                 out_bytes = img_output.astype(np.uint8).tobytes()
                 output.write(out_bytes)
 
-    @log.info
+    @trace
     def run(self) -> None:
         self._thread.start()
 
-    @log.info
+    @trace
     def wait(self) -> None:
         if self._thread.is_alive():
             self._thread.join()
 
-    @log.info
+    @trace
     def stop(self) -> None:
         # raises BrokenPipeError
         if self.output.exists():

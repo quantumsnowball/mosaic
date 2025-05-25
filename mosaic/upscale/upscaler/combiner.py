@@ -4,7 +4,7 @@ from typing import Self
 
 from mosaic.upscale.upscaler.processor import Processor
 from mosaic.utils.ffmpeg import FFmpeg
-from mosaic.utils.logging import log
+from mosaic.utils.logging import trace
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.spec import VideoDest
 
@@ -27,18 +27,18 @@ class Combiner:
     def input(self) -> Path:
         return self._input.output
 
-    @log.info
+    @trace
     def __enter__(self) -> Self:
         if self._pbar:
             self._pbar.start()
         return self
 
-    @log.info
+    @trace
     def __exit__(self, type, value, traceback) -> None:
         if self._pbar:
             self._pbar.stop()
 
-    @log.info
+    @trace
     def run(self) -> None:
         # block until upsampled info available
         info = self._input.upsampled_info.get()
@@ -85,14 +85,14 @@ class Combiner:
         # run
         self._proc = ffmpeg.run_async()
 
-    @log.info
+    @trace
     def wait(self) -> None:
         if self._proc is not None:
             self._proc.wait()
         if self._pbar is not None:
             self._pbar.wait()
 
-    @log.info
+    @trace
     def stop(self) -> None:
         if self._proc is not None:
             self._proc.terminate()
