@@ -29,6 +29,7 @@ def make_command(name: CommandName) -> click.Command:
         # create a new job
         with Job.create(
             command=name,
+            segment_time=segment_time,
             input_file=input_file,
             output_file=output_file,
         ) as job:

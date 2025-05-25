@@ -9,8 +9,7 @@ from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.jobs.job.checklist import Checklist
 from mosaic.jobs.utils import JOBS_DIR
-from mosaic.utils import PACKAGE_ROOT
-from mosaic.utils.exception import catch
+from mosaic.utils import HMS, PACKAGE_ROOT
 from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.logging import log
 from mosaic.utils.progress import ProgressBar
@@ -24,7 +23,6 @@ class Job:
     outputs_list_fname = 'outputs.txt'
     checklist_fname = 'checklist.db'
     concat_index_fname = 'concat.txt'
-    segment_time = '00:05:00'
     segment_ext = 'mp4'
     segment_pattern = f'%06d.{segment_ext}'
 
@@ -34,6 +32,7 @@ class Job:
         command: str,
         id: UUID,
         timestamp: datetime,
+        segment_time: HMS,
         input_file: Path,
         output_file: Path,
     ) -> None:
@@ -42,6 +41,7 @@ class Job:
         self.timestamp = timestamp
         self.timestamp_iso = self.timestamp.isoformat()
         self.timestamp_pp = self.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        self.segment_time = segment_time
         self.input_file = input_file
         self.output_file = output_file
         self.origin = VideoSource(self.input_file)
@@ -159,11 +159,19 @@ class Job:
         )
 
     @classmethod
-    def create(cls, *, command: str, input_file: Path, output_file: Path) -> Self:
+    def create(
+        cls,
+        *,
+        command: str,
+        segment_time: HMS,
+        input_file: Path,
+        output_file: Path
+    ) -> Self:
         job = cls(
             command=command,
             id=uuid4(),
             timestamp=datetime.now(),
+            segment_time=segment_time,
             input_file=input_file,
             output_file=output_file,
         )
