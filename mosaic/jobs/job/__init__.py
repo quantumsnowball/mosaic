@@ -139,6 +139,7 @@ class Job:
             command=self.command,
             id=self.id,
             timestamp=self.timestamp_iso,
+            segment_time=self.segment_time,
             input_file=self.input_file,
             output_file=self.output_file,
         ).items()}
@@ -154,6 +155,7 @@ class Job:
             command=d['command'],
             id=UUID(d['id']),
             timestamp=datetime.fromisoformat(d['timestamp']),
+            segment_time=HMS.from_str(d['segment_time']),
             input_file=Path(d['input_file']),
             output_file=Path(d['output_file']),
         )
