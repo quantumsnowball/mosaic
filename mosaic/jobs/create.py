@@ -18,7 +18,7 @@ def create() -> None:
 def make_command(name: CommandName) -> click.Command:
     @create.command(name=name)
     @click.option('-i', '--input-file', required=True, type=VideoPathParamType(), help='input media path')
-    @click.option('-st', '--segment-time', required=False, default='00:05:00', type=HMSParamType(), help='segment time')
+    @click.option('-sg', '--segment-time', required=False, default='00:05:00', type=HMSParamType(), help='segment time')
     @click.argument('output-file', required=True, type=VideoPathParamType())
     @service()
     def command(
