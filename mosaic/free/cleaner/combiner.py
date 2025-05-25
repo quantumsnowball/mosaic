@@ -37,7 +37,7 @@ class Combiner:
             self._pbar.stop()
 
     @trace
-    def run(self) -> None:
+    def start(self) -> None:
         # create the ffmpeg stream command using correct info
         ffmpeg = (
             FFmpeg()
@@ -77,6 +77,11 @@ class Combiner:
 
         # run
         self._proc = ffmpeg.run_async()
+
+    @trace
+    def run(self) -> None:
+        self.start()
+        self.wait()
 
     @trace
     def wait(self) -> None:

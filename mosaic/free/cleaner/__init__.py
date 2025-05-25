@@ -46,10 +46,10 @@ class Cleaner:
 
     @trace
     def start(self) -> None:
-        self.splitter.run()
-        self.packer.run()
-        self.processor.run()
-        self.combiner.run()
+        self.splitter.start()
+        self.packer.start()
+        self.processor.start()
+        self.combiner.start()
 
     @trace
     def run(self) -> None:
@@ -92,10 +92,10 @@ def run(
         Combiner(processor, output_file, raw_info) as combiner
     ):
         # run
-        splitter.run()
-        packer.run()
-        processor.run()
-        combiner.run()
+        splitter.start()
+        packer.start()
+        processor.start()
+        combiner.start()
 
         def wait() -> None:
             # wait until the last worker
