@@ -1,3 +1,4 @@
+from contextlib import ExitStack
 from pathlib import Path
 from typing import Self
 
@@ -21,31 +22,47 @@ class Upscaler:
         raw_info: bool,
         upsampler: RealESRGANer,
     ) -> None:
-        pass
+        source = VideoSource(input_file, start_time, end_time)
+        dest = VideoDest(output_file, scale)
+        self.splitter = Splitter(source)
+        self.processor = Processor(self.splitter, upsampler)
+        self.combiner = Combiner(self.processor, dest, raw_info)
+        self.cm = ExitStack()
 
     @trace
     def __enter__(self) -> Self:
+        self.cm.enter_context(self.splitter)
+        self.cm.enter_context(self.processor)
+        self.cm.enter_context(self.combiner)
         return self
 
     @trace
     def __exit__(self, type, value, traceback) -> None:
-        pass
+        self.wait()
+        self.cm.close()
 
     @trace
     def start(self) -> None:
-        pass
+        self.splitter.run()
+        self.processor.run()
+        self.combiner.run()
 
     @trace
     def run(self) -> None:
-        pass
+        self.start()
+        self.wait()
 
     @trace
     def wait(self) -> None:
-        pass
+        self.splitter.wait()
+        self.processor.wait()
+        self.combiner.wait()
 
     @trace
     def stop(self) -> None:
-        pass
+        self.splitter.stop()
+        self.processor.stop()
+        self.combiner.stop()
 
 
 @trace
