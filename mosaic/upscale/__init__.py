@@ -2,11 +2,11 @@ from pathlib import Path
 
 import click
 
-from mosaic.upscale import upscaler
 from mosaic.upscale.net import PRESETS, presets
 from mosaic.upscale.net.real_esrgan import RealESRGANer
+from mosaic.upscale.upscaler import Upscaler
 from mosaic.utils import HMS, HMSParamType, VideoPathParamType
-from mosaic.utils.exception import catch
+from mosaic.utils.logging import log
 from mosaic.utils.service import service
 
 PACKAGE_DIR = Path(__file__).parent
@@ -22,7 +22,6 @@ PACKAGE_DIR = Path(__file__).parent
 @click.option('--raw-info', is_flag=True, default=False, help='display raw ffmpeg info')
 @click.argument('output-file', required=True, type=VideoPathParamType())
 @service()
-@catch(KeyboardInterrupt)
 def upscale(
     input_file: Path,
     start_time: HMS | None,
@@ -51,7 +50,7 @@ def upscale(
         gpu_id=0,
     )
 
-    upscaler.run(
+    with Upscaler(
         input_file=input_file,
         start_time=start_time,
         end_time=end_time,
@@ -59,4 +58,9 @@ def upscale(
         scale=scale,
         raw_info=raw_info,
         upsampler=upsampler,
-    )
+    ) as upscaler:
+        try:
+            upscaler.run()
+        except KeyboardInterrupt as e:
+            log.info(e.__class__)
+            upscaler.stop()
