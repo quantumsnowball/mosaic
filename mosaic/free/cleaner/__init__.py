@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Self
 
 from mosaic.free.cleaner.combiner import Combiner
 from mosaic.free.cleaner.packer import Packer
@@ -9,6 +10,40 @@ from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.utils import HMS
 from mosaic.utils.logging import trace
 from mosaic.utils.spec import VideoSource
+
+
+class Cleaner:
+    def __init__(
+        self,
+        input_file: Path,
+        start_time: HMS | None,
+        end_time: HMS | None,
+        output_file: Path,
+        raw_info: bool,
+        netM: BiSeNet,
+        netG: BVDNet,
+    ) -> None:
+        pass
+
+    @trace
+    def __enter__(self) -> Self:
+        return self
+
+    @trace
+    def __exit__(self, type, value, traceback) -> None:
+        pass
+
+    @trace
+    def run(self) -> None:
+        pass
+
+    @trace
+    def wait(self) -> None:
+        pass
+
+    @trace
+    def stop(self) -> None:
+        pass
 
 
 @trace
