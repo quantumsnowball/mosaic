@@ -88,9 +88,14 @@ class Master:
         self.master.close()
 
     @trace
-    def run(self):
+    def start(self):
         self.splitter.run()
         self.combiner.run()
+
+    @trace
+    def run(self):
+        self.start()
+        self.wait()
 
     @trace
     def wait(self):
@@ -105,8 +110,7 @@ class Master:
 
 if __name__ == "__main__":
     with Master() as master:
-        master.run()
         try:
-            master.wait()
+            master.run()
         except KeyboardInterrupt:
             master.stop()
