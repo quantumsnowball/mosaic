@@ -26,7 +26,7 @@ def catch(
             except exceptions as e:
                 # func is interrupted, None value is return
                 logger.exception.debug(
-                    f'{func.__module__}.{func.__name__}() raised {e.__class__}'
+                    f'{func.__module__}::{func.__qualname__}() caught {e.__class__}'
                 )
 
         # return the wrapped function
