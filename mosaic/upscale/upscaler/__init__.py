@@ -52,6 +52,8 @@ def run(
         except KeyboardInterrupt:
             # upon kbint, only stop splitter
             stop()
+            # raise again
+            raise
         finally:
             # wait for all workers again
             wait()
