@@ -9,7 +9,7 @@ import numpy as np
 from mosaic.free.cleaner.constants import LEFT_FRAME, POOL_NUM
 from mosaic.free.cleaner.splitter import Splitter
 from mosaic.utils.exception import catch
-from mosaic.utils.logging import log
+from mosaic.utils.logging import trace
 
 
 class Package:
@@ -57,15 +57,15 @@ class Packer:
     def output(self) -> Output:
         return self._queue
 
-    @log.info
+    @trace
     def __enter__(self) -> Self:
         return self
 
-    @log.info
+    @trace
     def __exit__(self, type, value, traceback) -> None:
         pass
 
-    @log.info
+    @trace
     @catch(ShutDown)
     def _worker(self) -> None:
         with open(self.input, 'rb') as input:
@@ -101,16 +101,16 @@ class Packer:
                     # also time to break the loop
                     break
 
-    @log.info
+    @trace
     def run(self) -> None:
         self._thread.start()
 
-    @log.info
+    @trace
     def wait(self) -> None:
         if self._thread.is_alive():
             self._thread.join()
 
-    @log.info
+    @trace
     def stop(self) -> None:
         # raises ShutDown
         self.output.shutdown(immediate=True)

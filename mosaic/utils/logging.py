@@ -1,7 +1,6 @@
 import functools
 import logging
 import os
-from logging import CRITICAL, DEBUG, ERROR, INFO, NOTSET, WARNING
 from typing import Callable, ParamSpec, TypeVar
 
 P = ParamSpec("P")
@@ -19,9 +18,11 @@ LOGGER_SELECTION_ENV = 'MOSAIC_LOGGER'
 class logger:
     _loggers = dict(
         base=logging.getLogger('base'),
+        function=logging.getLogger('function'),
         exception=logging.getLogger('exception'),
     )
     base = _loggers['base']
+    function = _loggers['function']
     exception = _loggers['exception']
 
     @classmethod
@@ -40,9 +41,9 @@ class logger:
         # display the selected, suppress the ignored
         for name, logger in cls._loggers.items():
             if name in selected:
-                logger.setLevel(DEBUG)
+                logger.setLevel(logging.DEBUG)
             else:
-                logger.setLevel(CRITICAL)
+                logger.setLevel(logging.CRITICAL)
 
 
 # basicConfig, to be called on the root __init__
@@ -63,13 +64,13 @@ def setup_logger() -> None:
 
 
 # decorator
-def log_at_level(level: int) -> Wrapper[P, R]:
+def trace_function(level: int) -> Wrapper[P, R]:
     def wrapper(func: ToBeWrapped[P, R]) -> Wrapped[P, R]:
         # wrapped function
         @functools.wraps(func)
         def wrapped(*args: P.args, **kwargs: P.kwargs) -> R:
             # log info before funning the function
-            logger.base.log(
+            logger.function.log(
                 level,
                 f"CALLED >> {func.__module__}.{func.__name__}()"
             )
@@ -78,7 +79,7 @@ def log_at_level(level: int) -> Wrapper[P, R]:
             result = func(*args, **kwargs)
 
             # log info after funning the function
-            logger.base.log(
+            logger.function.log(
                 level,
                 f"          {func.__module__}.{func.__name__}() >> RETURN"
             )
@@ -93,11 +94,15 @@ def log_at_level(level: int) -> Wrapper[P, R]:
     return wrapper
 
 
+# helper
+trace = trace_function(logging.DEBUG)
+
+
 # namespace
 class log:
-    critical = log_at_level(CRITICAL)
-    error = log_at_level(ERROR)
-    warning = log_at_level(WARNING)
-    info = log_at_level(INFO)
-    debug = log_at_level(DEBUG)
-    notset = log_at_level(NOTSET)
+    # general log function at base logger
+    critical = logger.base.critical
+    error = logger.base.error
+    warning = logger.base.warning
+    info = logger.base.info
+    debug = logger.base.debug
