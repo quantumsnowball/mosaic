@@ -1,6 +1,7 @@
 import re
 import shutil
 from pathlib import Path
+from typing import Self
 
 import click
 
@@ -45,6 +46,11 @@ class HMS:
     @property
     def time_tag(self) -> str:
         return f"{self.hours:02d}{self.minutes:02d}{self.seconds:02d}"
+
+    @classmethod
+    def from_str(cls, txt: str) -> Self:
+        h, m, s = map(int, txt.split(':'))
+        return cls(h, m, s)
 
 
 class HMSParamType(click.ParamType):
