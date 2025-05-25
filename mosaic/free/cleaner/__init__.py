@@ -1,3 +1,4 @@
+from contextlib import ExitStack
 from pathlib import Path
 from typing import Self
 
@@ -23,27 +24,46 @@ class Cleaner:
         netM: BiSeNet,
         netG: BVDNet,
     ) -> None:
-        pass
+        source = VideoSource(input_file, start_time, end_time)
+        self.splitter = Splitter(source)
+        self.packer = Packer(self.splitter)
+        self.processor = Processor(self.packer, netM=netM, netG=netG)
+        self.combiner = Combiner(self.processor, output_file, raw_info)
+        self.cm = ExitStack()
 
     @trace
     def __enter__(self) -> Self:
+        self.cm.enter_context(self.splitter)
+        self.cm.enter_context(self.packer)
+        self.cm.enter_context(self.processor)
+        self.cm.enter_context(self.combiner)
         return self
 
     @trace
     def __exit__(self, type, value, traceback) -> None:
-        pass
+        self.wait()
+        self.cm.close()
 
     @trace
     def run(self) -> None:
-        pass
+        self.splitter.run()
+        self.packer.run()
+        self.processor.run()
+        self.combiner.run()
 
     @trace
     def wait(self) -> None:
-        pass
+        self.splitter.wait()
+        self.packer.wait()
+        self.processor.wait()
+        self.combiner.wait()
 
     @trace
     def stop(self) -> None:
-        pass
+        self.splitter.stop()
+        self.packer.stop()
+        self.processor.stop()
+        self.combiner.stop()
 
 
 @trace
