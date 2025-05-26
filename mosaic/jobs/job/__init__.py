@@ -1,4 +1,5 @@
 import json
+import shutil
 from datetime import datetime
 from pathlib import Path
 from typing import Self
@@ -8,7 +9,7 @@ from mosaic.free.cleaner import Cleaner
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.jobs.job.checklist import Checklist
-from mosaic.jobs.utils import JOBS_DIR
+from mosaic.jobs.utils import JOBS_DIR, Command
 from mosaic.utils import PACKAGE_ROOT
 from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.logging import log
@@ -30,7 +31,7 @@ class Job:
     def __init__(
         self,
         *,
-        command: str,
+        command: Command,
         id: UUID,
         timestamp: datetime,
         segment_time: HMS,
@@ -74,7 +75,7 @@ class Job:
             ).output(
                 '-f', 'segment',
                 '-segment_time', self.segment_time,
-                '-vcodec', 'libx264',
+                '-vcodec', 'copy',
                 '-acodec', 'copy',
                 self._input_dirpath / self.segment_pattern,
             ).run()
@@ -103,6 +104,20 @@ class Job:
                         log.info(e.__class__)
                         cleaner.stop()
                         break
+
+                # mark task done
+                self.checklist.mark_done(task)
+
+            elif self.command == 'copy':
+                # no processing just copy for testing purpose
+                try:
+                    shutil.copy(
+                        self._input_dirpath / task.name,
+                        self._output_dirpath / task.name,
+                    )
+                except KeyboardInterrupt as e:
+                    log.info(e.__class__)
+                    break
 
                 # mark task done
                 self.checklist.mark_done(task)
@@ -165,7 +180,7 @@ class Job:
     def create(
         cls,
         *,
-        command: str,
+        command: Command,
         segment_time: HMS,
         input_file: Path,
         output_file: Path
