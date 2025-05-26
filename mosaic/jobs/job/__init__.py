@@ -75,7 +75,7 @@ class Job:
             ).output(
                 '-f', 'segment',
                 '-segment_time', self.segment_time,
-                '-vcodec', 'libx264',
+                '-vcodec', 'copy',
                 '-acodec', 'copy',
                 self._input_dirpath / self.segment_pattern,
             ).run()
