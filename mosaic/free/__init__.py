@@ -2,6 +2,7 @@ from pathlib import Path
 
 import click
 
+import mosaic.free.args as args
 from mosaic.free.cleaner import Cleaner
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
@@ -22,6 +23,7 @@ PACKAGE_DIR = Path(__file__).parent
 @click.option('--raw-info', is_flag=True, default=False, help='display raw ffmpeg info')
 @click.argument('output-file', required=True, type=PathParamType())
 @service()
+@args.preprocess
 def free(
     input_file: Path,
     start_time: HMS | None,
