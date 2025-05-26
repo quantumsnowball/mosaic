@@ -4,7 +4,7 @@ from typing import Literal
 import click
 
 from mosaic.jobs.job import Job
-from mosaic.utils import VideoPathParamType
+from mosaic.utils.path import VideoPathParamType
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, HMSParamType
 

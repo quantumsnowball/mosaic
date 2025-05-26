@@ -5,8 +5,8 @@ import click
 from mosaic.free.cleaner import Cleaner
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
-from mosaic.utils import VideoPathParamType
 from mosaic.utils.logging import log
+from mosaic.utils.path import VideoPathParamType
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, HMSParamType
 
