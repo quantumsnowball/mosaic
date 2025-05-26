@@ -8,9 +8,9 @@ from mosaic.free.cleaner.processor import Processor
 from mosaic.free.cleaner.splitter import Splitter
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
-from mosaic.utils import HMS
 from mosaic.utils.logging import trace
 from mosaic.utils.spec import VideoSource
+from mosaic.utils.time import HMS
 
 
 class Cleaner:
