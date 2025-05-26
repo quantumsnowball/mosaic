@@ -2,8 +2,7 @@ import click
 
 from mosaic.jobs.clean import clean
 from mosaic.jobs.create import create
-from mosaic.jobs.job import Job
-from mosaic.jobs.utils import JOBS_DIR
+from mosaic.jobs.menu import Menu
 from mosaic.utils.service import service
 
 
@@ -15,27 +14,14 @@ def jobs(ctx: click.Context) -> None:
     if ctx.invoked_subcommand:
         return
 
-    # detect all jobs available
-    jobs = [Job.load(dirpath)
-            for dirpath in sorted(JOBS_DIR.glob('./*/'))]
+    # create menu and discover jobs
+    menu = Menu()
 
     # display a job list
-    for i, job in enumerate(jobs):
-        print(f'{i+1}: {job.timestamp_pp} - {job.id}')
-        print(f'\tprogress: {job.checklist.count_finished} / {job.checklist.count} completed')
-        print(f'\tcommand: {job.command}')
-        print(f'\tsegment time: {job.segment_time}')
-        print(f'\tinput file: {job.input_file}')
-        print(f'\toutput file: {job.output_file}')
-        print('')
+    menu.list_jobs()
 
-    # ask to select a job
-    if len(jobs) > 0:
-        n: int = click.prompt('Please select a job', type=int)
-        selected_job = jobs[n - 1]
-        selected_job.run()
-    else:
-        print('No jobs available. Please create a job first.')
+    # prompt for selecting a job
+    menu.prompt()
 
 
 jobs.add_command(create)
