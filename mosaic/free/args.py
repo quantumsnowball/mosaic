@@ -40,6 +40,10 @@ def preprocess(func: ToBeWrapped[P, R]) -> Wrapped[P, R]:
                 f'{start_time.time_tag if start_time else ""}-'
                 f'{end_time.time_tag if end_time else ""}')
 
+        # remove unwanted args
+        kwargs.pop('force')
+        kwargs.pop('time_tag')
+
         # run the actual function, return as is
         return func(*args, **kwargs)
 

@@ -28,8 +28,6 @@ def free(
     input_file: Path,
     start_time: HMS | None,
     end_time: HMS | None,
-    force: bool,
-    time_tag: bool,
     raw_info: bool,
     output_file: Path,
 ) -> None:
