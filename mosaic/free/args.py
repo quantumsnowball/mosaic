@@ -2,6 +2,8 @@ from functools import wraps
 from pathlib import Path
 from typing import Callable, ParamSpec, TypeVar, cast
 
+import click
+
 from mosaic.utils.time import HMS
 
 P = ParamSpec("P")
@@ -25,12 +27,20 @@ def preprocess(func: ToBeWrapped[P, R]) -> Wrapped[P, R]:
         output_file = cast(Path, kwargs['output_file'])
 
         # verify inputs
-        assert input_file.exists(), f'{input_file} does not exists'
+        if not input_file.exists():
+            click.secho(f'Input file does not exists: -i {input_file}', fg='red')
+            return
         if start_time and end_time:
             if not end_time > start_time:
-                raise ValueError('Invalid start time or end time')
+                click.secho(f'Invalid start time or end time: -ss {start_time}, -to {end_time}', fg='red')
+                return
         if not force and output_file.exists():
-            if input(f'Output file {output_file} already exist, overwrite? y/[N] ').lower() != 'y':
+            if click.prompt(
+                click.style(f'Output file {output_file} already exist, overwrite? y/[N]', fg='red'),
+                type=str,
+                default='n',
+                show_default=False,
+            ).lower() != 'y':
                 return
 
         # modify output filename
