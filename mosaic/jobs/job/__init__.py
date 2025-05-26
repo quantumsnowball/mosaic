@@ -1,4 +1,5 @@
 import json
+import shutil
 from datetime import datetime
 from pathlib import Path
 from typing import Self
@@ -106,8 +107,20 @@ class Job:
 
                 # mark task done
                 self.checklist.mark_done(task)
+
             elif self.command == 'copy':
-                pass
+                # no processing just copy for testing purpose
+                try:
+                    shutil.copy(
+                        self._input_dirpath / task.name,
+                        self._output_dirpath / task.name,
+                    )
+                except KeyboardInterrupt as e:
+                    log.info(e.__class__)
+                    break
+
+                # mark task done
+                self.checklist.mark_done(task)
 
     def finalize(self) -> None:
         # create concat index
