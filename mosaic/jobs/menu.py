@@ -1,4 +1,5 @@
 import click
+from click import style
 
 from mosaic.jobs.job import Job
 from mosaic.jobs.utils import JOBS_DIR
@@ -11,15 +12,15 @@ class Menu:
                      for dirpath in sorted(JOBS_DIR.glob('./*/'))]
 
     def list_jobs(self) -> None:
-
         for i, job in enumerate(self.jobs):
-            print(f'{i+1}: {job.timestamp_pp} - {job.id}')
-            print(f'\tprogress: {job.checklist.count_finished} / {job.checklist.count} completed')
-            print(f'\tcommand: {job.command}')
-            print(f'\tsegment time: {job.segment_time}')
-            print(f'\tinput file: {job.input_file}')
-            print(f'\toutput file: {job.output_file}')
-            print('')
+            click.echo(
+                f'{i+1}: {job.timestamp_pp} - {job.id}\n'
+                f'\tprogress: {job.checklist.count_finished} / {job.checklist.count} completed\n'
+                f'\tcommand: {job.command}\n'
+                f'\tsegment time: {job.segment_time}\n'
+                f'\tinput file: {job.input_file}\n'
+                f'\toutput file: {job.output_file}\n'
+            )
 
     def prompt(self) -> None:
         if len(self.jobs) > 0:
