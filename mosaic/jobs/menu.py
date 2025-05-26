@@ -7,6 +7,19 @@ from mosaic.jobs.job import Job
 from mosaic.jobs.utils import JOBS_DIR
 
 
+def title(
+    i: int,
+    job: Job,
+    *,
+    newline: bool = True,
+    fg: str = 'yellow',
+) -> str:
+    txt = style(f'{i+1}: {job.timestamp_pp} - {job.id}', fg=fg)
+    if newline:
+        txt += '\n'
+    return txt
+
+
 def field(
     key: str,
     val: Any,
@@ -33,7 +46,7 @@ class Menu:
     def list_jobs(self) -> None:
         for i, job in enumerate(self.jobs):
             click.echo((
-                f'{i+1}: {job.timestamp_pp} - {job.id}\n' +
+                title(i, job) +
                 field('progress', f'{job.checklist.count_finished} / {job.checklist.count} completed') +
                 field('command', job.command) +
                 field('segment time', job.segment_time) +
