@@ -31,12 +31,6 @@ def free(
     raw_info: bool,
     output_file: Path,
 ) -> None:
-    # load netM
-    netM = bisenet(PACKAGE_DIR/'net/netM/state_dicts/mosaic_position.pth')
-
-    # load netG
-    netG = video(PACKAGE_DIR/'net/netG/state_dicts/clean_youknow_video.pth')
-
     # run
     with Cleaner(
         input_file=input_file,
@@ -44,8 +38,8 @@ def free(
         end_time=end_time,
         output_file=output_file,
         raw_info=raw_info,
-        netM=netM,
-        netG=netG,
+        netM=bisenet(PACKAGE_DIR/'net/netM/state_dicts/mosaic_position.pth'),
+        netG=video(PACKAGE_DIR/'net/netG/state_dicts/clean_youknow_video.pth'),
     ) as cleaner:
         try:
             cleaner.run()
