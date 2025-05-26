@@ -4,7 +4,7 @@ from typing import Literal
 import click
 
 from mosaic.jobs.job import Job
-from mosaic.utils.path import VideoPathParamType
+from mosaic.utils.path import PathParamType
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, HMSParamType
 
@@ -18,9 +18,9 @@ def create() -> None:
 
 def make_command(name: CommandName) -> click.Command:
     @create.command(name=name)
-    @click.option('-i', '--input-file', required=True, type=VideoPathParamType(), help='input media path')
+    @click.option('-i', '--input-file', required=True, type=PathParamType(), help='input media path')
     @click.option('-sg', '--segment-time', required=False, default='00:05:00', type=HMSParamType(), help='segment time')
-    @click.argument('output-file', required=True, type=VideoPathParamType())
+    @click.argument('output-file', required=True, type=PathParamType())
     @service()
     def command(
         input_file: Path,

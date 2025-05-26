@@ -3,8 +3,8 @@ from pathlib import Path
 import click
 
 
-class VideoPathParamType(click.ParamType):
-    name = 'VideoPath'
+class PathParamType(click.ParamType):
+    name = 'Path'
 
     def convert(self,
                 value: str,
