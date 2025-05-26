@@ -18,8 +18,6 @@ def preprocess(func: ToBeWrapped[P, R]) -> Wrapped[P, R]:
     # wrapped function
     @wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> R | None:
-        # extract
-
         # verify inputs
         input_file = cast(Path, kwargs['input_file'])
         if not input_file.exists():
