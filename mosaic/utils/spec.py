@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import Any
 
-from mosaic.utils import HMS
 from mosaic.utils.ffprobe import FFprobe
+from mosaic.utils.time import HMS
 
 
 class VideoSource:

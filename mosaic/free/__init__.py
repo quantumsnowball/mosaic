@@ -5,9 +5,10 @@ import click
 from mosaic.free.cleaner import Cleaner
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
-from mosaic.utils import HMS, HMSParamType, VideoPathParamType
+from mosaic.utils import VideoPathParamType
 from mosaic.utils.logging import log
 from mosaic.utils.service import service
+from mosaic.utils.time import HMS, HMSParamType
 
 PACKAGE_DIR = Path(__file__).parent
 

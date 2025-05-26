@@ -9,11 +9,12 @@ from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.jobs.job.checklist import Checklist
 from mosaic.jobs.utils import JOBS_DIR
-from mosaic.utils import HMS, PACKAGE_ROOT
+from mosaic.utils import PACKAGE_ROOT
 from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.logging import log
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.spec import VideoSource
+from mosaic.utils.time import HMS
 
 
 class Job:

@@ -5,9 +5,10 @@ import click
 from mosaic.upscale.net import PRESETS, presets
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler import Upscaler
-from mosaic.utils import HMS, HMSParamType, VideoPathParamType
+from mosaic.utils import VideoPathParamType
 from mosaic.utils.logging import log
 from mosaic.utils.service import service
+from mosaic.utils.time import HMS, HMSParamType
 
 PACKAGE_DIR = Path(__file__).parent
 
