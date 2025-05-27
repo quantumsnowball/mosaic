@@ -38,9 +38,16 @@ def job_info(i: int, job: Job) -> str:
             style(f'{job.checklist.count_finished} / {job.checklist.count} completed', fg='green', dim=dim)
         )
 
+    def segment_time() -> str:
+        return (
+            style(f'{"segment time":>{width}s}: ', fg='cyan', dim=dim) +
+            style(f'{job.segment_time}', fg='green', dim=dim)
+        )
+
     txt = '\n'.join([
         title(),
         progress(),
+        segment_time(),
     ])
     # for key, val in {
     #     'progress': f'{job.checklist.count_finished} / {job.checklist.count} completed',
