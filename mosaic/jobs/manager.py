@@ -1,3 +1,4 @@
+from shutil import rmtree
 from typing import Any
 
 import click
@@ -64,6 +65,8 @@ class Manager:
         # detect all jobs available
         self.jobs = [Job.load(dirpath)
                      for dirpath in sorted(JOBS_DIR.glob('./*/'))]
+        self.jobs_finished = [job for job in self.jobs if job.is_finished]
+        self.jobs_unfinished = [job for job in self.jobs if not job.is_finished]
 
     def list_jobs(self) -> None:
         for i, job in enumerate(self.jobs):
@@ -76,3 +79,14 @@ class Manager:
             selected_job.run()
         else:
             print('No jobs available. Please create a job first.')
+
+    def clear_finished(self) -> None:
+        if click.prompt('Do you want to DELETE ALL finished jobs (y/N)?', type=str).lower() == 'y':
+            for job in self.jobs_finished:
+                try:
+                    rmtree(job.job_dirpath)
+                    click.secho(f'Deleted job: {job.id}', fg='yellow')
+                except Exception:
+                    click.secho(f'Failed to delete job: {job.id}', fg='red')
+        else:
+            click.echo('Operation cancelled')

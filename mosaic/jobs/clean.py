@@ -2,6 +2,7 @@ from shutil import rmtree
 
 import click
 
+from mosaic.jobs.manager import Manager
 from mosaic.jobs.utils import JOBS_DIR
 from mosaic.utils.service import service
 
@@ -24,3 +25,8 @@ def clean(clear_all_jobs: bool) -> None:
         else:
             click.echo('Operation cancelled')
         return
+
+    # default only prompt to clean finished jobs
+    manager = Manager()
+    manager.list_jobs()
+    manager.clear_finished()
