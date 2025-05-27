@@ -27,19 +27,29 @@ def field(
 
 def job_info(i: int, job: Job) -> str:
     dim = job.checklist.is_finished
+    width = 16
 
     def title() -> str:
         return style(f'{i+1}: {job.timestamp_pp} - {job.id}', fg='yellow', dim=dim)
 
-    txt = title()
-    for key, val in {
-        'progress': f'{job.checklist.count_finished} / {job.checklist.count} completed',
-        'command': job.command,
-        'segment time': job.segment_time,
-        'input file': job.input_file,
-        'output file': job.output_file,
-    }.items():
-        txt += field(key, val, dim=dim)
+    def progress() -> str:
+        return (
+            style(f'{"progress":>{width}s}: ', fg='cyan', dim=dim) +
+            style(f'{job.checklist.count_finished} / {job.checklist.count} completed', fg='green', dim=dim)
+        )
+
+    txt = '\n'.join([
+        title(),
+        progress(),
+    ])
+    # for key, val in {
+    #     'progress': f'{job.checklist.count_finished} / {job.checklist.count} completed',
+    #     'command': job.command,
+    #     'segment time': job.segment_time,
+    #     'input file': job.input_file,
+    #     'output file': job.output_file,
+    # }.items():
+    #     txt += field(key, val, dim=dim)
     return txt
 
 
