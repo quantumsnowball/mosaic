@@ -45,15 +45,19 @@ def job_info(i: int, job: Job) -> str:
         )
 
     def input_file() -> str:
+        file = job.input_file
+        metadata = f'[{file.stat().st_size}]' if file.exists() else ''
         return (
             style(f'{"input file":>{width}s}: ', fg='cyan', dim=dim) +
-            style(f'{job.input_file}', fg='green', dim=dim)
+            style(' '.join((str(file), metadata)), fg='green', dim=dim)
         )
 
     def output_file() -> str:
+        file = job.output_file
+        metadata = f'[{file.stat().st_size}]' if file.exists() else ''
         return (
             style(f'{"output file":>{width}s}: ', fg='cyan', dim=dim) +
-            style(f'{job.output_file}', fg='green', dim=dim)
+            style(' '.join((str(file), metadata)), fg='green', dim=dim)
         )
 
     return '\n'.join([
