@@ -68,11 +68,12 @@ class Manager:
         self.jobs_finished = [job for job in self.jobs if job.is_finished]
         self.jobs_unfinished = [job for job in self.jobs if not job.is_finished]
 
-    def list_jobs(self) -> None:
-        for i, job in enumerate(self.jobs):
+    def list_jobs(self, jobs) -> None:
+        for i, job in enumerate(jobs):
             click.echo(job_info(i, job))
 
     def run_job(self) -> None:
+        self.list_jobs(self.jobs_unfinished)
         if len(self.jobs) > 0:
             n: int = click.prompt('Please select a job', type=int)
             selected_job = self.jobs[n - 1]
@@ -81,6 +82,7 @@ class Manager:
             print('No jobs available. Please create a job first.')
 
     def clear_finished(self) -> None:
+        self.list_jobs(self.jobs_finished)
         if click.prompt('Do you want to DELETE ALL finished jobs (y/N)?', type=str).lower() == 'y':
             for job in self.jobs_finished:
                 try:
@@ -92,6 +94,7 @@ class Manager:
             click.echo('Operation cancelled')
 
     def clear_all_jobs(self) -> None:
+        self.list_jobs(self.jobs)
         if click.prompt(style('Do you want to DELETE ALL jobs (y/N)?', fg='red'), type=str).lower() == 'y':
             for job in self.jobs:
                 try:

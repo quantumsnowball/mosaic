@@ -17,9 +17,6 @@ def jobs(ctx: click.Context) -> None:
     # create menu and discover jobs
     manager = Manager()
 
-    # display a job list
-    manager.list_jobs()
-
     # prompt for selecting a job
     manager.run_job()
 

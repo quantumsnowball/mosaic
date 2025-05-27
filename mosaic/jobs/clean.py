@@ -20,5 +20,4 @@ def clean(clear_all_jobs: bool) -> None:
         return
 
     # default only prompt to clean finished jobs
-    manager.list_jobs()
     manager.clear_finished()
