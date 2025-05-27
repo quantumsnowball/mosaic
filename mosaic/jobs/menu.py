@@ -7,50 +7,56 @@ from mosaic.jobs.job import Job
 from mosaic.jobs.utils import JOBS_DIR
 
 
-def title(
-    i: int,
-    job: Job,
-    *,
-    newline: bool = True,
-    fg: str = 'yellow',
-    dim: bool = False,
-) -> str:
-    txt = style(f'{i+1}: {job.timestamp_pp} - {job.id}', fg=fg, dim=dim)
-    if newline:
-        txt += '\n'
-    return txt
-
-
-def field(
-    key: str,
-    val: Any,
-    width: int = 16,
-    *,
-    newline: bool = True,
-    fg_key: str = 'cyan',
-    fg_val: str = 'green',
-    dim: bool = False,
-) -> str:
-    txt_key = style(f'{key:>{width}s}', fg=fg_key, dim=dim)
-    txt_val = style(f'{str(val)}', fg=fg_val, dim=dim)
-    txt = f'{txt_key}: {txt_val}'
-    if newline:
-        txt += '\n'
-    return txt
-
-
 def job_info(i: int, job: Job) -> str:
     dim = job.checklist.is_finished
-    txt = title(i, job, dim=dim)
-    for key, val in {
-        'progress': f'{job.checklist.count_finished} / {job.checklist.count} completed',
-        'command': job.command,
-        'segment time': job.segment_time,
-        'input file': job.input_file,
-        'output file': job.output_file,
-    }.items():
-        txt += field(key, val, dim=dim)
-    return txt
+    width = 16
+
+    def title() -> str:
+        return style(f'{i+1}: {job.timestamp_pp} - {job.id}', fg='yellow', dim=dim)
+
+    def progress() -> str:
+        return (
+            style(f'{"progress":>{width}s}: ', fg='cyan', dim=dim) +
+            style(f'{job.checklist.count_finished} / {job.checklist.count} completed', fg='green', dim=dim)
+        )
+
+    def segment_time() -> str:
+        return (
+            style(f'{"segment time":>{width}s}: ', fg='cyan', dim=dim) +
+            style(f'{job.segment_time}', fg='green', dim=dim)
+        )
+
+    def input_file() -> str:
+        file = job.input_file
+        try:
+            size_mb = round(file.stat().st_size / 1e6, 2)
+            metadata = f'({size_mb}MB)' if file.exists() else ''
+        except FileNotFoundError:
+            metadata = '(not exist)'
+        return (
+            style(f'{"input file":>{width}s}: ', fg='cyan', dim=dim) +
+            style(' '.join((str(file), metadata)), fg='green', dim=dim)
+        )
+
+    def output_file() -> str:
+        file = job.output_file
+        try:
+            size_mb = round(file.stat().st_size / 1e6, 2)
+            metadata = f'({size_mb}MB)' if file.exists() else ''
+        except FileNotFoundError:
+            metadata = '(not exist)'
+        return (
+            style(f'{"output file":>{width}s}: ', fg='cyan', dim=dim) +
+            style(' '.join((str(file), metadata)), fg='green', dim=dim)
+        )
+
+    return '\n'.join([
+        title(),
+        progress(),
+        segment_time(),
+        input_file(),
+        output_file(),
+    ])
 
 
 class Menu:
