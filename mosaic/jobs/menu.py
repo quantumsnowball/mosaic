@@ -44,10 +44,17 @@ def job_info(i: int, job: Job) -> str:
             style(f'{job.segment_time}', fg='green', dim=dim)
         )
 
+    def input_file() -> str:
+        return (
+            style(f'{"input file":>{width}s}: ', fg='cyan', dim=dim) +
+            style(f'{job.input_file}', fg='green', dim=dim)
+        )
+
     txt = '\n'.join([
         title(),
         progress(),
         segment_time(),
+        input_file(),
     ])
     # for key, val in {
     #     'progress': f'{job.checklist.count_finished} / {job.checklist.count} completed',
