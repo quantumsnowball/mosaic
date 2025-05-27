@@ -9,6 +9,7 @@ from mosaic.free.cleaner import Cleaner
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.jobs.job.checklist import Checklist
+from mosaic.jobs.job.utils import prompt_overwrite_output
 from mosaic.jobs.utils import JOBS_DIR, Command
 from mosaic.utils import PACKAGE_ROOT
 from mosaic.utils.ffmpeg import FFmpeg
@@ -142,6 +143,8 @@ class Job:
         ).run()
 
     def run(self) -> None:
+        if not prompt_overwrite_output(self.output_file):
+            return
         if not self._checklist_fpath.exists():
             self.initialize()
         if not self.checklist.is_finished:
