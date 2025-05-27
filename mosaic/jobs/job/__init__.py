@@ -48,14 +48,14 @@ class Job:
         self.input_file = input_file
         self.output_file = output_file
         self.origin = VideoSource(self.input_file)
-        self._job_dirpath = JOBS_DIR / f'{self.timestamp_iso.replace(':', '.').replace('T', '_')}'
-        self._input_dirpath = self._job_dirpath / self.inputs_dirname
-        self._output_dirpath = self._job_dirpath / self.outputs_dirname
-        self._checklist_fpath = self._job_dirpath / self.checklist_fname
+        self.job_dirpath = JOBS_DIR / f'{self.timestamp_iso.replace(':', '.').replace('T', '_')}'
+        self._input_dirpath = self.job_dirpath / self.inputs_dirname
+        self._output_dirpath = self.job_dirpath / self.outputs_dirname
+        self._checklist_fpath = self.job_dirpath / self.checklist_fname
         self.checklist = Checklist(self._checklist_fpath)
 
     def __enter__(self) -> Self:
-        Path.mkdir(self._job_dirpath, parents=True)
+        Path.mkdir(self.job_dirpath, parents=True)
         Path.mkdir(self._input_dirpath)
         Path.mkdir(self._output_dirpath)
         return self
@@ -160,7 +160,7 @@ class Job:
             self.finalize()
 
     def save(self) -> None:
-        info_fpath = self._job_dirpath / self.info_fname
+        info_fpath = self.job_dirpath / self.info_fname
         info = {k: str(v) for k, v in dict(
             command=self.command,
             id=self.id,
