@@ -7,24 +7,6 @@ from mosaic.jobs.job import Job
 from mosaic.jobs.utils import JOBS_DIR
 
 
-def field(
-    key: str,
-    val: Any,
-    width: int = 16,
-    *,
-    newline: bool = True,
-    fg_key: str = 'cyan',
-    fg_val: str = 'green',
-    dim: bool = False,
-) -> str:
-    txt_key = style(f'{key:>{width}s}', fg=fg_key, dim=dim)
-    txt_val = style(f'{str(val)}', fg=fg_val, dim=dim)
-    txt = f'{txt_key}: {txt_val}'
-    if newline:
-        txt += '\n'
-    return txt
-
-
 def job_info(i: int, job: Job) -> str:
     dim = job.checklist.is_finished
     width = 16
