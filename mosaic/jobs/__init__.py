@@ -2,7 +2,7 @@ import click
 
 from mosaic.jobs.clean import clean
 from mosaic.jobs.create import create
-from mosaic.jobs.menu import Menu
+from mosaic.jobs.manager import Manager
 from mosaic.utils.service import service
 
 
@@ -15,13 +15,13 @@ def jobs(ctx: click.Context) -> None:
         return
 
     # create menu and discover jobs
-    menu = Menu()
+    manager = Manager()
 
     # display a job list
-    menu.list_jobs()
+    manager.list_jobs()
 
     # prompt for selecting a job
-    menu.prompt()
+    manager.prompt()
 
 
 jobs.add_command(create)

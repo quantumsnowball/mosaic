@@ -59,7 +59,7 @@ def job_info(i: int, job: Job) -> str:
     ])
 
 
-class Menu:
+class Manager:
     def __init__(self) -> None:
         # detect all jobs available
         self.jobs = [Job.load(dirpath)
