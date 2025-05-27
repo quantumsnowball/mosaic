@@ -21,7 +21,7 @@ def jobs(ctx: click.Context) -> None:
     manager.list_jobs()
 
     # prompt for selecting a job
-    manager.prompt()
+    manager.run_job()
 
 
 jobs.add_command(create)

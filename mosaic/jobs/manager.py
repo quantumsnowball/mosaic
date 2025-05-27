@@ -69,7 +69,7 @@ class Manager:
         for i, job in enumerate(self.jobs):
             click.echo(job_info(i, job))
 
-    def prompt(self) -> None:
+    def run_job(self) -> None:
         if len(self.jobs) > 0:
             n: int = click.prompt('Please select a job', type=int)
             selected_job = self.jobs[n - 1]
