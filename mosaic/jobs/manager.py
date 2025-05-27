@@ -90,3 +90,15 @@ class Manager:
                     click.secho(f'Failed to delete job: {job.id}', fg='red')
         else:
             click.echo('Operation cancelled')
+
+    def clear_all_jobs(self) -> None:
+        if click.prompt(style('Do you want to DELETE ALL jobs (y/N)?', fg='red'), type=str).lower() == 'y':
+            for job in self.jobs:
+                try:
+                    rmtree(job.job_dirpath)
+                    click.secho(f'Deleted job: {job.id}', fg='yellow')
+                except Exception:
+                    click.secho(f'Failed to delete job: {job.id}', fg='red')
+
+        else:
+            click.echo('Operation cancelled')
