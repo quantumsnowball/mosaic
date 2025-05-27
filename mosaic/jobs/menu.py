@@ -50,21 +50,19 @@ def job_info(i: int, job: Job) -> str:
             style(f'{job.input_file}', fg='green', dim=dim)
         )
 
-    txt = '\n'.join([
+    def output_file() -> str:
+        return (
+            style(f'{"output file":>{width}s}: ', fg='cyan', dim=dim) +
+            style(f'{job.output_file}', fg='green', dim=dim)
+        )
+
+    return '\n'.join([
         title(),
         progress(),
         segment_time(),
         input_file(),
+        output_file(),
     ])
-    # for key, val in {
-    #     'progress': f'{job.checklist.count_finished} / {job.checklist.count} completed',
-    #     'command': job.command,
-    #     'segment time': job.segment_time,
-    #     'input file': job.input_file,
-    #     'output file': job.output_file,
-    # }.items():
-    #     txt += field(key, val, dim=dim)
-    return txt
 
 
 class Menu:
