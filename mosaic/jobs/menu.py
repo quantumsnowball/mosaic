@@ -7,20 +7,6 @@ from mosaic.jobs.job import Job
 from mosaic.jobs.utils import JOBS_DIR
 
 
-def title(
-    i: int,
-    job: Job,
-    *,
-    newline: bool = True,
-    fg: str = 'yellow',
-    dim: bool = False,
-) -> str:
-    txt = style(f'{i+1}: {job.timestamp_pp} - {job.id}', fg=fg, dim=dim)
-    if newline:
-        txt += '\n'
-    return txt
-
-
 def field(
     key: str,
     val: Any,
@@ -41,7 +27,11 @@ def field(
 
 def job_info(i: int, job: Job) -> str:
     dim = job.checklist.is_finished
-    txt = title(i, job, dim=dim)
+
+    def title() -> str:
+        return style(f'{i+1}: {job.timestamp_pp} - {job.id}', fg='yellow', dim=dim)
+
+    txt = title()
     for key, val in {
         'progress': f'{job.checklist.count_finished} / {job.checklist.count} completed',
         'command': job.command,
