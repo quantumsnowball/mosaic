@@ -8,7 +8,7 @@ from mosaic.jobs.utils import JOBS_DIR
 
 
 def job_info(i: int, job: Job) -> str:
-    dim = job.checklist.is_finished
+    dim = job.is_finished
     width = 16
 
     def title() -> str:

@@ -63,6 +63,13 @@ class Job:
     def __exit__(self, *_) -> None:
         pass
 
+    @property
+    def is_finished(self) -> bool:
+        return all((
+            self.checklist.is_finished,
+            self.output_file.exists(),
+        ))
+
     def initialize(self) -> None:
         # split video into segments
         with ProgressBar(self.origin.duration) as pbar:
