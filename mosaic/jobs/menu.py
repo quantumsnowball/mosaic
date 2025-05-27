@@ -46,7 +46,11 @@ def job_info(i: int, job: Job) -> str:
 
     def input_file() -> str:
         file = job.input_file
-        metadata = f'[{file.stat().st_size}]' if file.exists() else ''
+        try:
+            size_mb = round(file.stat().st_size / 1e6, 2)
+            metadata = f'({size_mb}MB)' if file.exists() else ''
+        except FileNotFoundError:
+            metadata = '(not exist)'
         return (
             style(f'{"input file":>{width}s}: ', fg='cyan', dim=dim) +
             style(' '.join((str(file), metadata)), fg='green', dim=dim)
@@ -54,7 +58,11 @@ def job_info(i: int, job: Job) -> str:
 
     def output_file() -> str:
         file = job.output_file
-        metadata = f'[{file.stat().st_size}]' if file.exists() else ''
+        try:
+            size_mb = round(file.stat().st_size / 1e6, 2)
+            metadata = f'({size_mb}MB)' if file.exists() else ''
+        except FileNotFoundError:
+            metadata = '(not exist)'
         return (
             style(f'{"output file":>{width}s}: ', fg='cyan', dim=dim) +
             style(' '.join((str(file), metadata)), fg='green', dim=dim)
