@@ -52,6 +52,13 @@ class VideoStream:
     def duration(self) -> str:
         return str(self._d['duration'])
 
+    def summary(self) -> str:
+        return (
+            f'{self.codec_name} ({self.profile}), '
+            f'{self.resolution} [SAR {self.sar} DAR {self.dar}], '
+            f'{self.bit_rate/1e3} kb/s, {round(eval(self.framerate), 2)} fps'
+        )
+
 
 class FFprobe:
     _args = (
