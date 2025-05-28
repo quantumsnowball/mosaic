@@ -46,6 +46,14 @@ class HMS:
         h, m, s = map(int, txt.split(':'))
         return cls(h, m, s)
 
+    @classmethod
+    def from_total_seconds(cls, total_seconds: int) -> Self:
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        seconds = (total_seconds % 3600) % 60
+
+        return cls(hours, minutes, seconds)
+
 
 class HMSParamType(click.ParamType):
     name = 'HMS'
