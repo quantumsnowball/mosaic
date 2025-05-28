@@ -84,6 +84,12 @@ class AudioStream:
     def bit_rate(self) -> float:
         return float(self._d['bit_rate'])
 
+    def summary(self) -> str:
+        return (
+            f'{self.codec_name} ({self.profile}), '
+            f'{self.sample_rate} Hz, {self.channel_layout}, {self.bit_rate/1e3} kb/s'
+        )
+
 
 class FFprobe:
     _args = (
