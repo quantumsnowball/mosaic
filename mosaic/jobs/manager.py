@@ -50,10 +50,14 @@ def job_info(i: int, job: Job) -> str:
             metadata = f'({size_mb}MB)' if file.exists() else ''
         except FileNotFoundError:
             metadata = '(not exist)'
-        return (
-            style(f'{"output file":>{width}s}: ', fg='cyan', dim=dim) +
-            style(' '.join((str(file), metadata)), fg='green', dim=dim)
-        )
+        txt = style(f'{"output file":>{width}s}: ', fg='cyan', dim=dim)
+        txt += style(' '.join((str(file), metadata)), fg='green', dim=dim)
+        for i, stream in enumerate(FFprobe(file).video):
+            txt += (
+                '\n' + ' ' * (width+2) + style(f'v:{i}: ', fg='cyan', dim=dim) +
+                style(f'{stream.summary()}', fg='green', dim=dim)
+            )
+        return txt
 
     return '\n'.join([
         title(),
