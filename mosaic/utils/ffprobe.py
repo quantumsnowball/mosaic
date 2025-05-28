@@ -3,10 +3,20 @@ import subprocess
 from pathlib import Path
 from subprocess import PIPE
 
+from mosaic.utils.time import HMS
+
 
 class VideoStream:
     def __init__(self, data: dict) -> None:
         self._d = data
+
+    @property
+    def codec_name(self) -> str:
+        return str(self._d['codec_name'])
+
+    @property
+    def profile(self) -> str:
+        return str(self._d['profile'])
 
     @property
     def width(self) -> int:
@@ -15,7 +25,14 @@ class VideoStream:
     @property
     def height(self) -> int:
         return int(self._d['height'])
-    #
+
+    @property
+    def resolution(self) -> str:
+        return f'{self.width}x{self.height}'
+
+    @property
+    def bit_rate(self) -> float:
+        return float(self._d['bit_rate'])
 
     @property
     def framerate(self) -> str:
@@ -36,6 +53,56 @@ class VideoStream:
     @property
     def duration(self) -> str:
         return str(self._d['duration'])
+
+    @property
+    def hms(self) -> HMS:
+        return HMS.from_total_seconds(round(float(self.duration)))
+
+    def summary(self) -> str:
+        return (
+            f'{self.codec_name}, ({self.profile}), '
+            f'{self.resolution} [SAR {self.sar} DAR {self.dar}], '
+            f'{self.bit_rate/1e3} kb/s, {round(eval(self.framerate), 2)} fps'
+        )
+
+
+class AudioStream:
+    def __init__(self, data: dict) -> None:
+        self._d = data
+
+    @property
+    def codec_name(self) -> str:
+        return str(self._d['codec_name'])
+
+    @property
+    def profile(self) -> str:
+        return str(self._d['profile'])
+
+    @property
+    def sample_rate(self) -> str:
+        return str(self._d['sample_rate'])
+
+    @property
+    def channel_layout(self) -> str:
+        return str(self._d['channel_layout'])
+
+    @property
+    def bit_rate(self) -> float:
+        return float(self._d['bit_rate'])
+
+    @property
+    def duration(self) -> str:
+        return str(self._d['duration'])
+
+    @property
+    def hms(self) -> HMS:
+        return HMS.from_total_seconds(round(float(self.duration)))
+
+    def summary(self) -> str:
+        return (
+            f'{self.codec_name} ({self.profile}), '
+            f'{self.sample_rate} Hz, {self.channel_layout}, {self.bit_rate/1e3} kb/s'
+        )
 
 
 class FFprobe:
@@ -60,3 +127,9 @@ class FFprobe:
         return tuple(VideoStream(s)
                      for s in self.streams
                      if s['codec_type'] == 'video')
+
+    @property
+    def audio(self) -> tuple[AudioStream, ...]:
+        return tuple(AudioStream(s)
+                     for s in self.streams
+                     if s['codec_type'] == 'audio')

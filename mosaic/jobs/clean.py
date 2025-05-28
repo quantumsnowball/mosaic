@@ -1,9 +1,6 @@
-from shutil import rmtree
-
 import click
 
 from mosaic.jobs.manager import Manager
-from mosaic.jobs.utils import JOBS_DIR
 from mosaic.utils.service import service
 
 
