@@ -3,6 +3,8 @@ import subprocess
 from pathlib import Path
 from subprocess import PIPE
 
+from mosaic.utils.time import HMS
+
 
 class VideoStream:
     def __init__(self, data: dict) -> None:
@@ -52,9 +54,13 @@ class VideoStream:
     def duration(self) -> str:
         return str(self._d['duration'])
 
+    @property
+    def hms(self) -> HMS:
+        return HMS.from_total_seconds(round(float(self.duration)))
+
     def summary(self) -> str:
         return (
-            f'{self.codec_name} ({self.profile}), '
+            f'{self.hms}, {self.codec_name}, ({self.profile}), '
             f'{self.resolution} [SAR {self.sar} DAR {self.dar}], '
             f'{self.bit_rate/1e3} kb/s, {round(eval(self.framerate), 2)} fps'
         )
@@ -84,9 +90,17 @@ class AudioStream:
     def bit_rate(self) -> float:
         return float(self._d['bit_rate'])
 
+    @property
+    def duration(self) -> str:
+        return str(self._d['duration'])
+
+    @property
+    def hms(self) -> HMS:
+        return HMS.from_total_seconds(round(float(self.duration)))
+
     def summary(self) -> str:
         return (
-            f'{self.codec_name} ({self.profile}), '
+            f'{self.hms}, {self.codec_name} ({self.profile}), '
             f'{self.sample_rate} Hz, {self.channel_layout}, {self.bit_rate/1e3} kb/s'
         )
 
