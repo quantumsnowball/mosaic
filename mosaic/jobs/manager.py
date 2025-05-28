@@ -1,11 +1,11 @@
 from shutil import rmtree
-from typing import Any
 
 import click
 from click import style
 
 from mosaic.jobs.job import Job
 from mosaic.jobs.utils import JOBS_DIR
+from mosaic.utils.ffprobe import FFprobe
 
 
 def job_info(i: int, job: Job) -> str:
@@ -34,10 +34,14 @@ def job_info(i: int, job: Job) -> str:
             metadata = f'({size_mb}MB)' if file.exists() else ''
         except FileNotFoundError:
             metadata = '(not exist)'
-        return (
-            style(f'{"input file":>{width}s}: ', fg='cyan', dim=dim) +
-            style(' '.join((str(file), metadata)), fg='green', dim=dim)
-        )
+        txt = style(f'{"input file":>{width}s}: ', fg='cyan', dim=dim)
+        txt += style(' '.join((str(file), metadata)), fg='green', dim=dim)
+        for i, stream in enumerate(FFprobe(file).video):
+            txt += (
+                '\n' + ' ' * (width+2) + style(f'v:{i}: ', fg='cyan', dim=dim) +
+                style(f'{stream.summary()}', fg='green', dim=dim)
+            )
+        return txt
 
     def output_file() -> str:
         file = job.output_file
