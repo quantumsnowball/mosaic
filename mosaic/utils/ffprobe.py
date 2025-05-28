@@ -29,6 +29,10 @@ class VideoStream:
         return f'{self.width}x{self.height}'
 
     @property
+    def bit_rate(self) -> float:
+        return float(self._d['bit_rate'])
+
+    @property
     def framerate(self) -> str:
         return str(self._d['r_frame_rate'])
 
