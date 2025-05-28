@@ -60,6 +60,31 @@ class VideoStream:
         )
 
 
+class AudioStream:
+    def __init__(self, data: dict) -> None:
+        self._d = data
+
+    @property
+    def codec_name(self) -> str:
+        return str(self._d['codec_name'])
+
+    @property
+    def profile(self) -> str:
+        return str(self._d['profile'])
+
+    @property
+    def sample_rate(self) -> str:
+        return str(self._d['sample_rate'])
+
+    @property
+    def channel_layout(self) -> str:
+        return str(self._d['channel_layout'])
+
+    @property
+    def bit_rate(self) -> float:
+        return float(self._d['bit_rate'])
+
+
 class FFprobe:
     _args = (
         'ffprobe',
@@ -82,3 +107,9 @@ class FFprobe:
         return tuple(VideoStream(s)
                      for s in self.streams
                      if s['codec_type'] == 'video')
+
+    @property
+    def audio(self) -> tuple[AudioStream, ...]:
+        return tuple(AudioStream(s)
+                     for s in self.streams
+                     if s['codec_type'] == 'audio')
