@@ -15,7 +15,10 @@ class VideoStream:
     @property
     def height(self) -> int:
         return int(self._d['height'])
-    #
+
+    @property
+    def resolution(self) -> str:
+        return f'{self.width}x{self.height}'
 
     @property
     def framerate(self) -> str:
