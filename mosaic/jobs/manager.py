@@ -14,24 +14,24 @@ def job_info(i: int, job: Job) -> str:
     indent = 2
 
     def title() -> str:
-        return style(f'{i+1}: {job.timestamp_pp} - {job.id}', fg='yellow', dim=dim)
-
-    def command() -> str:
-        return (
-            style(f'{" "*indent + "command":{width}s} ', fg='cyan', dim=dim) +
-            style(job.command, fg='green', dim=dim)
-        )
+        return style(f'{i+1}: {job.timestamp_pp} - {job.id}', fg='green', dim=dim)
 
     def progress() -> str:
         return (
-            style(f'{" "*indent + "progress":{width}s} ', fg='cyan', dim=dim) +
-            style(f'{job.checklist.count_finished} / {job.checklist.count} completed', fg='green', dim=dim)
+            style(f'{" "*indent + "progress":{width}s} ', fg='blue', dim=dim) +
+            style(f'{job.checklist.count_finished} / {job.checklist.count} completed', fg='white', dim=dim)
+        )
+
+    def command() -> str:
+        return (
+            style(f'{" "*indent + "command":{width}s} ', fg='blue', dim=dim) +
+            style(job.command, fg='white', dim=dim)
         )
 
     def segment_time() -> str:
         return (
-            style(f'{" "*indent+"segment time":{width}s} ', fg='cyan', dim=dim) +
-            style(f'{job.segment_time}', fg='green', dim=dim)
+            style(f'{" "*indent+"segment time":{width}s} ', fg='blue', dim=dim) +
+            style(f'{job.segment_time}', fg='white', dim=dim)
         )
 
     def input_file() -> str:
@@ -41,18 +41,18 @@ def job_info(i: int, job: Job) -> str:
             metadata = f'({size_mb}MB)' if file.exists() else ''
         except FileNotFoundError:
             metadata = '(not exist)'
-        txt = style(f'{" "*indent + "input file":{width}s} ', fg='cyan', dim=dim)
-        txt += style(' '.join((str(file), metadata)), fg='green', dim=dim)
+        txt = style(f'{" "*indent + "input file":{width}s} ', fg='blue', dim=dim)
+        txt += style(' '.join((str(file), metadata)), fg='white', dim=dim)
         streams = FFprobe(file)
         for i, stream in enumerate(streams.video):
             txt += (
-                '\n' + style(f'{" "*indent*2}v:{i}  ', fg='cyan', dim=dim) +
-                style(f'{stream.summary()}', fg='green', dim=dim)
+                '\n' + style(f'{" "*indent*2}v:{i}  ', fg='yellow', dim=dim) +
+                style(f'{stream.summary()}', fg='white', dim=dim)
             )
         for i, stream in enumerate(streams.audio):
             txt += (
-                '\n' + style(f'{" "*indent*2}a:{i}  ', fg='cyan', dim=dim) +
-                style(f'{stream.summary()}', fg='green', dim=dim)
+                '\n' + style(f'{" "*indent*2}a:{i}  ', fg='magenta', dim=dim) +
+                style(f'{stream.summary()}', fg='white', dim=dim)
             )
         return txt
 
@@ -63,18 +63,18 @@ def job_info(i: int, job: Job) -> str:
             metadata = f'({size_mb}MB)' if file.exists() else ''
         except FileNotFoundError:
             metadata = '(not exist)'
-        txt = style(f'{" "*indent + "output file":{width}s} ', fg='cyan', dim=dim)
-        txt += style(' '.join((str(file), metadata)), fg='green', dim=dim)
+        txt = style(f'{" "*indent + "output file":{width}s} ', fg='blue', dim=dim)
+        txt += style(' '.join((str(file), metadata)), fg='white', dim=dim)
         streams = FFprobe(file)
         for i, stream in enumerate(streams.video):
             txt += (
-                '\n' + style(f'{" "*indent*2}v:{i}  ', fg='cyan', dim=dim) +
-                style(f'{stream.summary()}', fg='green', dim=dim)
+                '\n' + style(f'{" "*indent*2}v:{i}  ', fg='yellow', dim=dim) +
+                style(f'{stream.summary()}', fg='white', dim=dim)
             )
         for i, stream in enumerate(streams.audio):
             txt += (
-                '\n' + style(f'{" "*indent*2}a:{i}  ', fg='cyan', dim=dim) +
-                style(f'{stream.summary()}', fg='green', dim=dim)
+                '\n' + style(f'{" "*indent*2}a:{i}  ', fg='magenta', dim=dim) +
+                style(f'{stream.summary()}', fg='white', dim=dim)
             )
         return txt
 
