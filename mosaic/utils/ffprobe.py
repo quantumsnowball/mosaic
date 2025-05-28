@@ -13,6 +13,10 @@ class VideoStream:
         return str(self._d['codec_name'])
 
     @property
+    def profile(self) -> str:
+        return str(self._d['profile'])
+
+    @property
     def width(self) -> int:
         return int(self._d['width'])
 
