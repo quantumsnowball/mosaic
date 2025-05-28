@@ -9,6 +9,10 @@ class VideoStream:
         self._d = data
 
     @property
+    def codec_name(self) -> str:
+        return str(self._d['codec_name'])
+
+    @property
     def width(self) -> int:
         return int(self._d['width'])
 
