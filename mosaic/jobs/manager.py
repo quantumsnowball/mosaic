@@ -46,13 +46,13 @@ def job_info(i: int, job: Job) -> str:
         streams = FFprobe(file)
         for i, stream in enumerate(streams.video):
             txt += (
-                '\n' + style(f'{" "*indent*2}v:{i}  ', fg='yellow', dim=dim) +
-                style(f'{stream.summary()}', fg='white', dim=dim)
+                '\n' + style(f'{" "*indent*2}v:{i} {stream.hms} ', fg='yellow', dim=dim) +
+                style(f'{stream.summary()}', fg='cyan', dim=dim)
             )
         for i, stream in enumerate(streams.audio):
             txt += (
-                '\n' + style(f'{" "*indent*2}a:{i}  ', fg='magenta', dim=dim) +
-                style(f'{stream.summary()}', fg='white', dim=dim)
+                '\n' + style(f'{" "*indent*2}a:{i} {stream.hms} ', fg='magenta', dim=dim) +
+                style(f'{stream.summary()}', fg='cyan', dim=dim)
             )
         return txt
 
@@ -68,13 +68,13 @@ def job_info(i: int, job: Job) -> str:
         streams = FFprobe(file)
         for i, stream in enumerate(streams.video):
             txt += (
-                '\n' + style(f'{" "*indent*2}v:{i}  ', fg='yellow', dim=dim) +
-                style(f'{stream.summary()}', fg='white', dim=dim)
+                '\n' + style(f'{" "*indent*2}v:{i} {stream.hms} ', fg='yellow', dim=dim) +
+                style(f'{stream.summary()}', fg='cyan', dim=dim)
             )
         for i, stream in enumerate(streams.audio):
             txt += (
-                '\n' + style(f'{" "*indent*2}a:{i}  ', fg='magenta', dim=dim) +
-                style(f'{stream.summary()}', fg='white', dim=dim)
+                '\n' + style(f'{" "*indent*2}a:{i} {stream.hms} ', fg='magenta', dim=dim) +
+                style(f'{stream.summary()}', fg='cyan', dim=dim)
             )
         return txt
 

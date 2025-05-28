@@ -60,7 +60,7 @@ class VideoStream:
 
     def summary(self) -> str:
         return (
-            f'{self.hms}, {self.codec_name}, ({self.profile}), '
+            f'{self.codec_name}, ({self.profile}), '
             f'{self.resolution} [SAR {self.sar} DAR {self.dar}], '
             f'{self.bit_rate/1e3} kb/s, {round(eval(self.framerate), 2)} fps'
         )
@@ -100,7 +100,7 @@ class AudioStream:
 
     def summary(self) -> str:
         return (
-            f'{self.hms}, {self.codec_name} ({self.profile}), '
+            f'{self.codec_name} ({self.profile}), '
             f'{self.sample_rate} Hz, {self.channel_layout}, {self.bit_rate/1e3} kb/s'
         )
 
