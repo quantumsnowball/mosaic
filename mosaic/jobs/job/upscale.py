@@ -1,8 +1,8 @@
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import override
-from uuid import UUID
+from typing import Self, override
+from uuid import UUID, uuid4
 
 from mosaic.jobs.job.base import Job
 from mosaic.jobs.utils import Command
@@ -84,3 +84,24 @@ class UpscaleJob(Job):
         ).items()}
         with open(info_fpath, 'w') as f:
             json.dump(info, f, indent=4)
+
+    @classmethod
+    def create(
+        cls,
+        *,
+        segment_time: HMS,
+        model: str,
+        scale: str,
+        input_file: Path,
+        output_file: Path
+    ) -> Self:
+        return cls(
+            command='free',
+            id=uuid4(),
+            timestamp=datetime.now(),
+            segment_time=segment_time,
+            model=model,
+            scale=scale,
+            input_file=input_file,
+            output_file=output_file,
+        )
