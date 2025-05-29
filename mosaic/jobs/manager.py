@@ -3,7 +3,8 @@ from shutil import rmtree
 import click
 from click import style
 
-from mosaic.jobs.job import Job
+from mosaic.jobs.job import load_job
+from mosaic.jobs.job.base import Job
 from mosaic.jobs.utils import JOBS_DIR
 from mosaic.utils.ffprobe import FFprobe
 
@@ -91,7 +92,7 @@ def job_info(i: int, job: Job) -> str:
 class Manager:
     def __init__(self) -> None:
         # detect all jobs available
-        self.jobs = [Job.load(dirpath)
+        self.jobs = [load_job(dirpath)
                      for dirpath in sorted(JOBS_DIR.glob('./*/'))]
         self.jobs_finished = [job for job in self.jobs if job.is_finished]
         self.jobs_unfinished = [job for job in self.jobs if not job.is_finished]
