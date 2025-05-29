@@ -7,6 +7,7 @@ from uuid import UUID, uuid4
 from mosaic.jobs.job.base import Job
 from mosaic.jobs.job.copy import CopyJob
 from mosaic.jobs.job.free import FreeJob
+from mosaic.jobs.job.upscale import UpscaleJob
 from mosaic.jobs.utils import Command
 from mosaic.utils.time import HMS
 
@@ -71,4 +72,15 @@ def load_job(
             output_file=output_file,
         )
     elif command == 'upscale':
-        raise NotImplementedError
+        model = d['model']
+        scale = d['scale']
+        return UpscaleJob(
+            command=command,
+            id=id,
+            timestamp=timestamp,
+            segment_time=segment_time,
+            model=model,
+            scale=scale,
+            input_file=input_file,
+            output_file=output_file,
+        )
