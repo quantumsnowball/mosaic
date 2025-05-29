@@ -37,20 +37,27 @@ def job_info(i: int, job: Job) -> str:
         return style(txt, fg='white', dim=dim)
 
     def title() -> str:
-        index = w(f'{i+1}. ')
-        command = r(f'{job.command:8s}')
-        info = g(f'{job.timestamp_pp} - {job.id}')
-        return index + command + info
+        index = f'{i+1}. '
+        command = f'{job.command:8s}'
+        info = f'{job.timestamp_pp} - {job.id}'
+        return (
+            w(index) + r(command) + g(info)
+        )
 
     def progress() -> str:
         done = job.checklist.count_finished
         total = job.checklist.count
 
-        name = b(f'{" "*indent + "progress":{width}s}')
-        pct = r(f'{done / total:.2%}')
-        count = y(f'{done} / {total}')
-        segment_time = y(f'{job.segment_time}')
-        return f'{name} {pct}, {count} done, {segment_time} each'
+        name = f'{" "*indent + "progress":{width}s} '
+        pct = f'{done / total:.2%}'
+        count = f'{done} / {total}'
+        segment_time = f'{job.segment_time}'
+        return (
+            b(name) +
+            r(pct) + w(', ') +
+            y(count) + w(' done, ') +
+            y(segment_time) + w(' each')
+        )
 
     def video_file_details(file: Path, *, tag: str) -> str:
         txt = b(f'{" "*indent + tag:{width}s} ')
@@ -59,17 +66,16 @@ def job_info(i: int, job: Job) -> str:
             return txt
 
         size_mb = round(file.stat().st_size / 1e6, 2)
-        metadata = y(f'{size_mb:,.2f} MB') if file.exists() else ''
-        txt += w(f'{str(file)}') + metadata
-        streams = FFprobe(file)
-        for i, stream in enumerate(streams.video):
+        txt += w(f'{str(file)} ') + y(f'{size_mb:,.2f} MB')
+        details = FFprobe(file)
+        for i, stream in enumerate(details.video):
             txt += (
-                '\n' + y(f'{" "*indent*2}v:{i} {stream.hms} ') +
+                y(f'\n{" "*indent*2}v:{i} {stream.hms} ') +
                 w(', ').join([c(f'{s}') for s in stream.summary])
             )
-        for i, stream in enumerate(streams.audio):
+        for i, stream in enumerate(details.audio):
             txt += (
-                '\n' + m(f'{" "*indent*2}a:{i} {stream.hms} ') +
+                m(f'\n{" "*indent*2}a:{i} {stream.hms} ') +
                 w(', ').join([c(f'{s}') for s in stream.summary])
             )
         return txt
@@ -87,8 +93,7 @@ def job_info(i: int, job: Job) -> str:
         progress(),
         input_file(),
         output_file(),
-        '',
-    ])
+    ]) + '\n'
 
 
 class Manager:
