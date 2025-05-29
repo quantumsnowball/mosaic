@@ -103,7 +103,7 @@ class Manager:
     def run_job(self) -> None:
         self.list_jobs(self.jobs_unfinished)
         if len(self.jobs) > 0:
-            n: int = click.prompt('Please select a job', type=int)
+            n: int = click.prompt('Please select a job to run', type=int)
             selected_job = self.jobs[n - 1]
             selected_job.run()
         else:
