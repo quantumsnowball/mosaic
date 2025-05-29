@@ -15,18 +15,15 @@ def job_info(i: int, job: Job) -> str:
     indent = 2
 
     def title() -> str:
-        return style(f'{i+1}: {job.timestamp_pp} - {job.id}', fg='green', dim=dim)
+        index = style(f'{i+1}. ', fg='white', dim=dim)
+        command = style(f'{job.command:8s}', fg='red', dim=dim)
+        info = style(f'{job.timestamp_pp} - {job.id}', fg='green', dim=dim)
+        return index + command + info
 
     def progress() -> str:
         return (
             style(f'{" "*indent + "progress":{width}s} ', fg='blue', dim=dim) +
             style(f'{job.checklist.count_finished} / {job.checklist.count} completed', fg='white', dim=dim)
-        )
-
-    def command() -> str:
-        return (
-            style(f'{" "*indent + "command":{width}s} ', fg='blue', dim=dim) +
-            style(job.command, fg='white', dim=dim)
         )
 
     def segment_time() -> str:
@@ -84,7 +81,6 @@ def job_info(i: int, job: Job) -> str:
     return '\n'.join([
         title(),
         progress(),
-        command(),
         segment_time(),
         input_file(),
         output_file(),
