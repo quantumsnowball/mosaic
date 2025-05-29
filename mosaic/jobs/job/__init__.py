@@ -12,35 +12,6 @@ from mosaic.jobs.utils import Command
 from mosaic.utils.time import HMS
 
 
-def create_job(
-    *,
-    command: Command,
-    segment_time: HMS,
-    input_file: Path,
-    output_file: Path
-) -> Job:
-    if command == 'free':
-        return FreeJob(
-            command=command,
-            id=uuid4(),
-            timestamp=datetime.now(),
-            segment_time=segment_time,
-            input_file=input_file,
-            output_file=output_file,
-        )
-    elif command == 'copy':
-        return CopyJob(
-            command=command,
-            id=uuid4(),
-            timestamp=datetime.now(),
-            segment_time=segment_time,
-            input_file=input_file,
-            output_file=output_file,
-        )
-    elif command == 'upscale':
-        raise NotImplementedError
-
-
 def load_job(
     dirpath: Path
 ) -> Job:
