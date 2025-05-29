@@ -15,41 +15,68 @@ def job_info(i: int, job: Job) -> str:
     width = 16
     indent = 2
 
+    def r(txt: str) -> str:
+        return style(txt, fg='red', dim=dim)
+
+    def g(txt: str) -> str:
+        return style(txt, fg='green', dim=dim)
+
+    def y(txt: str) -> str:
+        return style(txt, fg='yellow', dim=dim)
+
+    def b(txt: str) -> str:
+        return style(txt, fg='blue', dim=dim)
+
+    def m(txt: str) -> str:
+        return style(txt, fg='magenta', dim=dim)
+
+    def c(txt: str) -> str:
+        return style(txt, fg='cyan', dim=dim)
+
+    def w(txt: str) -> str:
+        return style(txt, fg='white', dim=dim)
+
     def title() -> str:
-        index = style(f'{i+1}. ', fg='white', dim=dim)
-        command = style(f'{job.command:8s}', fg='red', dim=dim)
-        info = style(f'{job.timestamp_pp} - {job.id}', fg='green', dim=dim)
-        return index + command + info
+        index = f'{i+1}. '
+        command = f'{job.command:8s}'
+        info = f'{job.timestamp_pp} - {job.id}'
+        return (
+            w(index) + r(command) + g(info)
+        )
 
     def progress() -> str:
         done = job.checklist.count_finished
         total = job.checklist.count
 
-        name = style(f'{" "*indent + "progress":{width}s}', fg='blue', dim=dim)
-        pct = style(f'{done / total:.2%}', fg='red', dim=dim)
-        count = style(f'{done} / {total}', fg='yellow', dim=dim)
-        segment_time = style(f'{job.segment_time}', fg='yellow', dim=dim)
-        return f'{name} {pct}, {count} done, {segment_time} each'
+        name = f'{" "*indent + "progress":{width}s} '
+        pct = f'{done / total:.2%}'
+        count = f'{done} / {total}'
+        segment_time = f'{job.segment_time}'
+        return (
+            b(name) +
+            r(pct) + w(', ') +
+            y(count) + w(' done, ') +
+            y(segment_time) + w(' each')
+        )
 
     def video_file_details(file: Path, *, tag: str) -> str:
-        txt = style(f'{" "*indent + tag:{width}s} ', fg='blue', dim=dim)
+        txt = b(f'{" "*indent + tag:{width}s} ')
         if not file.exists():
-            txt += f'{str(file)}, ' + style('not exist', fg='yellow', dim=dim)
+            txt += w(f'{str(file)}, ') + y('not exist')
             return txt
 
         size_mb = round(file.stat().st_size / 1e6, 2)
-        metadata = style(f'{size_mb:,.2f} MB', fg='yellow', dim=dim) if file.exists() else ''
-        txt += f'{str(file)}, {metadata}'
-        streams = FFprobe(file)
-        for i, stream in enumerate(streams.video):
+        txt += w(f'{str(file)} ') + y(f'{size_mb:,.2f} MB')
+        details = FFprobe(file)
+        for i, stream in enumerate(details.video):
             txt += (
-                '\n' + style(f'{" "*indent*2}v:{i} {stream.hms} ', fg='yellow', dim=dim) +
-                ', '.join([style(f'{s}', fg='cyan', dim=dim) for s in stream.summary])
+                y(f'\n{" "*indent*2}v:{i} {stream.hms} ') +
+                w(', ').join([c(f'{s}') for s in stream.summary])
             )
-        for i, stream in enumerate(streams.audio):
+        for i, stream in enumerate(details.audio):
             txt += (
-                '\n' + style(f'{" "*indent*2}a:{i} {stream.hms} ', fg='magenta', dim=dim) +
-                ', '.join([style(f'{s}', fg='cyan', dim=dim) for s in stream.summary])
+                m(f'\n{" "*indent*2}a:{i} {stream.hms} ') +
+                w(', ').join([c(f'{s}') for s in stream.summary])
             )
         return txt
 
@@ -66,8 +93,7 @@ def job_info(i: int, job: Job) -> str:
         progress(),
         input_file(),
         output_file(),
-        '',
-    ])
+    ]) + '\n'
 
 
 class Manager:
