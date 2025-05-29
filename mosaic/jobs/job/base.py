@@ -125,15 +125,5 @@ class Job(ABC):
         if self.checklist.is_finished:
             self.finalize()
 
-    def save(self) -> None:
-        info_fpath = self.job_dirpath / self.info_fname
-        info = {k: str(v) for k, v in dict(
-            command=self.command,
-            id=self.id,
-            timestamp=self.timestamp_iso,
-            segment_time=self.segment_time,
-            input_file=self.input_file,
-            output_file=self.output_file,
-        ).items()}
-        with open(info_fpath, 'w') as f:
-            json.dump(info, f, indent=4)
+    @abstractmethod
+    def save(self) -> None: ...
