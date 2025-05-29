@@ -16,10 +16,10 @@ def jobs(ctx: click.Context) -> None:
         return
 
     # create menu and discover jobs
-    manager = Manager()
+    with Manager() as manager:
 
-    # prompt for selecting a job
-    manager.run_job()
+        # prompt for selecting a job
+        manager.run_job()
 
 
 jobs.add_command(create)

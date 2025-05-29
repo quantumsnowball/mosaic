@@ -8,7 +8,7 @@ from mosaic.utils.service import service
 @service(mkdir=False)
 def ls() -> None:
     # search for jobs
-    manager = Manager()
+    with Manager() as manager:
 
-    # list all jobs
-    manager.list_jobs(manager.jobs)
+        # list all jobs
+        manager.list_jobs(manager.jobs)

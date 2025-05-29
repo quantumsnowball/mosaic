@@ -9,12 +9,12 @@ from mosaic.utils.service import service
 @service(mkdir=False)
 def clean(clear_all_jobs: bool) -> None:
     # search for jobs
-    manager = Manager()
+    with Manager() as manager:
 
-    # prompt for delete the whole root dir
-    if clear_all_jobs:
-        manager.clear_all_jobs()
-        return
+        # prompt for delete the whole root dir
+        if clear_all_jobs:
+            manager.clear_all_jobs()
+            return
 
-    # default only prompt to clean finished jobs
-    manager.clear_finished()
+        # default only prompt to clean finished jobs
+        manager.clear_finished()
