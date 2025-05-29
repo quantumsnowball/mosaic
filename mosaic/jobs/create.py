@@ -4,6 +4,8 @@ import click
 
 from mosaic.jobs.job.copy import CopyJob
 from mosaic.jobs.job.free import FreeJob
+from mosaic.jobs.job.upscale import UpscaleJob
+from mosaic.upscale.net import PRESETS
 from mosaic.utils.path import PathParamType
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, HMSParamType
@@ -34,6 +36,20 @@ class args:
         'output-file',
         required=True,
         type=PathParamType()
+    )
+    model = click.option(
+        '-m',
+        '--model',
+        default='realesr_animevideov3',
+        type=click.Choice(PRESETS),
+        help='Real-ESRGAN model choices'
+    )
+    scale = click.option(
+        '-s',
+        '--scale',
+        default='1080p',
+        type=click.Choice(('720p', '1080p', '1440p', '2160p')),
+        help='output scale'
     )
 
 
@@ -72,6 +88,34 @@ def copy(
     # create a new job
     with CopyJob.create(
         segment_time=segment_time,
+        input_file=input_file,
+        output_file=output_file,
+    ) as job:
+        # save
+        job.save()
+        # run
+        job.run()
+
+
+@create.command
+@args.input_file
+@args.segment_time
+@args.model
+@args.scale
+@args.output_file
+@service()
+def upscale(
+    input_file: Path,
+    segment_time: HMS,
+    model: str,
+    scale: str,
+    output_file: Path,
+) -> None:
+    # create a new job
+    with UpscaleJob.create(
+        segment_time=segment_time,
+        model=model,
+        scale=scale,
         input_file=input_file,
         output_file=output_file,
     ) as job:
