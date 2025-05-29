@@ -44,12 +44,12 @@ def job_info(i: int, job: Job) -> str:
         for i, stream in enumerate(streams.video):
             txt += (
                 '\n' + style(f'{" "*indent*2}v:{i} {stream.hms} ', fg='yellow', dim=dim) +
-                style(f'{stream.summary()}', fg='cyan', dim=dim)
+                ', '.join([style(f'{s}', fg='cyan', dim=dim) for s in stream.summary])
             )
         for i, stream in enumerate(streams.audio):
             txt += (
                 '\n' + style(f'{" "*indent*2}a:{i} {stream.hms} ', fg='magenta', dim=dim) +
-                style(f'{stream.summary()}', fg='cyan', dim=dim)
+                ', '.join([style(f'{s}', fg='cyan', dim=dim) for s in stream.summary])
             )
         return txt
 
