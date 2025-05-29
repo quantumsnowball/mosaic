@@ -137,36 +137,3 @@ class Job(ABC):
         ).items()}
         with open(info_fpath, 'w') as f:
             json.dump(info, f, indent=4)
-
-    @classmethod
-    def load(cls, dirpath: Path) -> Self:
-        fpath = dirpath / cls.info_fname
-        with open(fpath, 'r') as f:
-            d = json.load(f)
-        return cls(
-            command=d['command'],
-            id=UUID(d['id']),
-            timestamp=datetime.fromisoformat(d['timestamp']),
-            segment_time=HMS.from_str(d['segment_time']),
-            input_file=Path(d['input_file']),
-            output_file=Path(d['output_file']),
-        )
-
-    @classmethod
-    def create(
-        cls,
-        *,
-        command: Command,
-        segment_time: HMS,
-        input_file: Path,
-        output_file: Path
-    ) -> Self:
-        job = cls(
-            command=command,
-            id=uuid4(),
-            timestamp=datetime.now(),
-            segment_time=segment_time,
-            input_file=input_file,
-            output_file=output_file,
-        )
-        return job
