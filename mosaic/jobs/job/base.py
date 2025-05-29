@@ -132,8 +132,9 @@ class Job(ABC):
         total = self.checklist.count
         pct = (done + 0.5) / total
         return (
-            f'{name} : ' +
+            '\n' +
+            f'{name}  ' +
             style(f'{pct:.2%}', fg='red') + ', ' +
-            style(f'{done} / {total} ', fg='yellow') + 'done, ' +
+            style(f'{done+1} / {total} ', fg='yellow') + 'on going, ' +
             style(f'{self.segment_time} ', fg='yellow') + 'long'
         )
