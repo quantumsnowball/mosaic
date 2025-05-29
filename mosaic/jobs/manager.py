@@ -34,22 +34,22 @@ def job_info(i: int, job: Job) -> str:
     def video_file_details(file: Path, *, tag: str) -> str:
         txt = style(f'{" "*indent + tag:{width}s} ', fg='blue', dim=dim)
         if not file.exists():
-            txt += f'{str(file)}, ' + style('not exist', fg='yellow', dim=dim)
+            txt += style(f'{str(file)}, ', fg='white', dim=dim) + style('not exist', fg='yellow', dim=dim)
             return txt
 
         size_mb = round(file.stat().st_size / 1e6, 2)
         metadata = style(f'{size_mb:,.2f} MB', fg='yellow', dim=dim) if file.exists() else ''
-        txt += f'{str(file)}, {metadata}'
+        txt += style(f'{str(file)}, ', fg='white', dim=dim) + metadata
         streams = FFprobe(file)
         for i, stream in enumerate(streams.video):
             txt += (
                 '\n' + style(f'{" "*indent*2}v:{i} {stream.hms} ', fg='yellow', dim=dim) +
-                ', '.join([style(f'{s}', fg='cyan', dim=dim) for s in stream.summary])
+                style(', ', dim=dim).join([style(f'{s}', fg='cyan', dim=dim) for s in stream.summary])
             )
         for i, stream in enumerate(streams.audio):
             txt += (
                 '\n' + style(f'{" "*indent*2}a:{i} {stream.hms} ', fg='magenta', dim=dim) +
-                ', '.join([style(f'{s}', fg='cyan', dim=dim) for s in stream.summary])
+                style(', ', dim=dim).join([style(f'{s}', fg='cyan', dim=dim) for s in stream.summary])
             )
         return txt
 
