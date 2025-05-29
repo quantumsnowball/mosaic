@@ -96,7 +96,7 @@ class UpscaleJob(Job):
         output_file: Path
     ) -> Self:
         return cls(
-            command='free',
+            command='upscale',
             id=uuid4(),
             timestamp=datetime.now(),
             segment_time=segment_time,
