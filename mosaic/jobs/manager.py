@@ -15,6 +15,27 @@ def job_info(i: int, job: Job) -> str:
     width = 16
     indent = 2
 
+    def r(txt: str) -> str:
+        return style(txt, fg='red', dim=dim)
+
+    def g(txt: str) -> str:
+        return style(txt, fg='green', dim=dim)
+
+    def y(txt: str) -> str:
+        return style(txt, fg='yellow', dim=dim)
+
+    def b(txt: str) -> str:
+        return style(txt, fg='blue', dim=dim)
+
+    def m(txt: str) -> str:
+        return style(txt, fg='magenta', dim=dim)
+
+    def c(txt: str) -> str:
+        return style(txt, fg='cyan', dim=dim)
+
+    def w(txt: str) -> str:
+        return style(txt, fg='white', dim=dim)
+
     def title() -> str:
         index = style(f'{i+1}. ', fg='white', dim=dim)
         command = style(f'{job.command:8s}', fg='red', dim=dim)
