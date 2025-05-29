@@ -37,40 +37,40 @@ def job_info(i: int, job: Job) -> str:
         return style(txt, fg='white', dim=dim)
 
     def title() -> str:
-        index = style(f'{i+1}. ', fg='white', dim=dim)
-        command = style(f'{job.command:8s}', fg='red', dim=dim)
-        info = style(f'{job.timestamp_pp} - {job.id}', fg='green', dim=dim)
+        index = w(f'{i+1}. ')
+        command = r(f'{job.command:8s}')
+        info = g(f'{job.timestamp_pp} - {job.id}')
         return index + command + info
 
     def progress() -> str:
         done = job.checklist.count_finished
         total = job.checklist.count
 
-        name = style(f'{" "*indent + "progress":{width}s}', fg='blue', dim=dim)
-        pct = style(f'{done / total:.2%}', fg='red', dim=dim)
-        count = style(f'{done} / {total}', fg='yellow', dim=dim)
-        segment_time = style(f'{job.segment_time}', fg='yellow', dim=dim)
+        name = b(f'{" "*indent + "progress":{width}s}')
+        pct = r(f'{done / total:.2%}')
+        count = y(f'{done} / {total}')
+        segment_time = y(f'{job.segment_time}')
         return f'{name} {pct}, {count} done, {segment_time} each'
 
     def video_file_details(file: Path, *, tag: str) -> str:
-        txt = style(f'{" "*indent + tag:{width}s} ', fg='blue', dim=dim)
+        txt = b(f'{" "*indent + tag:{width}s} ')
         if not file.exists():
-            txt += style(f'{str(file)}, ', fg='white', dim=dim) + style('not exist', fg='yellow', dim=dim)
+            txt += w(f'{str(file)}, ') + y('not exist')
             return txt
 
         size_mb = round(file.stat().st_size / 1e6, 2)
-        metadata = style(f'{size_mb:,.2f} MB', fg='yellow', dim=dim) if file.exists() else ''
-        txt += style(f'{str(file)}, ', fg='white', dim=dim) + metadata
+        metadata = y(f'{size_mb:,.2f} MB') if file.exists() else ''
+        txt += w(f'{str(file)}') + metadata
         streams = FFprobe(file)
         for i, stream in enumerate(streams.video):
             txt += (
-                '\n' + style(f'{" "*indent*2}v:{i} {stream.hms} ', fg='yellow', dim=dim) +
-                style(', ', dim=dim).join([style(f'{s}', fg='cyan', dim=dim) for s in stream.summary])
+                '\n' + y(f'{" "*indent*2}v:{i} {stream.hms} ') +
+                w(', ').join([c(f'{s}') for s in stream.summary])
             )
         for i, stream in enumerate(streams.audio):
             txt += (
-                '\n' + style(f'{" "*indent*2}a:{i} {stream.hms} ', fg='magenta', dim=dim) +
-                style(', ', dim=dim).join([style(f'{s}', fg='cyan', dim=dim) for s in stream.summary])
+                '\n' + m(f'{" "*indent*2}a:{i} {stream.hms} ') +
+                w(', ').join([c(f'{s}') for s in stream.summary])
             )
         return txt
 
