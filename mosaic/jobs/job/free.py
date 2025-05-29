@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Self, override
 from uuid import uuid4
 
+import click
+
 from mosaic.free.cleaner import Cleaner
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
@@ -18,6 +20,8 @@ class FreeJob(Job):
     def proceed(self) -> None:
         # loop through available tasks
         while task := self.checklist.next_task():
+            click.echo(self.progress(task.name))
+
             with Cleaner(
                 input_file=self._input_dirpath / task.name,
                 start_time=None,

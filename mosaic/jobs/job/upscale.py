@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Self, override
 from uuid import UUID, uuid4
 
+import click
+
 from mosaic.jobs.job.base import Job
 from mosaic.jobs.utils import Command
 from mosaic.upscale.net import presets
@@ -41,6 +43,8 @@ class UpscaleJob(Job):
     def proceed(self) -> None:
         # loop through available tasks
         while task := self.checklist.next_task():
+            click.echo(self.progress(task.name))
+
             # load upsampler
             net = presets[self.model]
             upsampler = RealESRGANer(
