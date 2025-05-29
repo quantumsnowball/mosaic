@@ -24,22 +24,22 @@ def job_info(i: int, job: Job) -> str:
         done = job.checklist.count_finished
         total = job.checklist.count
 
-        name = style(f'{" "*indent + "progress":{width}s} ', fg='blue', dim=dim)
-        pct = style(f'{done / total:.2%}, ', fg='white', dim=dim)
-        count = style(f'{done} / {total}, ', fg='white', dim=dim)
-        segment_time = style(f'segment time {job.segment_time}', fg='white', dim=dim)
-        return name + pct + count + segment_time
+        name = style(f'{" "*indent + "progress":{width}s}', fg='blue', dim=dim)
+        pct = style(f'{done / total:.2%}', fg='red', dim=dim)
+        count = style(f'{done} / {total}', fg='yellow', dim=dim)
+        segment_time = style(f'{job.segment_time}', fg='yellow', dim=dim)
+        return f'{name} {pct}, {count} done, {segment_time} each'
 
     def input_file() -> str:
         file = job.input_file
         txt = style(f'{" "*indent + "input file":{width}s} ', fg='blue', dim=dim)
         if not file.exists():
-            txt += style(f'{str(file)} (not exist)', fg='white', dim=dim)
+            txt += f'{str(file)}, ' + style('not exist', fg='yellow', dim=dim)
             return txt
 
         size_mb = round(file.stat().st_size / 1e6, 2)
-        metadata = f'{size_mb}MB'
-        txt += style(f'{str(file)} ({metadata})', fg='white', dim=dim)
+        metadata = style(f'{size_mb:,.2f} MB', fg='yellow', dim=dim) if file.exists() else ''
+        txt += f'{str(file)}, {metadata}'
         streams = FFprobe(file)
         for i, stream in enumerate(streams.video):
             txt += (
@@ -57,12 +57,12 @@ def job_info(i: int, job: Job) -> str:
         file = job.output_file
         txt = style(f'{" "*indent + "output file":{width}s} ', fg='blue', dim=dim)
         if not file.exists():
-            txt += style(f'{str(file)} (not exist)', fg='white', dim=dim)
+            txt += f'{str(file)}, ' + style('not exist', fg='yellow', dim=dim)
             return txt
 
         size_mb = round(file.stat().st_size / 1e6, 2)
-        metadata = f'{size_mb}MB' if file.exists() else ''
-        txt += style(f'{str(file)} ({metadata})', fg='white', dim=dim)
+        metadata = style(f'{size_mb:,.2f} MB', fg='yellow', dim=dim) if file.exists() else ''
+        txt += f'{str(file)},  {metadata}'
         streams = FFprobe(file)
         for i, stream in enumerate(streams.video):
             txt += (
