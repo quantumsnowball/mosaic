@@ -1,5 +1,6 @@
 import json
 import shutil
+from abc import ABC, abstractmethod
 from datetime import datetime
 from pathlib import Path
 from typing import Self
@@ -19,7 +20,7 @@ from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
 
 
-class Job:
+class Job(ABC):
     info_fname = 'job.json'
     inputs_dirname = 'inputs'
     outputs_dirname = 'outputs'
@@ -92,43 +93,8 @@ class Job:
         self.checklist.create()
         self.checklist.initialize(self._input_dirpath, ext=self.segment_ext, val=False)
 
-    def proceed(self) -> None:
-        # loop through available tasks
-        while task := self.checklist.next_task():
-            # process task with the correct command
-            if self.command == 'free':
-                with Cleaner(
-                    input_file=self._input_dirpath / task.name,
-                    start_time=None,
-                    end_time=None,
-                    output_file=self._output_dirpath / task.name,
-                    raw_info=False,
-                    netM=bisenet(PACKAGE_ROOT/'free/net/netM/state_dicts/mosaic_position.pth'),
-                    netG=video(PACKAGE_ROOT/'free/net/netG/state_dicts/clean_youknow_video.pth'),
-                ) as cleaner:
-                    try:
-                        cleaner.run()
-                    except KeyboardInterrupt as e:
-                        log.info(e.__class__)
-                        cleaner.stop()
-                        break
-
-                # mark task done
-                self.checklist.mark_done(task)
-
-            elif self.command == 'copy':
-                # no processing just copy for testing purpose
-                try:
-                    shutil.copy(
-                        self._input_dirpath / task.name,
-                        self._output_dirpath / task.name,
-                    )
-                except KeyboardInterrupt as e:
-                    log.info(e.__class__)
-                    break
-
-                # mark task done
-                self.checklist.mark_done(task)
+    @abstractmethod
+    def proceed(self) -> None: ...
 
     def finalize(self) -> None:
         # create concat index
