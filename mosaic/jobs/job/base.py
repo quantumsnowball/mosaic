@@ -97,16 +97,20 @@ class Job(ABC):
             for part in parts:
                 f.write(f'file {part.name}\n')
         # combine the output segments
-        FFmpeg(
-        ).global_args(
-            '-y',
-        ).input(
-            '-f', 'concat',
-            '-i', index,
-        ).output(
-            '-c', 'copy',
-            self.output_file,
-        ).run()
+        with ProgressBar(self.origin.duration) as pbar:
+            FFmpeg(
+            ).global_args(
+                '-y',
+                '-loglevel', 'fatal',
+                '-progress', pbar.input,
+                '-stats_period', ProgressBar.REFRESH_RATE,
+            ).input(
+                '-f', 'concat',
+                '-i', index,
+            ).output(
+                '-c', 'copy',
+                self.output_file,
+            ).run()
 
     def run(self) -> None:
         if not prompt_overwrite_output(self.output_file):
