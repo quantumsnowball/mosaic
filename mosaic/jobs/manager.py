@@ -37,13 +37,14 @@ def job_info(i: int, job: Job) -> str:
 
     def input_file() -> str:
         file = job.input_file
-        try:
-            size_mb = round(file.stat().st_size / 1e6, 2)
-            metadata = f'({size_mb}MB)' if file.exists() else ''
-        except FileNotFoundError:
-            metadata = '(not exist)'
         txt = style(f'{" "*indent + "input file":{width}s} ', fg='blue', dim=dim)
-        txt += style(' '.join((str(file), metadata)), fg='white', dim=dim)
+        if not file.exists():
+            txt += style(f'{str(file)} (not exist)', fg='white', dim=dim)
+            return txt
+
+        size_mb = round(file.stat().st_size / 1e6, 2)
+        metadata = f'{size_mb}MB'
+        txt += style(f'{str(file)} ({metadata})', fg='white', dim=dim)
         streams = FFprobe(file)
         for i, stream in enumerate(streams.video):
             txt += (
@@ -59,13 +60,14 @@ def job_info(i: int, job: Job) -> str:
 
     def output_file() -> str:
         file = job.output_file
-        try:
-            size_mb = round(file.stat().st_size / 1e6, 2)
-            metadata = f'({size_mb}MB)' if file.exists() else ''
-        except FileNotFoundError:
-            metadata = '(not exist)'
         txt = style(f'{" "*indent + "output file":{width}s} ', fg='blue', dim=dim)
-        txt += style(' '.join((str(file), metadata)), fg='white', dim=dim)
+        if not file.exists():
+            txt += style(f'{str(file)} (not exist)', fg='white', dim=dim)
+            return txt
+
+        size_mb = round(file.stat().st_size / 1e6, 2)
+        metadata = f'{size_mb}MB' if file.exists() else ''
+        txt += style(f'{str(file)} ({metadata})', fg='white', dim=dim)
         streams = FFprobe(file)
         for i, stream in enumerate(streams.video):
             txt += (
