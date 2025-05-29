@@ -2,7 +2,8 @@ from pathlib import Path
 
 import click
 
-from mosaic.jobs.job import create_job
+from mosaic.jobs.job.copy import CopyJob
+from mosaic.jobs.job.free import FreeJob
 from mosaic.utils.path import PathParamType
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, HMSParamType
@@ -47,8 +48,7 @@ def free(
     output_file: Path,
 ) -> None:
     # create a new job
-    with create_job(
-        command='free',
+    with FreeJob.create(
         segment_time=segment_time,
         input_file=input_file,
         output_file=output_file,
@@ -70,8 +70,7 @@ def copy(
     output_file: Path,
 ) -> None:
     # create a new job
-    with create_job(
-        command='copy',
+    with CopyJob.create(
         segment_time=segment_time,
         input_file=input_file,
         output_file=output_file,
