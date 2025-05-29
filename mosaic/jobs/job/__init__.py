@@ -5,10 +5,13 @@ from pathlib import Path
 from typing import Self
 from uuid import UUID, uuid4
 
+import mosaic.jobs.job.base
 from mosaic.free.cleaner import Cleaner
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.jobs.job.checklist import Checklist
+from mosaic.jobs.job.copy import CopyJob
+from mosaic.jobs.job.free import FreeJob
 from mosaic.jobs.job.utils import prompt_overwrite_output
 from mosaic.jobs.utils import JOBS_DIR, Command
 from mosaic.utils import PACKAGE_ROOT
@@ -204,3 +207,32 @@ class Job:
             output_file=output_file,
         )
         return job
+
+
+def create_job(
+    *,
+    command: Command,
+    segment_time: HMS,
+    input_file: Path,
+    output_file: Path
+) -> mosaic.jobs.job.base.Job:
+    if command == 'free':
+        return FreeJob(
+            command=command,
+            id=uuid4(),
+            timestamp=datetime.now(),
+            segment_time=segment_time,
+            input_file=input_file,
+            output_file=output_file,
+        )
+    elif command == 'copy':
+        return CopyJob(
+            command=command,
+            id=uuid4(),
+            timestamp=datetime.now(),
+            segment_time=segment_time,
+            input_file=input_file,
+            output_file=output_file,
+        )
+    elif command == 'upscale':
+        raise NotImplementedError
