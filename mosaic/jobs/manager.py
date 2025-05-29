@@ -84,6 +84,7 @@ def job_info(i: int, job: Job) -> str:
         segment_time(),
         input_file(),
         output_file(),
+        '',
     ])
 
 
