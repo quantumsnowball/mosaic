@@ -6,7 +6,6 @@ from typing import Self, override
 from uuid import uuid4
 
 from mosaic.jobs.job.base import Job
-from mosaic.jobs.utils import Command
 from mosaic.utils.logging import log
 from mosaic.utils.time import HMS
 

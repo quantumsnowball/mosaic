@@ -8,7 +8,6 @@ from mosaic.free.cleaner import Cleaner
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.jobs.job.base import Job
-from mosaic.jobs.utils import Command
 from mosaic.utils import PACKAGE_ROOT
 from mosaic.utils.logging import log
 from mosaic.utils.time import HMS
