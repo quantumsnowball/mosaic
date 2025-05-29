@@ -2,7 +2,7 @@ from pathlib import Path
 
 import click
 
-from mosaic.jobs.job import Job
+from mosaic.jobs.job import create_job
 from mosaic.jobs.utils import Command
 from mosaic.utils.path import PathParamType
 from mosaic.utils.service import service
@@ -26,7 +26,7 @@ def make_command(name: Command) -> click.Command:
         output_file: Path,
     ) -> None:
         # create a new job
-        with Job.create(
+        with create_job(
             command=name,
             segment_time=segment_time,
             input_file=input_file,
