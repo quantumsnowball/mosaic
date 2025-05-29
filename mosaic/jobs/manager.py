@@ -1,5 +1,6 @@
 from pathlib import Path
 from shutil import rmtree
+from typing import Self
 
 import click
 from click import style
@@ -103,6 +104,15 @@ class Manager:
                      for dirpath in sorted(JOBS_DIR.glob('./*/'))]
         self.jobs_finished = [job for job in self.jobs if job.is_finished]
         self.jobs_unfinished = [job for job in self.jobs if not job.is_finished]
+
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(self, *_) -> None:
+        try:
+            JOBS_DIR.rmdir()
+        except OSError:
+            pass
 
     def list_jobs(self, jobs) -> None:
         for i, job in enumerate(jobs):
