@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Self
 from uuid import UUID
 
+from click import style
+
 from mosaic.jobs.job.checklist import Checklist
 from mosaic.jobs.job.utils import prompt_overwrite_output
 from mosaic.jobs.utils import JOBS_DIR, Command
@@ -124,3 +126,14 @@ class Job(ABC):
 
     @abstractmethod
     def save(self) -> None: ...
+
+    def progress(self, name: str):
+        done = self.checklist.count_finished
+        total = self.checklist.count
+        pct = (done + 0.5) / total
+        return (
+            f'{name} : ' +
+            style(f'{pct:.2%}', fg='red') + ', ' +
+            style(f'{done} / {total} ', fg='yellow') + 'done, ' +
+            style(f'{self.segment_time} ', fg='yellow') + 'long'
+        )
