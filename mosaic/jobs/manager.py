@@ -21,10 +21,14 @@ def job_info(i: int, job: Job) -> str:
         return index + command + info
 
     def progress() -> str:
+        done = job.checklist.count_finished
+        total = job.checklist.count
+
         name = style(f'{" "*indent + "progress":{width}s} ', fg='blue', dim=dim)
-        count = style(f'{job.checklist.count_finished} / {job.checklist.count} completed, ', fg='white', dim=dim)
+        pct = style(f'{done / total:.2%}, ', fg='white', dim=dim)
+        count = style(f'{done} / {total}, ', fg='white', dim=dim)
         segment_time = style(f'segment time {job.segment_time}', fg='white', dim=dim)
-        return name + count + segment_time
+        return name + pct + count + segment_time
 
     def input_file() -> str:
         file = job.input_file
