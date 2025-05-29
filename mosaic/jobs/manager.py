@@ -1,3 +1,4 @@
+from pathlib import Path
 from shutil import rmtree
 
 import click
@@ -30,9 +31,8 @@ def job_info(i: int, job: Job) -> str:
         segment_time = style(f'{job.segment_time}', fg='yellow', dim=dim)
         return f'{name} {pct}, {count} done, {segment_time} each'
 
-    def input_file() -> str:
-        file = job.input_file
-        txt = style(f'{" "*indent + "input file":{width}s} ', fg='blue', dim=dim)
+    def video_file_details(file: Path, *, tag: str) -> str:
+        txt = style(f'{" "*indent + tag:{width}s} ', fg='blue', dim=dim)
         if not file.exists():
             txt += f'{str(file)}, ' + style('not exist', fg='yellow', dim=dim)
             return txt
@@ -53,28 +53,13 @@ def job_info(i: int, job: Job) -> str:
             )
         return txt
 
+    def input_file() -> str:
+        file = job.input_file
+        return video_file_details(file, tag='input file')
+
     def output_file() -> str:
         file = job.output_file
-        txt = style(f'{" "*indent + "output file":{width}s} ', fg='blue', dim=dim)
-        if not file.exists():
-            txt += f'{str(file)}, ' + style('not exist', fg='yellow', dim=dim)
-            return txt
-
-        size_mb = round(file.stat().st_size / 1e6, 2)
-        metadata = style(f'{size_mb:,.2f} MB', fg='yellow', dim=dim) if file.exists() else ''
-        txt += f'{str(file)},  {metadata}'
-        streams = FFprobe(file)
-        for i, stream in enumerate(streams.video):
-            txt += (
-                '\n' + style(f'{" "*indent*2}v:{i} {stream.hms} ', fg='yellow', dim=dim) +
-                style(f'{stream.summary()}', fg='cyan', dim=dim)
-            )
-        for i, stream in enumerate(streams.audio):
-            txt += (
-                '\n' + style(f'{" "*indent*2}a:{i} {stream.hms} ', fg='magenta', dim=dim) +
-                style(f'{stream.summary()}', fg='cyan', dim=dim)
-            )
-        return txt
+        return video_file_details(file, tag='output file')
 
     return '\n'.join([
         title(),
