@@ -1,11 +1,10 @@
 import json
 from typing import override
 
-from mosaic.free.cleaner import Cleaner
-from mosaic.free.net.netG import video
-from mosaic.free.net.netM import bisenet
 from mosaic.jobs.job.base import Job
-from mosaic.utils import PACKAGE_ROOT
+from mosaic.upscale.net import presets
+from mosaic.upscale.net.real_esrgan import RealESRGANer
+from mosaic.upscale.upscaler import Upscaler
 from mosaic.utils.logging import log
 
 
@@ -14,14 +13,23 @@ class UpscaleJob(Job):
     def proceed(self) -> None:
         # loop through available tasks
         while task := self.checklist.next_task():
-            with Cleaner(
+            # load upsampler
+            net = presets[model]
+            upsampler = RealESRGANer(
+                scale=net.scale,
+                model_path=net.model_path,
+                model=net.model,
+                gpu_id=0,
+            )
+
+            with Upscaler(
                 input_file=self._input_dirpath / task.name,
                 start_time=None,
                 end_time=None,
                 output_file=self._output_dirpath / task.name,
                 raw_info=False,
-                netM=bisenet(PACKAGE_ROOT/'free/net/netM/state_dicts/mosaic_position.pth'),
-                netG=video(PACKAGE_ROOT/'free/net/netG/state_dicts/clean_youknow_video.pth'),
+                scale=scale,
+                upsampler=upsampler,
             ) as cleaner:
                 try:
                     cleaner.run()
