@@ -58,11 +58,13 @@ class VideoStream:
     def hms(self) -> HMS:
         return HMS.from_total_seconds(round(float(self.duration)))
 
-    def summary(self) -> str:
+    @property
+    def summary(self) -> tuple[str, ...]:
         return (
-            f'{self.codec_name}, ({self.profile}), '
-            f'{self.resolution} [SAR {self.sar} DAR {self.dar}], '
-            f'{self.bit_rate/1e3} kb/s, {round(eval(self.framerate), 2)} fps'
+            f'{self.codec_name} ({self.profile})',
+            f'{self.resolution} [SAR {self.sar} DAR {self.dar}]',
+            f'{self.bit_rate/1e3} kb/s',
+            f'{round(eval(self.framerate), 2)} fps',
         )
 
 
@@ -98,10 +100,13 @@ class AudioStream:
     def hms(self) -> HMS:
         return HMS.from_total_seconds(round(float(self.duration)))
 
-    def summary(self) -> str:
+    @property
+    def summary(self) -> tuple[str, ...]:
         return (
-            f'{self.codec_name} ({self.profile}), '
-            f'{self.sample_rate} Hz, {self.channel_layout}, {self.bit_rate/1e3} kb/s'
+            f'{self.codec_name} ({self.profile})',
+            f'{self.sample_rate} Hz',
+            f'{self.channel_layout}',
+            f'{self.bit_rate/1e3} kb/s',
         )
 
 

@@ -1,3 +1,4 @@
+from pathlib import Path
 from shutil import rmtree
 
 import click
@@ -15,79 +16,57 @@ def job_info(i: int, job: Job) -> str:
     indent = 2
 
     def title() -> str:
-        return style(f'{i+1}: {job.timestamp_pp} - {job.id}', fg='green', dim=dim)
+        index = style(f'{i+1}. ', fg='white', dim=dim)
+        command = style(f'{job.command:8s}', fg='red', dim=dim)
+        info = style(f'{job.timestamp_pp} - {job.id}', fg='green', dim=dim)
+        return index + command + info
 
     def progress() -> str:
-        return (
-            style(f'{" "*indent + "progress":{width}s} ', fg='blue', dim=dim) +
-            style(f'{job.checklist.count_finished} / {job.checklist.count} completed', fg='white', dim=dim)
-        )
+        done = job.checklist.count_finished
+        total = job.checklist.count
 
-    def command() -> str:
-        return (
-            style(f'{" "*indent + "command":{width}s} ', fg='blue', dim=dim) +
-            style(job.command, fg='white', dim=dim)
-        )
+        name = style(f'{" "*indent + "progress":{width}s}', fg='blue', dim=dim)
+        pct = style(f'{done / total:.2%}', fg='red', dim=dim)
+        count = style(f'{done} / {total}', fg='yellow', dim=dim)
+        segment_time = style(f'{job.segment_time}', fg='yellow', dim=dim)
+        return f'{name} {pct}, {count} done, {segment_time} each'
 
-    def segment_time() -> str:
-        return (
-            style(f'{" "*indent+"segment time":{width}s} ', fg='blue', dim=dim) +
-            style(f'{job.segment_time}', fg='white', dim=dim)
-        )
+    def video_file_details(file: Path, *, tag: str) -> str:
+        txt = style(f'{" "*indent + tag:{width}s} ', fg='blue', dim=dim)
+        if not file.exists():
+            txt += f'{str(file)}, ' + style('not exist', fg='yellow', dim=dim)
+            return txt
+
+        size_mb = round(file.stat().st_size / 1e6, 2)
+        metadata = style(f'{size_mb:,.2f} MB', fg='yellow', dim=dim) if file.exists() else ''
+        txt += f'{str(file)}, {metadata}'
+        streams = FFprobe(file)
+        for i, stream in enumerate(streams.video):
+            txt += (
+                '\n' + style(f'{" "*indent*2}v:{i} {stream.hms} ', fg='yellow', dim=dim) +
+                ', '.join([style(f'{s}', fg='cyan', dim=dim) for s in stream.summary])
+            )
+        for i, stream in enumerate(streams.audio):
+            txt += (
+                '\n' + style(f'{" "*indent*2}a:{i} {stream.hms} ', fg='magenta', dim=dim) +
+                ', '.join([style(f'{s}', fg='cyan', dim=dim) for s in stream.summary])
+            )
+        return txt
 
     def input_file() -> str:
         file = job.input_file
-        txt = style(f'{" "*indent + "input file":{width}s} ', fg='blue', dim=dim)
-        if not file.exists():
-            txt += style(f'{str(file)} (not exist)', fg='white', dim=dim)
-            return txt
-
-        size_mb = round(file.stat().st_size / 1e6, 2)
-        metadata = f'{size_mb}MB'
-        txt += style(f'{str(file)} ({metadata})', fg='white', dim=dim)
-        streams = FFprobe(file)
-        for i, stream in enumerate(streams.video):
-            txt += (
-                '\n' + style(f'{" "*indent*2}v:{i} {stream.hms} ', fg='yellow', dim=dim) +
-                style(f'{stream.summary()}', fg='cyan', dim=dim)
-            )
-        for i, stream in enumerate(streams.audio):
-            txt += (
-                '\n' + style(f'{" "*indent*2}a:{i} {stream.hms} ', fg='magenta', dim=dim) +
-                style(f'{stream.summary()}', fg='cyan', dim=dim)
-            )
-        return txt
+        return video_file_details(file, tag='input file')
 
     def output_file() -> str:
         file = job.output_file
-        txt = style(f'{" "*indent + "output file":{width}s} ', fg='blue', dim=dim)
-        if not file.exists():
-            txt += style(f'{str(file)} (not exist)', fg='white', dim=dim)
-            return txt
-
-        size_mb = round(file.stat().st_size / 1e6, 2)
-        metadata = f'{size_mb}MB' if file.exists() else ''
-        txt += style(f'{str(file)} ({metadata})', fg='white', dim=dim)
-        streams = FFprobe(file)
-        for i, stream in enumerate(streams.video):
-            txt += (
-                '\n' + style(f'{" "*indent*2}v:{i} {stream.hms} ', fg='yellow', dim=dim) +
-                style(f'{stream.summary()}', fg='cyan', dim=dim)
-            )
-        for i, stream in enumerate(streams.audio):
-            txt += (
-                '\n' + style(f'{" "*indent*2}a:{i} {stream.hms} ', fg='magenta', dim=dim) +
-                style(f'{stream.summary()}', fg='cyan', dim=dim)
-            )
-        return txt
+        return video_file_details(file, tag='output file')
 
     return '\n'.join([
         title(),
         progress(),
-        command(),
-        segment_time(),
         input_file(),
         output_file(),
+        '',
     ])
 
 
@@ -106,7 +85,7 @@ class Manager:
     def run_job(self) -> None:
         self.list_jobs(self.jobs_unfinished)
         if len(self.jobs) > 0:
-            n: int = click.prompt('Please select a job', type=int)
+            n: int = click.prompt('Please select a job to run', type=int)
             selected_job = self.jobs[n - 1]
             selected_job.run()
         else:
