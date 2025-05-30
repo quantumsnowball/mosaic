@@ -98,12 +98,19 @@ def job_info(i: int, job: Job) -> str:
 
 
 class Manager:
-    def __init__(self) -> None:
+    @property
+    def jobs(self) -> list[Job]:
         # detect all jobs available
-        self.jobs = [load_job(dirpath)
-                     for dirpath in sorted(JOBS_DIR.glob('./*/'))]
-        self.jobs_finished = [job for job in self.jobs if job.is_finished]
-        self.jobs_unfinished = [job for job in self.jobs if not job.is_finished]
+        return [load_job(dirpath)
+                for dirpath in sorted(JOBS_DIR.glob('./*/'))]
+
+    @property
+    def jobs_finished(self) -> list[Job]:
+        return [job for job in self.jobs if job.is_finished]
+
+    @property
+    def jobs_unfinished(self) -> list[Job]:
+        return [job for job in self.jobs if not job.is_finished]
 
     def __enter__(self) -> Self:
         return self
@@ -119,27 +126,30 @@ class Manager:
             click.echo(job_info(i, job))
 
     def run_job(self) -> None:
-        if len(self.jobs_unfinished) == 0:
+        jobs = self.jobs_unfinished
+        if len(jobs) == 0:
             click.echo('No jobs available. Please create a job first.')
             return
 
-        self.list_jobs(self.jobs_unfinished)
+        self.list_jobs(jobs)
         n: int = click.prompt('Please select an unfinished job to run', type=int)
-        selected_job = self.jobs[n - 1]
+        selected_job = jobs[n - 1]
         selected_job.run()
 
     def delete_job(self) -> None:
-        self.list_jobs(self.jobs)
+        jobs = self.jobs
+        self.list_jobs(jobs)
         n: int = click.prompt('Please select a job to delete', type=int)
-        selected_job = self.jobs[n - 1]
+        selected_job = jobs[n - 1]
         if click.prompt(style(f'Are you sure to DELETE job {selected_job.id} (y/N)?', fg='red'), type=str).lower() == 'y':
             rmtree(selected_job.job_dirpath)
             click.secho(f'Deleted job: {selected_job.id}', fg='yellow')
 
     def clear_finished(self) -> None:
-        self.list_jobs(self.jobs_finished)
+        jobs = self.jobs_finished
+        self.list_jobs(jobs)
         if click.prompt('Do you want to DELETE ALL finished jobs (y/N)?', type=str).lower() == 'y':
-            for job in self.jobs_finished:
+            for job in jobs:
                 try:
                     rmtree(job.job_dirpath)
                     click.secho(f'Deleted job: {job.id}', fg='yellow')
@@ -149,9 +159,10 @@ class Manager:
             click.echo('Operation cancelled')
 
     def clear_all_jobs(self) -> None:
-        self.list_jobs(self.jobs)
+        jobs = self.jobs
+        self.list_jobs(jobs)
         if click.prompt(style('Do you want to DELETE ALL jobs (y/N)?', fg='red'), type=str).lower() == 'y':
-            for job in self.jobs:
+            for job in jobs:
                 try:
                     rmtree(job.job_dirpath)
                     click.secho(f'Deleted job: {job.id}', fg='yellow')
