@@ -67,8 +67,8 @@ class Combiner:
                 #
                 '-pix_fmt', 'yuv420p',
                 '-vcodec', 'libx264',
-                '-vf', f'scale=-2:{self._scale.replace("p", "")}',
-                '-aspect', self.origin.dar,
+                '-vf', f'scale=-2:{self._scale.replace("p", "")},setsar=1:1',
+                # '-aspect', self.origin.dar,
                 self._output_file,
             )
         )

@@ -62,6 +62,7 @@ class Combiner:
                 #
                 '-pix_fmt', 'yuv420p',
                 '-vcodec', 'libx264',
+                '-vf', f'setsar=1:1',
                 self._output_file,
             )
         )
