@@ -110,7 +110,8 @@ class Job(ABC):
                 '-f', 'concat',
                 '-i', index,
             ).output(
-                '-c', 'copy',
+                '-vcodec', 'copy',
+                '-acodec', 'copy',
                 self.output_file,
             ).run()
 
