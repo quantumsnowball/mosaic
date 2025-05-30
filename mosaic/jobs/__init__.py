@@ -2,6 +2,7 @@ import click
 
 from mosaic.jobs.clean import clean
 from mosaic.jobs.create import create
+from mosaic.jobs.delete import delete
 from mosaic.jobs.ls import ls
 from mosaic.jobs.manager import Manager
 from mosaic.utils.service import service
@@ -24,4 +25,5 @@ def jobs(ctx: click.Context) -> None:
 
 jobs.add_command(create)
 jobs.add_command(clean)
+jobs.add_command(delete)
 jobs.add_command(ls)

@@ -1,6 +1,6 @@
 from pathlib import Path
 from shutil import rmtree
-from typing import Self
+from typing import Self, Sequence
 
 import click
 from click import style
@@ -114,7 +114,7 @@ class Manager:
         except OSError:
             pass
 
-    def list_jobs(self, jobs) -> None:
+    def list_jobs(self, jobs: Sequence[Job]) -> None:
         for i, job in enumerate(jobs):
             click.echo(job_info(i, job))
 
@@ -127,6 +127,14 @@ class Manager:
         n: int = click.prompt('Please select an unfinished job to run', type=int)
         selected_job = self.jobs[n - 1]
         selected_job.run()
+
+    def delete_job(self) -> None:
+        self.list_jobs(self.jobs)
+        n: int = click.prompt('Please select a job to delete', type=int)
+        selected_job = self.jobs[n - 1]
+        if click.prompt(style(f'Are you sure to DELETE job {selected_job.id} (y/N)?', fg='red'), type=str).lower() == 'y':
+            rmtree(selected_job.job_dirpath)
+            click.secho(f'Deleted job: {selected_job.id}', fg='yellow')
 
     def clear_finished(self) -> None:
         self.list_jobs(self.jobs_finished)
