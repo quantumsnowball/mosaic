@@ -137,13 +137,14 @@ class Manager:
         selected_job.run()
 
     def delete_job(self) -> None:
-        jobs = self.jobs
-        self.list_jobs(jobs)
-        n: int = click.prompt('Please select a job to delete', type=int)
-        selected_job = jobs[n - 1]
-        if click.prompt(style(f'Are you sure to DELETE job {selected_job.id} (y/N)?', fg='red'), type=str).lower() == 'y':
-            rmtree(selected_job.job_dirpath)
-            click.secho(f'Deleted job: {selected_job.id}', fg='yellow')
+        while True:
+            jobs = self.jobs
+            self.list_jobs(jobs)
+            n: int = click.prompt('Please select a job to delete', type=int)
+            selected_job = jobs[n - 1]
+            if click.prompt(style(f'Are you sure to DELETE job {selected_job.id} (y/N)?', fg='red'), type=str).lower() == 'y':
+                rmtree(selected_job.job_dirpath)
+                click.secho(f'Deleted job: {selected_job.id}', fg='yellow')
 
     def clear_finished(self) -> None:
         jobs = self.jobs_finished
