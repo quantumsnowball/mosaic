@@ -12,19 +12,19 @@ class VideoStream:
 
     @property
     def codec_name(self) -> str:
-        return str(self._d['codec_name'])
+        return str(self._d.get('codec_name', 'n.a.'))
 
     @property
     def profile(self) -> str:
-        return str(self._d['profile'])
+        return str(self._d.get('profile', 'n.a.'))
 
     @property
     def width(self) -> int:
-        return int(self._d['width'])
+        return int(self._d.get('width', -1))
 
     @property
     def height(self) -> int:
-        return int(self._d['height'])
+        return int(self._d.get('height', -1))
 
     @property
     def resolution(self) -> str:
@@ -32,27 +32,27 @@ class VideoStream:
 
     @property
     def bit_rate(self) -> float:
-        return float(self._d['bit_rate'])
+        return float(self._d.get('bit_rate', -1))
 
     @property
     def framerate(self) -> str:
-        return str(self._d['r_frame_rate'])
+        return str(self._d.get('r_frame_rate', 'n.a.'))
 
     @property
     def sar(self) -> str:
-        return str(self._d['sample_aspect_ratio'])
+        return str(self._d.get('sample_aspect_ratio', 'n.a.'))
 
     @property
     def dar(self) -> str:
-        return str(self._d['display_aspect_ratio'])
+        return str(self._d.get('display_aspect_ratio', 'n.a.'))
 
     @property
     def pix_fmt(self) -> str:
-        return str(self._d['pix_fmt'])
+        return str(self._d.get('pix_fmt', 'n.a.'))
 
     @property
     def duration(self) -> str:
-        return str(self._d['duration'])
+        return str(self._d.get('duration', 'n.a.'))
 
     @property
     def hms(self) -> HMS:
