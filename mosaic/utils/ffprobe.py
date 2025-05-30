@@ -74,27 +74,27 @@ class AudioStream:
 
     @property
     def codec_name(self) -> str:
-        return str(self._d['codec_name'])
+        return str(self._d.get('codec_name', 'n.a.'))
 
     @property
     def profile(self) -> str:
-        return str(self._d['profile'])
+        return str(self._d.get('profile', 'n.a.'))
 
     @property
     def sample_rate(self) -> str:
-        return str(self._d['sample_rate'])
+        return str(self._d.get('sample_rate', 'n.a.'))
 
     @property
     def channel_layout(self) -> str:
-        return str(self._d['channel_layout'])
+        return str(self._d.get('channel_layout', 'n.a.'))
 
     @property
     def bit_rate(self) -> float:
-        return float(self._d['bit_rate'])
+        return float(self._d.get('bit_rate', -1))
 
     @property
     def duration(self) -> str:
-        return str(self._d['duration'])
+        return str(self._d.get('duration', 'n.a.'))
 
     @property
     def hms(self) -> HMS:
