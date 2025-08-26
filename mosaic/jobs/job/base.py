@@ -4,12 +4,15 @@ from pathlib import Path
 from typing import Self
 from uuid import UUID
 
+from alive_progress import alive_bar
 from click import style
 
 from mosaic.jobs.job.checklist import Checklist
 from mosaic.jobs.job.utils import prompt_overwrite_output
 from mosaic.jobs.utils import JOBS_DIR, Command
 from mosaic.utils.ffmpeg import FFmpeg
+from mosaic.utils.ffprobe import FFprobe
+from mosaic.utils.logging import log
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
@@ -81,8 +84,35 @@ class Job(ABC):
                 '-segment_time', self.segment_time,
                 '-vcodec', 'copy',
                 '-acodec', 'copy',
+                '-reset_timestamps', '1',
                 self._input_dirpath / self.segment_pattern,
             ).run()
+
+        # detect and fix segment metadata
+        segment_list = sorted(self._input_dirpath.glob(f'*.{self.segment_ext}'))
+        with alive_bar(len(segment_list)) as bar:
+            for segment in segment_list:
+                for _ in range(3):
+                    if self.origin.framerate != FFprobe(segment).video[0].framerate:
+                        log.info(f'Trying to fix {segment.name} with incorrect metadata')
+                        bar.text(f'Fixing {segment.name} ...')
+                        segment_fixed = segment.with_name(f'{segment.stem}_fixed{segment.suffix}')
+                        FFmpeg().global_args(
+                            '-loglevel', 'fatal'
+                        ).input(
+                            '-i', segment,
+                        ).output(
+                            '-vcodec', 'copy',
+                            '-acodec', 'copy',
+                            '-video_track_timescale', self.origin.framerate,
+                            segment_fixed,
+                        ).run()
+                        segment_fixed.replace(segment)
+                        continue
+                    break
+                else:
+                    raise RuntimeError(f'Failed to fix segment {segment.name} with incorrect metadata')
+                bar()
 
         # create a sqlite db as the checklist
         self.checklist.create()
