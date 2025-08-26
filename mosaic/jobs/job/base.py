@@ -84,6 +84,13 @@ class Job(ABC):
                 self._input_dirpath / self.segment_pattern,
             ).run()
 
+        # detect and fix segment metadata
+        for f in self._input_dirpath.glob(f'*.{self.segment_ext}'):
+            src_r = self.origin.framerate
+            out_r = FFprobe(f).video[0].framerate
+            print(f'{src_r=}, {out_r=}')
+            # assert self.origin.framerate == FFprobe(f).video[0].framerate
+
         # create a sqlite db as the checklist
         self.checklist.create()
         self.checklist.initialize(self._input_dirpath, ext=self.segment_ext, val=False)
