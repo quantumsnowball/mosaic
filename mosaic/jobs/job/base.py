@@ -10,6 +10,7 @@ from mosaic.jobs.job.checklist import Checklist
 from mosaic.jobs.job.utils import prompt_overwrite_output
 from mosaic.jobs.utils import JOBS_DIR, Command
 from mosaic.utils.ffmpeg import FFmpeg
+from mosaic.utils.ffprobe import FFprobe
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
@@ -81,15 +82,28 @@ class Job(ABC):
                 '-segment_time', self.segment_time,
                 '-vcodec', 'copy',
                 '-acodec', 'copy',
+                '-reset_timestamps', '1',
                 self._input_dirpath / self.segment_pattern,
             ).run()
 
         # detect and fix segment metadata
-        for f in self._input_dirpath.glob(f'*.{self.segment_ext}'):
-            src_r = self.origin.framerate
-            out_r = FFprobe(f).video[0].framerate
-            print(f'{src_r=}, {out_r=}')
-            # assert self.origin.framerate == FFprobe(f).video[0].framerate
+        for segment in self._input_dirpath.glob(f'*.{self.segment_ext}'):
+            source_framerate = self.origin.framerate
+            segment_framerate = FFprobe(segment).video[0].framerate
+            if source_framerate != segment_framerate:
+                segment_fixed = segment.with_name(f'{segment.stem}_fixed{segment.suffix}')
+                FFmpeg().global_args(
+                    '-loglevel', 'fatal'
+                ).input(
+                    '-i', segment,
+                ).output(
+                    '-vcodec', 'copy',
+                    '-acodec', 'copy',
+                    '-video_track_timescale', source_framerate,
+                    segment_fixed,
+                ).run()
+                segment_fixed.replace(segment)
+            assert self.origin.framerate == FFprobe(segment).video[0].framerate
 
         # create a sqlite db as the checklist
         self.checklist.create()
