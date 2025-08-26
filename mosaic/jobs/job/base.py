@@ -11,6 +11,7 @@ from mosaic.jobs.job.utils import prompt_overwrite_output
 from mosaic.jobs.utils import JOBS_DIR, Command
 from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.ffprobe import FFprobe
+from mosaic.utils.logging import log
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
@@ -87,23 +88,26 @@ class Job(ABC):
             ).run()
 
         # detect and fix segment metadata
-        for segment in self._input_dirpath.glob(f'*.{self.segment_ext}'):
-            source_framerate = self.origin.framerate
-            segment_framerate = FFprobe(segment).video[0].framerate
-            if source_framerate != segment_framerate:
-                segment_fixed = segment.with_name(f'{segment.stem}_fixed{segment.suffix}')
-                FFmpeg().global_args(
-                    '-loglevel', 'fatal'
-                ).input(
-                    '-i', segment,
-                ).output(
-                    '-vcodec', 'copy',
-                    '-acodec', 'copy',
-                    '-video_track_timescale', source_framerate,
-                    segment_fixed,
-                ).run()
-                segment_fixed.replace(segment)
-            assert self.origin.framerate == FFprobe(segment).video[0].framerate
+        for segment in sorted(self._input_dirpath.glob(f'*.{self.segment_ext}')):
+            for _ in range(3):
+                if self.origin.framerate != FFprobe(segment).video[0].framerate:
+                    log.info(f'Trying to fix {segment.name} with incorrect metadata')
+                    segment_fixed = segment.with_name(f'{segment.stem}_fixed{segment.suffix}')
+                    FFmpeg().global_args(
+                        '-loglevel', 'fatal'
+                    ).input(
+                        '-i', segment,
+                    ).output(
+                        '-vcodec', 'copy',
+                        '-acodec', 'copy',
+                        '-video_track_timescale', self.origin.framerate,
+                        segment_fixed,
+                    ).run()
+                    segment_fixed.replace(segment)
+                    continue
+                break
+            else:
+                raise RuntimeError(f'Failed to fix segment {segment.name} with incorrect metadata')
 
         # create a sqlite db as the checklist
         self.checklist.create()
