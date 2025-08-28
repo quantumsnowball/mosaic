@@ -8,6 +8,7 @@ from uuid import uuid4
 
 from mosaic.jobs.job.base import Job, Save
 from mosaic.utils.logging import log
+from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
 
 
@@ -43,6 +44,8 @@ class CopyJob(Job):
             timestamp=self.timestamp_iso,
             segment_time=self.segment_time,
             input_file=self.input_file,
+            duration=self.duration,
+            framerate=self.framerate,
             output_file=self.output_file,
         ).dict
         with open(info_fpath, 'w') as f:
@@ -56,11 +59,14 @@ class CopyJob(Job):
         input_file: Path,
         output_file: Path
     ) -> Self:
+        origin = VideoSource(input_file)
         return cls(
             command='copy',
             id=uuid4(),
             timestamp=datetime.now(),
             segment_time=segment_time,
             input_file=input_file,
+            duration=origin.duration,
+            framerate=origin.framerate,
             output_file=output_file,
         )
