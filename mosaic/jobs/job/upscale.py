@@ -13,6 +13,7 @@ from mosaic.upscale.net import presets
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler import Upscaler
 from mosaic.utils.logging import log
+from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
 
 
@@ -33,6 +34,8 @@ class UpscaleJob(Job):
         model: str,
         scale: str,
         input_file: Path,
+        duration: float,
+        framerate: str,
         output_file: Path,
     ) -> None:
         super().__init__(
@@ -41,6 +44,8 @@ class UpscaleJob(Job):
             timestamp=timestamp,
             segment_time=segment_time,
             input_file=input_file,
+            duration=duration,
+            framerate=framerate,
             output_file=output_file,
         )
         self.scale = scale
@@ -91,6 +96,8 @@ class UpscaleJob(Job):
             scale=self.scale,
             model=self.model,
             input_file=self.input_file,
+            duration=self.duration,
+            framerate=self.framerate,
             output_file=self.output_file,
         ).dict
         with open(info_fpath, 'w') as f:
@@ -106,6 +113,7 @@ class UpscaleJob(Job):
         input_file: Path,
         output_file: Path
     ) -> Self:
+        origin = VideoSource(input_file)
         return cls(
             command='upscale',
             id=uuid4(),
@@ -114,5 +122,7 @@ class UpscaleJob(Job):
             model=model,
             scale=scale,
             input_file=input_file,
+            duration=origin.duration,
+            framerate=origin.framerate,
             output_file=output_file,
         )
