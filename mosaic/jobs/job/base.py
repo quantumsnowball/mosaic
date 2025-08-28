@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Self
@@ -16,6 +17,20 @@ from mosaic.utils.logging import log
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
+
+
+@dataclass
+class Save:
+    command: str
+    id: UUID
+    timestamp: str
+    segment_time: HMS
+    input_file: Path
+    output_file: Path
+
+    @property
+    def dict(self) -> dict[str, str]:
+        return {k: str(v) for k, v in asdict(self).items()}
 
 
 class Job(ABC):
