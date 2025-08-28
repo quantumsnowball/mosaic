@@ -1,13 +1,19 @@
 import json
 import shutil
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Self, override
 from uuid import uuid4
 
-from mosaic.jobs.job.base import Job
+from mosaic.jobs.job.base import Job, Save
 from mosaic.utils.logging import log
 from mosaic.utils.time import HMS
+
+
+@dataclass
+class CopyJobSave(Save):
+    pass
 
 
 class CopyJob(Job):
@@ -31,14 +37,14 @@ class CopyJob(Job):
     @override
     def save(self) -> None:
         info_fpath = self.job_dirpath / self.info_fname
-        info = {k: str(v) for k, v in dict(
+        info = CopyJobSave(
             command=self.command,
             id=self.id,
             timestamp=self.timestamp_iso,
             segment_time=self.segment_time,
             input_file=self.input_file,
             output_file=self.output_file,
-        ).items()}
+        ).dict
         with open(info_fpath, 'w') as f:
             json.dump(info, f, indent=4)
 
