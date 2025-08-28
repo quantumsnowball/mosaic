@@ -1,4 +1,5 @@
 import json
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Self, override
@@ -6,13 +7,19 @@ from uuid import UUID, uuid4
 
 import click
 
-from mosaic.jobs.job.base import Job
+from mosaic.jobs.job.base import Job, Save
 from mosaic.jobs.utils import Command
 from mosaic.upscale.net import presets
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler import Upscaler
 from mosaic.utils.logging import log
 from mosaic.utils.time import HMS
+
+
+@dataclass
+class UpscaleJobSave(Save):
+    scale: str
+    model: str
 
 
 class UpscaleJob(Job):
@@ -76,7 +83,7 @@ class UpscaleJob(Job):
     @override
     def save(self) -> None:
         info_fpath = self.job_dirpath / self.info_fname
-        info = {k: str(v) for k, v in dict(
+        info = UpscaleJobSave(
             command=self.command,
             id=self.id,
             timestamp=self.timestamp_iso,
@@ -85,7 +92,7 @@ class UpscaleJob(Job):
             model=self.model,
             input_file=self.input_file,
             output_file=self.output_file,
-        ).items()}
+        ).dict
         with open(info_fpath, 'w') as f:
             json.dump(info, f, indent=4)
 
