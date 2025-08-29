@@ -126,15 +126,20 @@ class Manager:
             click.echo(job_info(i, job))
 
     def run_job(self) -> None:
-        jobs = self.jobs_unfinished
-        if len(jobs) == 0:
-            click.echo('No jobs available. Please create a job first.')
-            return
+        while True:
+            jobs = self.jobs_unfinished
+            if len(jobs) == 0:
+                click.echo('No jobs available. Please create a job first.')
+                return
 
-        self.list_jobs(jobs)
-        n: int = click.prompt('Please select an unfinished job to run', type=int)
-        selected_job = jobs[n - 1]
-        selected_job.run()
+            self.list_jobs(jobs)
+            n: int = click.prompt('Please select an unfinished job to run', type=int)
+            if n > len(jobs):
+                continue
+
+            selected_job = jobs[n - 1]
+            selected_job.run()
+            return
 
     def delete_job(self) -> None:
         while True:
