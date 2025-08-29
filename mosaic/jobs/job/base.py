@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Self
@@ -14,8 +15,23 @@ from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.ffprobe import FFprobe
 from mosaic.utils.logging import log
 from mosaic.utils.progress import ProgressBar
-from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
+
+
+@dataclass
+class Save:
+    command: str
+    id: UUID
+    timestamp: str
+    segment_time: HMS
+    input_file: Path
+    duration: float
+    framerate: str
+    output_file: Path
+
+    @property
+    def dict(self) -> dict[str, str]:
+        return {k: str(v) for k, v in asdict(self).items()}
 
 
 class Job(ABC):
@@ -36,6 +52,8 @@ class Job(ABC):
         timestamp: datetime,
         segment_time: HMS,
         input_file: Path,
+        duration: float,
+        framerate: str,
         output_file: Path,
     ) -> None:
         self.command = command
@@ -46,7 +64,9 @@ class Job(ABC):
         self.segment_time = segment_time
         self.input_file = input_file
         self.output_file = output_file
-        self.origin = VideoSource(self.input_file)
+        # self.origin = VideoSource(self.input_file)
+        self.duration = duration
+        self.framerate = framerate
         self.job_dirpath = JOBS_DIR / f'{self.timestamp_iso.replace(':', '.').replace('T', '_')}'
         self._input_dirpath = self.job_dirpath / self.inputs_dirname
         self._output_dirpath = self.job_dirpath / self.outputs_dirname
@@ -71,7 +91,7 @@ class Job(ABC):
 
     def initialize(self) -> None:
         # split video into segments
-        with ProgressBar(self.origin.duration) as pbar:
+        with ProgressBar(self.duration) as pbar:
             FFmpeg(
             ).global_args(
                 '-loglevel', 'fatal',
@@ -93,7 +113,7 @@ class Job(ABC):
         with alive_bar(len(segment_list)) as bar:
             for segment in segment_list:
                 for _ in range(3):
-                    if self.origin.framerate != FFprobe(segment).video[0].framerate:
+                    if self.framerate != FFprobe(segment).video[0].framerate:
                         log.info(f'Trying to fix {segment.name} with incorrect metadata')
                         bar.text(f'Fixing {segment.name} ...')
                         segment_fixed = segment.with_name(f'{segment.stem}_fixed{segment.suffix}')
@@ -104,7 +124,7 @@ class Job(ABC):
                         ).output(
                             '-vcodec', 'copy',
                             '-acodec', 'copy',
-                            '-video_track_timescale', self.origin.framerate,
+                            '-video_track_timescale', self.framerate,
                             segment_fixed,
                         ).run()
                         segment_fixed.replace(segment)
@@ -129,7 +149,7 @@ class Job(ABC):
             for part in parts:
                 f.write(f'file {part.name}\n')
         # combine the output segments
-        with ProgressBar(self.origin.duration) as pbar:
+        with ProgressBar(self.duration) as pbar:
             FFmpeg(
             ).global_args(
                 '-y',

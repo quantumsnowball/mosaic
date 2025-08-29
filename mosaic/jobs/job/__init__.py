@@ -23,6 +23,8 @@ def load_job(
     timestamp = datetime.fromisoformat(d['timestamp'])
     segment_time = HMS.from_str(d['segment_time'])
     input_file = Path(d['input_file'])
+    duration = float(d['duration'])
+    framerate = str(d['framerate'])
     output_file = Path(d['output_file'])
     if command == 'free':
         return FreeJob(
@@ -31,6 +33,8 @@ def load_job(
             timestamp=timestamp,
             segment_time=segment_time,
             input_file=input_file,
+            duration=duration,
+            framerate=framerate,
             output_file=output_file,
         )
     elif command == 'copy':
@@ -40,6 +44,8 @@ def load_job(
             timestamp=timestamp,
             segment_time=segment_time,
             input_file=input_file,
+            duration=duration,
+            framerate=framerate,
             output_file=output_file,
         )
     elif command == 'upscale':
@@ -53,5 +59,7 @@ def load_job(
             model=model,
             scale=scale,
             input_file=input_file,
+            duration=duration,
+            framerate=framerate,
             output_file=output_file,
         )
