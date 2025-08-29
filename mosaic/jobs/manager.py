@@ -139,8 +139,15 @@ class Manager:
     def delete_job(self) -> None:
         while True:
             jobs = self.jobs
+            if len(jobs) == 0:
+                click.echo('Job list is empty.')
+                return
+
             self.list_jobs(jobs)
             n: int = click.prompt('Please select a job to delete', type=int)
+            if n > len(jobs):
+                continue
+
             selected_job = jobs[n - 1]
             if click.prompt(style(f'Are you sure to DELETE job {selected_job.id} (y/N)?', fg='red'), type=str).lower() == 'y':
                 rmtree(selected_job.job_dirpath)
