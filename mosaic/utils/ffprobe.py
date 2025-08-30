@@ -39,6 +39,10 @@ class VideoStream:
         return str(self._d.get('r_frame_rate', 'n.a.'))
 
     @property
+    def avg_framerate(self) -> str:
+        return str(self._d.get('avg_frame_rate', 'n.a.'))
+
+    @property
     def sar(self) -> str:
         return str(self._d.get('sample_aspect_ratio', 'n.a.'))
 
