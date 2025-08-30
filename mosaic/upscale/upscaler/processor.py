@@ -4,6 +4,7 @@ import queue
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
+from queue import ShutDown
 from threading import Thread
 from typing import Self
 
@@ -12,6 +13,8 @@ import numpy as np
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler.splitter import Splitter
 from mosaic.utils import TEMP_DIR
+from mosaic.utils.exception import catch
+from mosaic.utils.logging import trace
 
 
 @dataclass
@@ -68,15 +71,19 @@ class Processor:
     def upsampled_info(self) -> 'mp.Queue[UpsampleInfo]':
         return self._upsampled_info
 
+    @trace
     def __enter__(self) -> Self:
         if not self.output.exists():
             os.mkfifo(self.output)
         return self
 
+    @trace
     def __exit__(self, type, value, traceback) -> None:
         if self.output.exists():
             self.output.unlink()
 
+    @trace
+    @catch(ShutDown, ValueError)
     def _reader_worker(self) -> None:
         with open(self.input, 'rb') as input:
             while True:
@@ -84,12 +91,9 @@ class Processor:
                 if not (in_bytes := input.read(self._frame_size)):
                     break
 
-                # Convert bytes to numpy array, break on incomplete frame
+                # Convert bytes to numpy array, break on incomplete frame raises ValueError
                 shape = (self._height, self._width, 3)
-                try:
-                    frame = np.frombuffer(in_bytes, np.uint8).reshape(shape)
-                except ValueError:
-                    break
+                frame = np.frombuffer(in_bytes, np.uint8).reshape(shape)
 
                 # write frame to out queue
                 self._reader_out_queue.put(frame)
@@ -97,6 +101,8 @@ class Processor:
             # signal the end of frame stream
             self._reader_out_queue.put(None)
 
+    @trace
+    @catch(ShutDown, ValueError)
     def _processor_worker(self) -> None:
         info_known = False
         while True:
@@ -119,6 +125,8 @@ class Processor:
         # signal the end of frame stream
         self._processor_out_queue.put(None)
 
+    @trace
+    @catch(ShutDown, BrokenPipeError)
     def _writer_worker(self) -> None:
         with open(self.output, 'wb') as output:
             while True:
@@ -128,21 +136,35 @@ class Processor:
 
                 # write bytes to output
                 out_bytes = frame.astype(np.uint8).tobytes()
-                try:
-                    output.write(out_bytes)
-                except BrokenPipeError:
-                    break
+                output.write(out_bytes)
 
-    def run(self) -> None:
+    @trace
+    def start(self) -> None:
         self._reader_thread.start()
         self._processor_thread.start()
         self._writer_thread.start()
 
-    def wait(self) -> None:
-        self._reader_thread.join()
-        self._processor_thread.join()
-        self._writer_thread.join()
+    @trace
+    def run(self) -> None:
+        self.start()
+        self.wait()
 
+    @trace
+    def wait(self) -> None:
+        if self._reader_thread.is_alive():
+            self._reader_thread.join()
+        if self._processor_thread.is_alive():
+            self._processor_thread.join()
+        if self._writer_thread.is_alive():
+            self._writer_thread.join()
+
+    @trace
     def stop(self) -> None:
+        # raises ShutDown
+        self._reader_out_queue.shutdown(immediate=True)
+        self._processor_out_queue.shutdown(immediate=True)
+        # raises ValueError
+        self._upsampled_info.close()
+        # raises BrokenPipeError
         if self.output.exists():
             self.output.unlink()

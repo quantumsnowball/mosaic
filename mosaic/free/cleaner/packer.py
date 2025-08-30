@@ -1,6 +1,6 @@
 from collections import deque
 from pathlib import Path
-from queue import Queue
+from queue import Queue, ShutDown
 from threading import Thread
 from typing import Self, cast
 
@@ -8,6 +8,8 @@ import numpy as np
 
 from mosaic.free.cleaner.constants import LEFT_FRAME, POOL_NUM
 from mosaic.free.cleaner.splitter import Splitter
+from mosaic.utils.exception import catch
+from mosaic.utils.logging import trace
 
 
 class Package:
@@ -55,12 +57,16 @@ class Packer:
     def output(self) -> Output:
         return self._queue
 
+    @trace
     def __enter__(self) -> Self:
         return self
 
+    @trace
     def __exit__(self, type, value, traceback) -> None:
         pass
 
+    @trace
+    @catch(ShutDown)
     def _worker(self) -> None:
         with open(self.input, 'rb') as input:
             # buffer is first prefilled with None values
@@ -70,7 +76,7 @@ class Packer:
             while True:
                 # read from input pipe for a frame
                 in_bytes = input.read(self._frame_size)
-                if in_bytes:
+                if in_bytes and len(in_bytes) == self._frame_size:
                     shape = (self._height, self._width, 3)
                     frame = np.frombuffer(in_bytes, np.uint8).reshape(shape)
                     buffer.append(frame)
@@ -82,23 +88,34 @@ class Packer:
                 # img_origin is the buffer center item
                 img_origin = img_pool[LEFT_FRAME]
 
-                # when img_origin exists, it is a valid window
+                # when the center img_origin exists, it is a valid window
+                # on queue shutdown, ShutDown is raised and break the loop
                 if img_origin is not None:
                     # hand it to Package and put to output queue
                     self.output.put(Package(img_origin, img_pool))
-
-                # when center to right item are None, sliding window has ended
-                if all(val is None for val in img_pool[LEFT_FRAME:]):
+                # else, it can only be the starting or ending stage
+                elif all(val is None for val in img_pool[LEFT_FRAME:]):
+                    # when center to right all items are None, sliding window has ended
+                    # can only be after the ending stage, signal the end of Output queue
+                    self.output.put(None)
+                    # also time to break the loop
                     break
 
-            # signal the end of Output queue
-            self.output.put(None)
-
-    def run(self) -> None:
+    @trace
+    def start(self) -> None:
         self._thread.start()
 
-    def wait(self) -> None:
-        self._thread.join()
+    @trace
+    def run(self) -> None:
+        self.start()
+        self.wait()
 
+    @trace
+    def wait(self) -> None:
+        if self._thread.is_alive():
+            self._thread.join()
+
+    @trace
     def stop(self) -> None:
-        self.output.put(None)
+        # raises ShutDown
+        self.output.shutdown(immediate=True)

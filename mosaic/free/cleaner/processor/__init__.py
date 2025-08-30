@@ -1,7 +1,7 @@
 import os
 import uuid
 from pathlib import Path
-from queue import Queue
+from queue import Queue, ShutDown
 from threading import Thread
 from typing import Self
 
@@ -14,6 +14,8 @@ from mosaic.free.cleaner.processor.replace import replace_mosaic
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.utils import TEMP_DIR
+from mosaic.utils.exception import catch
+from mosaic.utils.logging import trace
 
 
 class Processor:
@@ -42,20 +44,25 @@ class Processor:
     def output(self) -> Path:
         return self._output_pipe
 
+    @trace
     def __enter__(self) -> Self:
         if not self.output.exists():
             os.mkfifo(self.output)
         return self
 
+    @trace
     def __exit__(self, type, value, traceback) -> None:
         if self.output.exists():
             self.output.unlink()
 
+    @trace
+    @catch(ShutDown, BrokenPipeError)
     def _worker(self) -> None:
         with open(self.output, 'wb') as output:
             previous_frame = None
             while True:
                 # read a frame package from input queue
+                # on queue shutdown, ShutDown is raised and break the loop
                 package = self.input.get()
 
                 # if no more further data, quit loop
@@ -70,10 +77,7 @@ class Processor:
                 if size < self._min_mask_size:
                     img_output = package.img_origin.copy()
                     out_bytes = img_output.astype(np.uint8).tobytes()
-                    try:
-                        output.write(out_bytes)
-                    except BrokenPipeError:
-                        break
+                    output.write(out_bytes)
                     continue
 
                 # remove mosaic area
@@ -86,17 +90,24 @@ class Processor:
 
                 # write bytes to output
                 out_bytes = img_output.astype(np.uint8).tobytes()
-                try:
-                    output.write(out_bytes)
-                except BrokenPipeError:
-                    break
+                output.write(out_bytes)
 
-    def run(self) -> None:
+    @trace
+    def start(self) -> None:
         self._thread.start()
 
-    def wait(self) -> None:
-        self._thread.join()
+    @trace
+    def run(self) -> None:
+        self.start()
+        self.wait()
 
+    @trace
+    def wait(self) -> None:
+        if self._thread.is_alive():
+            self._thread.join()
+
+    @trace
     def stop(self) -> None:
+        # raises BrokenPipeError
         if self.output.exists():
             self.output.unlink()

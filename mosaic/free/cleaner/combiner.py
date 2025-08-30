@@ -4,6 +4,7 @@ from typing import Self
 
 from mosaic.free.cleaner.processor import Processor
 from mosaic.utils.ffmpeg import FFmpeg
+from mosaic.utils.logging import trace
 from mosaic.utils.progress import ProgressBar
 
 
@@ -24,16 +25,19 @@ class Combiner:
     def input(self) -> Path:
         return self._input.output
 
+    @trace
     def __enter__(self) -> Self:
         if self._pbar:
             self._pbar.start()
         return self
 
+    @trace
     def __exit__(self, type, value, traceback) -> None:
         if self._pbar:
             self._pbar.stop()
 
-    def run(self) -> None:
+    @trace
+    def start(self) -> None:
         # create the ffmpeg stream command using correct info
         ffmpeg = (
             FFmpeg()
@@ -58,6 +62,7 @@ class Combiner:
                 #
                 '-pix_fmt', 'yuv420p',
                 '-vcodec', 'libx264',
+                '-vf', f'setsar=1:1',
                 self._output_file,
             )
         )
@@ -74,12 +79,19 @@ class Combiner:
         # run
         self._proc = ffmpeg.run_async()
 
+    @trace
+    def run(self) -> None:
+        self.start()
+        self.wait()
+
+    @trace
     def wait(self) -> None:
-        assert self._proc is not None
-        self._proc.wait()
+        if self._proc is not None:
+            self._proc.wait()
         if self._pbar is not None:
             self._pbar.wait()
 
+    @trace
     def stop(self) -> None:
         if self._proc is not None:
             self._proc.terminate()
