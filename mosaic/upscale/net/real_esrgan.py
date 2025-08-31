@@ -10,7 +10,8 @@ class RealESRGANer:
     """A helper class for upsampling images with RealESRGAN.
 
     Args:
-        scale (int): Upsampling scale factor used in the networks. It is usually 2 or 4.
+        scale (int): Upsampling scale factor used in the networks. It is usually 2 or 4. Scale of 4 mean width and
+            height times 4x. i.e. 640x480 original becomes 2560x1920 output.
         model_path (str): The path to the pretrained model. It can be urls (will first download it automatically).
         model (nn.Module): The defined network. Default: None.
         tile (int): As too large images result in the out of GPU memory issue, so this tile option will first crop
