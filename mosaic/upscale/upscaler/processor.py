@@ -110,7 +110,7 @@ class Processor:
             if (original_frame := self._reader_out_queue.get()) is None:
                 break
 
-            # apply a filter in python
+            # apply filter and the net model pass through
             frame, mode = self._upsampler.enhance(original_frame)
 
             # determine upsampled frame info
