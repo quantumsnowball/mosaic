@@ -17,6 +17,7 @@ class VideoSource:
         self.width = d.width
         self.height = d.height
         self.framerate = d.framerate
+        self.avg_framerate = d.avg_framerate
         self.sar = d.sar
         self.dar = d.dar
         self.pix_fmt = d.pix_fmt
@@ -25,8 +26,17 @@ class VideoSource:
         self.start_time = start_time
         self.end_time = end_time
 
+        # checks
+        self.check_framerate()
+
     def __str__(self) -> str:
         return str(self.input_file)
+
+    def check_framerate(self) -> None:
+        framerate = float(eval(self.framerate))
+        avg_framerate = float(eval(self.avg_framerate))
+        assert 0.9 < framerate / avg_framerate < 1.1, \
+            f'Incorrect video source framerate: {framerate=:.2f}, {avg_framerate=:.2f}'
 
     @property
     def frame_size(self) -> int:
