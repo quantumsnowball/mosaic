@@ -63,6 +63,8 @@ class ProgressBar:
                 while line := progress.readline():
                     # break gracefully even before EOF
                     if line.startswith('progress=end'):
+                        # finish bar to 100% then break loop
+                        bar(1.0)
                         break
 
                     line = line.strip()
@@ -84,9 +86,6 @@ class ProgressBar:
                         # calc and show progress percentage
                         pct = out_time / self.duration
                         bar(min(pct, 1.0))
-
-                # finish bar to 100%
-                bar(1.0)
 
         # run in own thread
         self._thread = Thread(target=worker)
