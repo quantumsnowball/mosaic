@@ -32,6 +32,10 @@ class VideoSource:
     def __str__(self) -> str:
         return str(self.input_file)
 
+    def ensure_framerate_is_simplified(self) -> None:
+        assert self.framerate.strip().endswith('/1'), \
+            f'framerate is {self.framerate}, not simplified'
+
     def check_framerate(self) -> None:
         framerate = float(eval(self.framerate))
         avg_framerate = float(eval(self.avg_framerate))
