@@ -10,4 +10,4 @@ class PathParamType(click.ParamType):
                 value: str,
                 param: click.Parameter | None,
                 ctx: click.Context | None) -> Path:
-        return Path(value)
+        return Path(value.strip())
