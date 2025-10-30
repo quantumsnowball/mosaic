@@ -4,6 +4,7 @@ import click
 
 from mosaic.free import free
 from mosaic.jobs import jobs
+from mosaic.lada import lada
 from mosaic.upscale import upscale
 from mosaic.utils.logging import setup_logger
 
@@ -23,5 +24,6 @@ def version() -> None:
 
 
 mosaic.add_command(free)
+mosaic.add_command(lada)
 mosaic.add_command(upscale)
 mosaic.add_command(jobs)
