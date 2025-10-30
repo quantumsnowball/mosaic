@@ -60,6 +60,7 @@ class CopyJob(Job):
         output_file: Path
     ) -> Self:
         origin = VideoSource(input_file)
+        origin.ensure_framerate_is_simplified()
         return cls(
             command='copy',
             id=uuid4(),
