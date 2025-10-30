@@ -3,6 +3,8 @@ from pathlib import Path
 import click
 
 import mosaic.lada.args as args
+from mosaic.lada.cleaner import Cleaner
+from mosaic.utils.logging import log
 from mosaic.utils.path import PathParamType
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, HMSParamType
@@ -26,4 +28,15 @@ def lada(
     output_file: Path,
 ) -> None:
     # run
-    print(f'{start_time=} {end_time=} {raw_info=} {input_file=} {output_file=}')
+    with Cleaner(
+        input_file=input_file,
+        start_time=start_time,
+        end_time=end_time,
+        output_file=output_file,
+        raw_info=raw_info,
+    ) as cleaner:
+        try:
+            cleaner.run()
+        except KeyboardInterrupt as e:
+            log.info(e.__class__)
+            cleaner.stop()
