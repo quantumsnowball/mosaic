@@ -22,7 +22,7 @@ def preprocess(func: ToBeWrapped[P, R]) -> Wrapped[P, R]:
         input_file = cast(Path, kwargs['input_file'])
         if not input_file.exists():
             click.secho(f'Input file does not exists: -i {input_file}', fg='red')
-            return
+            return None
 
         # verify time
         start_time = cast(HMS, kwargs['start_time'])
@@ -30,7 +30,7 @@ def preprocess(func: ToBeWrapped[P, R]) -> Wrapped[P, R]:
         if start_time and end_time:
             if not end_time > start_time:
                 click.secho(f'Invalid start time or end time: -ss {start_time}, -to {end_time}', fg='red')
-                return
+                return None
 
         # modify output filename
         time_tag = cast(bool, kwargs['time_tag'])
@@ -51,7 +51,7 @@ def preprocess(func: ToBeWrapped[P, R]) -> Wrapped[P, R]:
                 default='n',
                 show_default=False,
             ).lower() != 'y':
-                return
+                return None
 
         # remove unwanted args
         kwargs.pop('force')

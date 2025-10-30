@@ -14,7 +14,7 @@ Wrapper = Callable[[ToBeWrapped[P, R], ], Wrapped[P, R]]
 # catch any type of exception
 def catch(
     *exceptions: type[BaseException],
-) -> Wrapper[P, R]:
+) -> Wrapper:
     # decorator
     def wrapper(func: ToBeWrapped[P, R]) -> Wrapped[P, R]:
         # wrapped function
@@ -28,6 +28,7 @@ def catch(
                 logger.exception.debug(
                     f'{func.__module__}::{func.__qualname__}() caught {e.__class__}'
                 )
+                return None
 
         # return the wrapped function
         return wrapped

@@ -69,15 +69,15 @@ def job_info(i: int, job: Job) -> str:
         size_mb = round(file.stat().st_size / 1e6, 2)
         txt += w(f'{str(file)} ') + y(f'{size_mb:,.2f} MB')
         details = FFprobe(file)
-        for i, stream in enumerate(details.video):
+        for i, v_stream in enumerate(details.video):
             txt += (
-                y(f'\n{" "*indent*2}v:{i} {stream.hms} ') +
-                w(', ').join([c(f'{s}') for s in stream.summary])
+                y(f'\n{" "*indent*2}v:{i} {v_stream.hms} ') +
+                w(', ').join([c(f'{s}') for s in v_stream.summary])
             )
-        for i, stream in enumerate(details.audio):
+        for i, a_stream in enumerate(details.audio):
             txt += (
-                m(f'\n{" "*indent*2}a:{i} {stream.hms} ') +
-                w(', ').join([c(f'{s}') for s in stream.summary])
+                m(f'\n{" "*indent*2}a:{i} {a_stream.hms} ') +
+                w(', ').join([c(f'{s}') for s in a_stream.summary])
             )
         return txt
 

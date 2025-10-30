@@ -46,7 +46,7 @@ class Packer:
         self._height = o.height
         self._width = o.width
         self._frame_size = o.width * o.height * 3
-        self._queue = Queue(maxsize=maxsize)
+        self._queue = cast(Packer.Output, Queue(maxsize=maxsize))
         self._thread = Thread(target=self._worker)
 
     @property

@@ -9,7 +9,7 @@ PACKAGE_DIR = Path(__file__).parent
 
 @dataclass
 class Preset:
-    model: RRDBNet
+    model: RRDBNet | SRVGGNetCompact
     scale: int
     filename: str
 

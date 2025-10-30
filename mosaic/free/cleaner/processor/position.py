@@ -30,7 +30,7 @@ def boundingSquare(mask: np.ndarray,
     x, y, w, h = cv2.boundingRect(mask)
 
     center = np.array([int(x+w/2), int(y+h/2)])
-    size = max(w, h)
+    size: float = max(w, h)
     point0 = np.array([x, y])
     point1 = np.array([x+size, y+size])
 

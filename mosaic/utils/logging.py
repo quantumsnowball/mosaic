@@ -64,7 +64,7 @@ def setup_logger() -> None:
 
 
 # decorator
-def trace_function(level: int) -> Wrapper[P, R]:
+def trace_function(level: int) -> Wrapper:
     def wrapper(func: ToBeWrapped[P, R]) -> Wrapped[P, R]:
         # wrapped function
         @functools.wraps(func)
