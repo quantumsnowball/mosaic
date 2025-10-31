@@ -18,7 +18,6 @@ class Cleaner:
         self._output_file = output_file
         self._netD_path = netD_path
         self._netR_path = netR_path
-        self.cm = ExitStack()
 
     @trace
     def __enter__(self) -> Self:
@@ -27,7 +26,6 @@ class Cleaner:
     @trace
     def __exit__(self, type, value, traceback) -> None:
         self.wait()
-        self.cm.close()
 
     @trace
     def start(self) -> None:
