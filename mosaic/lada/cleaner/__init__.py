@@ -1,3 +1,4 @@
+import subprocess
 from contextlib import ExitStack
 from pathlib import Path
 from typing import Self
@@ -30,7 +31,14 @@ class Cleaner:
 
     @trace
     def start(self) -> None:
-        print('gonna start cleaner')
+        p = subprocess.run(
+            ['lada-cli', '--version'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        for line in p.stdout:
+            print(line, end="")
 
     @trace
     def run(self) -> None:
@@ -39,8 +47,8 @@ class Cleaner:
 
     @trace
     def wait(self) -> None:
-        print('wait for other workers')
+        pass
 
     @trace
     def stop(self) -> None:
-        print('stop other workers')
+        pass
