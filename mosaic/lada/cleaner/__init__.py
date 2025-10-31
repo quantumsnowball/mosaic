@@ -15,7 +15,6 @@ class Cleaner:
         start_time: HMS | None,
         end_time: HMS | None,
         output_file: Path,
-        raw_info: bool,
         netD_path: Path,
         netR_path: Path,
     ) -> None:
