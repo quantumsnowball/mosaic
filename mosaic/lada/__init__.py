@@ -9,6 +9,8 @@ from mosaic.utils.path import PathParamType
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, HMSParamType
 
+PACKAGE_DIR = Path(__file__).parent
+
 
 @click.command()
 @service()
@@ -34,6 +36,8 @@ def lada(
         end_time=end_time,
         output_file=output_file,
         raw_info=raw_info,
+        netD_path=PACKAGE_DIR / 'net/state_dicts/lada_mosaic_detection_model_v2.pt',
+        netR_path=PACKAGE_DIR / 'net/state_dicts/lada_mosaic_restoration_model_generic_v1.2.pth',
     ) as cleaner:
         try:
             cleaner.run()

@@ -16,8 +16,14 @@ class Cleaner:
         end_time: HMS | None,
         output_file: Path,
         raw_info: bool,
+        netD_path: Path,
+        netR_path: Path,
     ) -> None:
         source = VideoSource(input_file, start_time, end_time)
+        self._input_file = input_file
+        self._output_file = output_file
+        self._netD_path = netD_path
+        self._netR_path = netR_path
         self.cm = ExitStack()
 
     @trace
@@ -31,14 +37,14 @@ class Cleaner:
 
     @trace
     def start(self) -> None:
-        p = subprocess.run(
-            ['lada-cli', '--version'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
-        for line in p.stdout:
-            print(line, end="")
+        subprocess.run([
+            'lada-cli',
+            '--mosaic-restoration-model', 'basicvsrpp',
+            '--mosaic-detection-model-path', self._netD_path,
+            '--mosaic-restoration-model-path', self._netR_path,
+            '--input', self._input_file,
+            '--output', self._output_file,
+        ], text=True)
 
     @trace
     def run(self) -> None:
