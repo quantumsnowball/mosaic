@@ -4,21 +4,16 @@ from pathlib import Path
 from typing import Self
 
 from mosaic.utils.logging import trace
-from mosaic.utils.spec import VideoSource
-from mosaic.utils.time import HMS
 
 
 class Cleaner:
     def __init__(
         self,
         input_file: Path,
-        start_time: HMS | None,
-        end_time: HMS | None,
         output_file: Path,
         netD_path: Path,
         netR_path: Path,
     ) -> None:
-        source = VideoSource(input_file, start_time, end_time)
         self._input_file = input_file
         self._output_file = output_file
         self._netD_path = netD_path
