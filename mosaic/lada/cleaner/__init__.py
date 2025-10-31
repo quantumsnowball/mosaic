@@ -1,3 +1,4 @@
+import subprocess
 from contextlib import ExitStack
 from pathlib import Path
 from typing import Self
@@ -15,8 +16,14 @@ class Cleaner:
         end_time: HMS | None,
         output_file: Path,
         raw_info: bool,
+        netD_path: Path,
+        netR_path: Path,
     ) -> None:
         source = VideoSource(input_file, start_time, end_time)
+        self._input_file = input_file
+        self._output_file = output_file
+        self._netD_path = netD_path
+        self._netR_path = netR_path
         self.cm = ExitStack()
 
     @trace
@@ -30,7 +37,14 @@ class Cleaner:
 
     @trace
     def start(self) -> None:
-        print('gonna start cleaner')
+        subprocess.run([
+            'lada-cli',
+            '--mosaic-restoration-model', 'basicvsrpp',
+            '--mosaic-detection-model-path', self._netD_path,
+            '--mosaic-restoration-model-path', self._netR_path,
+            '--input', self._input_file,
+            '--output', self._output_file,
+        ], text=True)
 
     @trace
     def run(self) -> None:
@@ -39,8 +53,8 @@ class Cleaner:
 
     @trace
     def wait(self) -> None:
-        print('wait for other workers')
+        pass
 
     @trace
     def stop(self) -> None:
-        print('stop other workers')
+        pass
