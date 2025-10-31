@@ -4,6 +4,7 @@ import click
 
 from mosaic.jobs.job.copy import CopyJob
 from mosaic.jobs.job.free import FreeJob
+from mosaic.jobs.job.lada import LadaJob
 from mosaic.jobs.job.upscale import UpscaleJob
 from mosaic.upscale.net import PRESETS
 from mosaic.utils.path import PathParamType
@@ -65,6 +66,28 @@ def free(
 ) -> None:
     # create a new job
     with FreeJob.create(
+        segment_time=segment_time,
+        input_file=input_file,
+        output_file=output_file,
+    ) as job:
+        # save
+        job.save()
+        # run
+        job.run()
+
+
+@create.command
+@args.input_file
+@args.segment_time
+@args.output_file
+@service()
+def lada(
+    input_file: Path,
+    segment_time: HMS,
+    output_file: Path,
+) -> None:
+    # create a new job
+    with LadaJob.create(
         segment_time=segment_time,
         input_file=input_file,
         output_file=output_file,
