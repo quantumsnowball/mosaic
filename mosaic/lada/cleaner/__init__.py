@@ -38,7 +38,7 @@ class Cleaner:
             '--mosaic-restoration-model-path', self._netR_path,
             '--input', self._input_file,
             '--output', self._output_file,
-        ], text=True)
+        ])
 
     @trace
     def run(self) -> None:
