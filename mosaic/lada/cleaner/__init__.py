@@ -1,6 +1,5 @@
-import subprocess
-from contextlib import ExitStack
 from pathlib import Path
+from subprocess import Popen
 from typing import Self
 
 from mosaic.utils.logging import trace
@@ -18,6 +17,7 @@ class Cleaner:
         self._output_file = output_file
         self._netD_path = netD_path
         self._netR_path = netR_path
+        self._proc: Popen | None = None
 
     @trace
     def __enter__(self) -> Self:
@@ -29,7 +29,7 @@ class Cleaner:
 
     @trace
     def start(self) -> None:
-        subprocess.run([
+        self._proc = Popen([
             'lada-cli',
             '--mosaic-restoration-model', 'basicvsrpp',
             '--mosaic-detection-model-path', self._netD_path,
@@ -45,8 +45,10 @@ class Cleaner:
 
     @trace
     def wait(self) -> None:
-        pass
+        if self._proc is not None:
+            self._proc.wait()
 
     @trace
     def stop(self) -> None:
-        pass
+        if self._proc is not None:
+            self._proc.terminate()
