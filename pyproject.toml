@@ -16,9 +16,14 @@ dependencies = [
     'opencv-python',
     'alive-progress',
 ]
+requires-python = ">=3.14"
 
 [project.urls]
 Homepage = "https://github.com/quantumsnowball/mosaic"
 
 [project.scripts]
 mosaic = "mosaic:mosaic"
+
+[tool.pyright]
+venvPath = "./"
+venv = ".venv"
