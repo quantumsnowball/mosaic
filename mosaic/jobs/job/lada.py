@@ -40,8 +40,9 @@ class LadaJob(Job):
                     cleaner.stop()
                     break
 
-            # mark task done
-            self.checklist.mark_done(task)
+            # mark task done if output file exists
+            if (self._output_dirpath / task.name).exists():
+                self.checklist.mark_done(task)
 
     @override
     def save(self) -> None:
