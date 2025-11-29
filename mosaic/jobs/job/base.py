@@ -2,18 +2,16 @@ from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import Self
 from uuid import UUID
-from tempfile import TemporaryFile, NamedTemporaryFile
 
-from alive_progress import alive_bar
 from click import style
 
 from mosaic.jobs.job.checklist import Checklist
 from mosaic.jobs.job.utils import prompt_overwrite_output
 from mosaic.jobs.utils import JOBS_DIR, Command
 from mosaic.utils.ffmpeg import FFmpeg
-from mosaic.utils.ffprobe import FFprobe
 from mosaic.utils.logging import log
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.time import HMS
@@ -36,6 +34,7 @@ class Save:
 
 
 class Job(ABC):
+    timescale = '90000'
     info_fname = 'job.json'
     inputs_dirname = 'inputs'
     outputs_dirname = 'outputs'
@@ -65,7 +64,6 @@ class Job(ABC):
         self.segment_time = segment_time
         self.input_file = input_file
         self.output_file = output_file
-        # self.origin = VideoSource(self.input_file)
         self.duration = duration
         self.framerate = framerate
         self.job_dirpath = JOBS_DIR / f'{self.timestamp_iso.replace(':', '.').replace('T', '_')}'
@@ -91,9 +89,9 @@ class Job(ABC):
         ))
 
     def initialize(self) -> None:
-        with NamedTemporaryFile(suffix='.mp4', dir='.') as temp_video:
-            print(temp_video.name)
-            # conver video timescale to 90000
+        with NamedTemporaryFile(suffix='.mp4', dir=self.job_dirpath) as prep_video:
+            log.debug(f'prep_video={prep_video.name}')
+            # conver video timescale to most universal timescale
             with ProgressBar(self.duration) as pbar:
                 FFmpeg(
                 ).global_args(
@@ -106,8 +104,8 @@ class Job(ABC):
                 ).output(
                     '-vcodec', 'copy',
                     '-acodec', 'copy',
-                    '-video_track_timescale', '90000',
-                    temp_video.name
+                    '-video_track_timescale', self.timescale,
+                    prep_video.name
                 ).run()
 
             # split video into segments
@@ -118,7 +116,7 @@ class Job(ABC):
                     '-progress', pbar.input,
                     '-stats_period', ProgressBar.REFRESH_RATE,
                 ).input(
-                    '-i', temp_video.name,
+                    '-i', prep_video.name,
                 ).output(
                     '-f', 'segment',
                     '-segment_time', self.segment_time,
@@ -127,32 +125,6 @@ class Job(ABC):
                     '-reset_timestamps', '1',
                     self._input_dirpath / self.segment_pattern,
                 ).run()
-
-        # detect and fix segment metadata
-        # segment_list = sorted(self._input_dirpath.glob(f'*.{self.segment_ext}'))
-        # with alive_bar(len(segment_list)) as bar:
-        #     for segment in segment_list:
-        #         for _ in range(3):
-        #             if self.framerate != FFprobe(segment).video[0].framerate:
-        #                 log.info(f'Trying to fix {segment.name} with incorrect metadata')
-        #                 bar.text(f'Fixing {segment.name} ...')
-        #                 segment_fixed = segment.with_name(f'{segment.stem}_fixed{segment.suffix}')
-        #                 FFmpeg().global_args(
-        #                     '-loglevel', 'fatal'
-        #                 ).input(
-        #                     '-i', segment,
-        #                 ).output(
-        #                     '-vcodec', 'copy',
-        #                     '-acodec', 'copy',
-        #                     '-video_track_timescale', self.framerate,
-        #                     segment_fixed,
-        #                 ).run()
-        #                 segment_fixed.replace(segment)
-        #                 continue
-        #             break
-        #         else:
-        #             raise RuntimeError(f'Failed to fix segment {segment.name} with incorrect metadata')
-        #         bar()
 
         # create a sqlite db as the checklist
         self.checklist.create()
