@@ -69,7 +69,6 @@ class LadaJob(Job):
         output_file: Path
     ) -> Self:
         origin = VideoSource(input_file)
-        origin.ensure_framerate_is_simplified()
         return cls(
             command='lada',
             id=uuid4(),
