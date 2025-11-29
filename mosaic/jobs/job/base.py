@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Self
 from uuid import UUID
+from tempfile import TemporaryFile, NamedTemporaryFile
 
 from alive_progress import alive_bar
 from click import style
@@ -90,23 +91,42 @@ class Job(ABC):
         ))
 
     def initialize(self) -> None:
-        # split video into segments
-        with ProgressBar(self.duration) as pbar:
-            FFmpeg(
-            ).global_args(
-                '-loglevel', 'fatal',
-                '-progress', pbar.input,
-                '-stats_period', ProgressBar.REFRESH_RATE,
-            ).input(
-                '-i', self.input_file,
-            ).output(
-                '-f', 'segment',
-                '-segment_time', self.segment_time,
-                '-vcodec', 'copy',
-                '-acodec', 'copy',
-                '-reset_timestamps', '1',
-                self._input_dirpath / self.segment_pattern,
-            ).run()
+        with NamedTemporaryFile(suffix='.mp4', dir='.') as temp_video:
+            print(temp_video.name)
+            # conver video timescale to 90000
+            with ProgressBar(self.duration) as pbar:
+                FFmpeg(
+                ).global_args(
+                    '-loglevel', 'fatal',
+                    '-progress', pbar.input,
+                    '-stats_period', ProgressBar.REFRESH_RATE,
+                    '-y',
+                ).input(
+                    '-i', self.input_file,
+                ).output(
+                    '-vcodec', 'copy',
+                    '-acodec', 'copy',
+                    '-video_track_timescale', '90000',
+                    temp_video.name
+                ).run()
+
+            # split video into segments
+            with ProgressBar(self.duration) as pbar:
+                FFmpeg(
+                ).global_args(
+                    '-loglevel', 'fatal',
+                    '-progress', pbar.input,
+                    '-stats_period', ProgressBar.REFRESH_RATE,
+                ).input(
+                    '-i', temp_video.name,
+                ).output(
+                    '-f', 'segment',
+                    '-segment_time', self.segment_time,
+                    '-vcodec', 'copy',
+                    '-acodec', 'copy',
+                    '-reset_timestamps', '1',
+                    self._input_dirpath / self.segment_pattern,
+                ).run()
 
         # detect and fix segment metadata
         # segment_list = sorted(self._input_dirpath.glob(f'*.{self.segment_ext}'))
