@@ -14,7 +14,6 @@ from mosaic.jobs.utils import JOBS_DIR, Command
 from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.logging import log
 from mosaic.utils.progress import ProgressBar
-from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
 
 
