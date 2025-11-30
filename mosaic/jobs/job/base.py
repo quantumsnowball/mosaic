@@ -14,6 +14,7 @@ from mosaic.jobs.utils import JOBS_DIR, Command
 from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.logging import log
 from mosaic.utils.progress import ProgressBar
+from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
 
 
@@ -26,6 +27,8 @@ class Save:
     input_file: Path
     duration: float
     framerate: str
+    sar: str
+    dar: str
     output_file: Path
 
     @property
@@ -54,6 +57,8 @@ class Job(ABC):
         input_file: Path,
         duration: float,
         framerate: str,
+        sar: str,
+        dar: str,
         output_file: Path,
     ) -> None:
         self.command = command
@@ -66,6 +71,8 @@ class Job(ABC):
         self.output_file = output_file
         self.duration = duration
         self.framerate = framerate
+        self.sar = sar
+        self.dar = dar
         self.job_dirpath = JOBS_DIR / f'{self.timestamp_iso.replace(':', '.').replace('T', '_')}'
         self._input_dirpath = self.job_dirpath / self.inputs_dirname
         self._output_dirpath = self.job_dirpath / self.outputs_dirname
