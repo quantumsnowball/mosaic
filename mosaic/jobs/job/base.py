@@ -161,6 +161,7 @@ class Job(ABC):
             ).output(
                 '-vcodec', 'copy',
                 '-acodec', 'copy',
+                '-aspect', self.dar,
                 self.output_file,
             ).run()
 
