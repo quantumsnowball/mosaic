@@ -59,6 +59,8 @@ class FreeJob(Job):
             input_file=self.input_file,
             duration=self.duration,
             framerate=self.framerate,
+            sar=self.sar,
+            dar=self.dar,
             output_file=self.output_file,
         ).dict
         with open(info_fpath, 'w') as f:
@@ -81,5 +83,7 @@ class FreeJob(Job):
             input_file=input_file,
             duration=origin.duration,
             framerate=origin.framerate,
+            sar=origin.sar,
+            dar=origin.dar,
             output_file=output_file,
         )

@@ -38,6 +38,8 @@ def load_job(
             input_file=input_file,
             duration=duration,
             framerate=framerate,
+            sar=sar,
+            dar=dar,
             output_file=output_file,
         )
     elif command == 'lada':
@@ -49,6 +51,8 @@ def load_job(
             input_file=input_file,
             duration=duration,
             framerate=framerate,
+            sar=sar,
+            dar=dar,
             output_file=output_file,
         )
     elif command == 'copy':
@@ -60,6 +64,8 @@ def load_job(
             input_file=input_file,
             duration=duration,
             framerate=framerate,
+            sar=sar,
+            dar=dar,
             output_file=output_file,
         )
     elif command == 'upscale':
@@ -75,5 +81,7 @@ def load_job(
             input_file=input_file,
             duration=duration,
             framerate=framerate,
+            sar=sar,
+            dar=dar,
             output_file=output_file,
         )
