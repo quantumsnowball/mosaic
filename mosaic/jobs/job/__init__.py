@@ -26,6 +26,8 @@ def load_job(
     input_file = Path(d['input_file'])
     duration = float(d['duration'])
     framerate = str(d['framerate'])
+    sar = str(d['sar'])
+    dar = str(d['dar'])
     output_file = Path(d['output_file'])
     if command == 'free':
         return FreeJob(
