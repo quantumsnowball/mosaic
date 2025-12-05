@@ -1,6 +1,6 @@
 from pathlib import Path
 from shutil import rmtree
-from typing import Self, Sequence
+from typing import Generator, Iterable, Self
 
 import click
 from click import style
@@ -120,7 +120,7 @@ class Manager:
         except OSError:
             pass
 
-    def list_jobs(self, jobs: Sequence[Job]) -> None:
+    def list_jobs(self, jobs: Iterable[Job]) -> None:
         for i, job in enumerate(jobs):
             click.echo(job_info(i, job))
 
