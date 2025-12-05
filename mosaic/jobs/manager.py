@@ -99,18 +99,17 @@ def job_info(i: int, job: Job) -> str:
 
 class Manager:
     @property
-    def jobs(self) -> list[Job]:
+    def jobs(self) -> Generator[Job]:
         # detect all jobs available
-        return [load_job(dirpath)
-                for dirpath in sorted(JOBS_DIR.glob('./*/'))]
+        return (load_job(dirpath) for dirpath in sorted(JOBS_DIR.glob('./*/')))
 
     @property
-    def jobs_finished(self) -> list[Job]:
-        return [job for job in self.jobs if job.is_finished]
+    def jobs_finished(self) -> Generator[Job]:
+        return (job for job in self.jobs if job.is_finished)
 
     @property
-    def jobs_unfinished(self) -> list[Job]:
-        return [job for job in self.jobs if not job.is_finished]
+    def jobs_unfinished(self) -> Generator[Job]:
+        return (job for job in self.jobs if not job.is_finished)
 
     def __enter__(self) -> Self:
         return self
