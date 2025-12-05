@@ -126,7 +126,7 @@ class Manager:
 
     def run_job(self) -> None:
         while True:
-            jobs = self.jobs_unfinished
+            jobs = list(self.jobs_unfinished)
             if len(jobs) == 0:
                 click.echo('No jobs available. Please create a job first.')
                 return
@@ -142,7 +142,7 @@ class Manager:
 
     def delete_job(self) -> None:
         while True:
-            jobs = self.jobs
+            jobs = list(self.jobs)
             if len(jobs) == 0:
                 click.echo('Job list is empty.')
                 return
@@ -158,7 +158,7 @@ class Manager:
                 click.secho(f'Deleted job: {selected_job.id}', fg='yellow')
 
     def clear_finished(self) -> None:
-        jobs = self.jobs_finished
+        jobs = list(self.jobs_finished)
         self.list_jobs(jobs)
         if click.prompt('Do you want to DELETE ALL finished jobs (y/N)?', type=str).lower() == 'y':
             for job in jobs:
@@ -171,7 +171,7 @@ class Manager:
             click.echo('Operation cancelled')
 
     def clear_all_jobs(self) -> None:
-        jobs = self.jobs
+        jobs = list(self.jobs)
         self.list_jobs(jobs)
         if click.prompt(style('Do you want to DELETE ALL jobs (y/N)?', fg='red'), type=str).lower() == 'y':
             for job in jobs:
