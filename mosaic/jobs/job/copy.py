@@ -46,6 +46,8 @@ class CopyJob(Job):
             input_file=self.input_file,
             duration=self.duration,
             framerate=self.framerate,
+            sar=self.sar,
+            dar=self.dar,
             output_file=self.output_file,
         ).dict
         with open(info_fpath, 'w') as f:
@@ -60,7 +62,6 @@ class CopyJob(Job):
         output_file: Path
     ) -> Self:
         origin = VideoSource(input_file)
-        origin.ensure_framerate_is_simplified()
         return cls(
             command='copy',
             id=uuid4(),
@@ -69,5 +70,7 @@ class CopyJob(Job):
             input_file=input_file,
             duration=origin.duration,
             framerate=origin.framerate,
+            sar=origin.sar,
+            dar=origin.dar,
             output_file=output_file,
         )

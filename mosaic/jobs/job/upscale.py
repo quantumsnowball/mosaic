@@ -36,6 +36,8 @@ class UpscaleJob(Job):
         input_file: Path,
         duration: float,
         framerate: str,
+        sar: str,
+        dar: str,
         output_file: Path,
     ) -> None:
         super().__init__(
@@ -46,6 +48,8 @@ class UpscaleJob(Job):
             input_file=input_file,
             duration=duration,
             framerate=framerate,
+            sar=sar,
+            dar=dar,
             output_file=output_file,
         )
         self.scale = scale
@@ -98,6 +102,8 @@ class UpscaleJob(Job):
             input_file=self.input_file,
             duration=self.duration,
             framerate=self.framerate,
+            sar=self.sar,
+            dar=self.dar,
             output_file=self.output_file,
         ).dict
         with open(info_fpath, 'w') as f:
@@ -114,7 +120,6 @@ class UpscaleJob(Job):
         output_file: Path
     ) -> Self:
         origin = VideoSource(input_file)
-        origin.ensure_framerate_is_simplified()
         return cls(
             command='upscale',
             id=uuid4(),
@@ -125,5 +130,7 @@ class UpscaleJob(Job):
             input_file=input_file,
             duration=origin.duration,
             framerate=origin.framerate,
+            sar=origin.sar,
+            dar=origin.dar,
             output_file=output_file,
         )

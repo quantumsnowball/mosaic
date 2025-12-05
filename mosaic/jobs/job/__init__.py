@@ -26,6 +26,8 @@ def load_job(
     input_file = Path(d['input_file'])
     duration = float(d['duration'])
     framerate = str(d['framerate'])
+    sar = str(d['sar'])
+    dar = str(d['dar'])
     output_file = Path(d['output_file'])
     if command == 'free':
         return FreeJob(
@@ -36,6 +38,8 @@ def load_job(
             input_file=input_file,
             duration=duration,
             framerate=framerate,
+            sar=sar,
+            dar=dar,
             output_file=output_file,
         )
     elif command == 'lada':
@@ -47,6 +51,8 @@ def load_job(
             input_file=input_file,
             duration=duration,
             framerate=framerate,
+            sar=sar,
+            dar=dar,
             output_file=output_file,
         )
     elif command == 'copy':
@@ -58,6 +64,8 @@ def load_job(
             input_file=input_file,
             duration=duration,
             framerate=framerate,
+            sar=sar,
+            dar=dar,
             output_file=output_file,
         )
     elif command == 'upscale':
@@ -73,5 +81,7 @@ def load_job(
             input_file=input_file,
             duration=duration,
             framerate=framerate,
+            sar=sar,
+            dar=dar,
             output_file=output_file,
         )
