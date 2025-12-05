@@ -94,7 +94,7 @@ def job_info(i: int, job: Job) -> str:
         progress(),
         input_file(),
         output_file(),
-    ]) + '\n'
+    ])
 
 
 class Manager:
