@@ -1,6 +1,6 @@
 import click
 
-from mosaic.jobs.manager import Manager
+from mosaic.jobs.manager import Manager, job_info
 from mosaic.utils.service import service
 
 
@@ -11,4 +11,5 @@ def run() -> None:
     with Manager() as manager:
         while (job := next(manager.jobs_unfinished, None)):
             # get the next unfinished job to run
+            click.echo(job_info(job))
             job.run(force_overwrite=True)
