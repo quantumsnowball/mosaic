@@ -11,7 +11,7 @@ from mosaic.jobs.utils import JOBS_DIR
 from mosaic.utils.ffprobe import FFprobe
 
 
-def job_info(i: int, job: Job) -> str:
+def job_info(job: Job, i: int | None = None) -> str:
     dim = job.is_finished
     width = 16
     indent = 2
@@ -38,7 +38,7 @@ def job_info(i: int, job: Job) -> str:
         return style(txt, fg='white', dim=dim)
 
     def title() -> str:
-        index = f'{i+1}. '
+        index = f'{i+1}. ' if i is not None else 'Job: '
         command = f'{job.command:8s}'
         info = f'{job.timestamp_pp} - {job.id}'
         return (
@@ -122,7 +122,7 @@ class Manager:
 
     def list_jobs(self, jobs: Iterable[Job]) -> None:
         for i, job in enumerate(jobs):
-            click.echo(job_info(i, job))
+            click.echo(job_info(job, i))
 
     def run_job(self) -> None:
         while True:
