@@ -1,6 +1,6 @@
 from pathlib import Path
 from shutil import rmtree
-from typing import Self, Sequence
+from typing import Generator, Iterable, Self
 
 import click
 from click import style
@@ -11,7 +11,7 @@ from mosaic.jobs.utils import JOBS_DIR
 from mosaic.utils.ffprobe import FFprobe
 
 
-def job_info(i: int, job: Job) -> str:
+def job_info(job: Job, i: int | None = None) -> str:
     dim = job.is_finished
     width = 16
     indent = 2
@@ -38,7 +38,7 @@ def job_info(i: int, job: Job) -> str:
         return style(txt, fg='white', dim=dim)
 
     def title() -> str:
-        index = f'{i+1}. '
+        index = f'{i+1}. ' if i is not None else 'Job: '
         command = f'{job.command:8s}'
         info = f'{job.timestamp_pp} - {job.id}'
         return (
@@ -94,23 +94,22 @@ def job_info(i: int, job: Job) -> str:
         progress(),
         input_file(),
         output_file(),
-    ]) + '\n'
+    ])
 
 
 class Manager:
     @property
-    def jobs(self) -> list[Job]:
+    def jobs(self) -> Generator[Job]:
         # detect all jobs available
-        return [load_job(dirpath)
-                for dirpath in sorted(JOBS_DIR.glob('./*/'))]
+        return (load_job(dirpath) for dirpath in sorted(JOBS_DIR.glob('./*/')))
 
     @property
-    def jobs_finished(self) -> list[Job]:
-        return [job for job in self.jobs if job.is_finished]
+    def jobs_finished(self) -> Generator[Job]:
+        return (job for job in self.jobs if job.is_finished)
 
     @property
-    def jobs_unfinished(self) -> list[Job]:
-        return [job for job in self.jobs if not job.is_finished]
+    def jobs_unfinished(self) -> Generator[Job]:
+        return (job for job in self.jobs if not job.is_finished)
 
     def __enter__(self) -> Self:
         return self
@@ -121,13 +120,13 @@ class Manager:
         except OSError:
             pass
 
-    def list_jobs(self, jobs: Sequence[Job]) -> None:
+    def list_jobs(self, jobs: Iterable[Job]) -> None:
         for i, job in enumerate(jobs):
-            click.echo(job_info(i, job))
+            click.echo(job_info(job, i))
 
     def run_job(self) -> None:
         while True:
-            jobs = self.jobs_unfinished
+            jobs = list(self.jobs_unfinished)
             if len(jobs) == 0:
                 click.echo('No jobs available. Please create a job first.')
                 return
@@ -143,7 +142,7 @@ class Manager:
 
     def delete_job(self) -> None:
         while True:
-            jobs = self.jobs
+            jobs = list(self.jobs)
             if len(jobs) == 0:
                 click.echo('Job list is empty.')
                 return
@@ -159,7 +158,7 @@ class Manager:
                 click.secho(f'Deleted job: {selected_job.id}', fg='yellow')
 
     def clear_finished(self) -> None:
-        jobs = self.jobs_finished
+        jobs = list(self.jobs_finished)
         self.list_jobs(jobs)
         if click.prompt('Do you want to DELETE ALL finished jobs (y/N)?', type=str).lower() == 'y':
             for job in jobs:
@@ -172,7 +171,7 @@ class Manager:
             click.echo('Operation cancelled')
 
     def clear_all_jobs(self) -> None:
-        jobs = self.jobs
+        jobs = list(self.jobs)
         self.list_jobs(jobs)
         if click.prompt(style('Do you want to DELETE ALL jobs (y/N)?', fg='red'), type=str).lower() == 'y':
             for job in jobs:

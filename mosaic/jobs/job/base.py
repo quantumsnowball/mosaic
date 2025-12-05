@@ -164,8 +164,8 @@ class Job(ABC):
                 self.output_file,
             ).run()
 
-    def run(self) -> None:
-        if not prompt_overwrite_output(self.output_file):
+    def run(self, *, force_overwrite=False) -> None:
+        if not force_overwrite and not prompt_overwrite_output(self.output_file):
             return
         if not self._checklist_fpath.exists():
             self.initialize()
