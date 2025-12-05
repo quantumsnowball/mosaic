@@ -35,6 +35,9 @@ class Cleaner:
             '--mosaic-detection-model-path', self._netD_path,
             '--mosaic-restoration-model-path', self._netR_path,
             '--input', self._input_file,
+            # lada-cli default for x264: crf=20, preset=medium
+            '--crf', '22',
+            '--preset', 'slow',
             '--output', self._output_file,
         ])
 
