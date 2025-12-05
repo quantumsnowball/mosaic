@@ -1,3 +1,4 @@
+import signal
 from pathlib import Path
 from subprocess import Popen
 from typing import Self
@@ -54,4 +55,4 @@ class Cleaner:
     @trace
     def stop(self) -> None:
         if self._proc is not None:
-            self._proc.terminate()
+            self._proc.send_signal(signal.SIGINT)
