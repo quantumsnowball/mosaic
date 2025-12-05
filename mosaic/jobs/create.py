@@ -72,8 +72,8 @@ def free(
     ) as job:
         # save
         job.save()
-        # run
-        job.run()
+        # initialize
+        job.initialize()
 
 
 @create.command
@@ -94,8 +94,8 @@ def lada(
     ) as job:
         # save
         job.save()
-        # run
-        job.run()
+        # initialize
+        job.initialize()
 
 
 @create.command
@@ -116,8 +116,8 @@ def copy(
     ) as job:
         # save
         job.save()
-        # run
-        job.run()
+        # initialize
+        job.initialize()
 
 
 @create.command
@@ -144,5 +144,5 @@ def upscale(
     ) as job:
         # save
         job.save()
-        # run
-        job.run()
+        # initialize
+        job.initialize()
