@@ -84,7 +84,7 @@ class UpscaleJob(Job):
                 except KeyboardInterrupt as e:
                     log.info(e.__class__)
                     cleaner.stop()
-                    break
+                    raise e
 
             # mark task done
             self.checklist.mark_done(task)

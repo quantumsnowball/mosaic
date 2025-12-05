@@ -30,7 +30,7 @@ class CopyJob(Job):
                 )
             except KeyboardInterrupt as e:
                 log.info(e.__class__)
-                break
+                raise e
 
             # mark task done
             self.checklist.mark_done(task)
