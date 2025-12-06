@@ -72,6 +72,7 @@ class Job(ABC):
         self.framerate = framerate
         self.sar = sar
         self.dar = dar
+        self.aspect = dar if dar != 'n.a.' else f'{width}:{height}'
         self.job_dirpath = JOBS_DIR / f'{self.timestamp_iso.replace(':', '.').replace('T', '_')}'
         self._input_dirpath = self.job_dirpath / self.inputs_dirname
         self._output_dirpath = self.job_dirpath / self.outputs_dirname
@@ -160,7 +161,7 @@ class Job(ABC):
             ).output(
                 '-vcodec', 'copy',
                 '-acodec', 'copy',
-                '-aspect', self.dar,
+                '-aspect', self.aspect,
                 self.output_file,
             ).run()
 
