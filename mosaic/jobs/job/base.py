@@ -24,6 +24,8 @@ class Save:
     timestamp: str
     segment_time: HMS
     input_file: Path
+    width: int
+    height: int
     duration: float
     framerate: str
     sar: str
@@ -54,6 +56,8 @@ class Job(ABC):
         timestamp: datetime,
         segment_time: HMS,
         input_file: Path,
+        width: int,
+        height: int,
         duration: float,
         framerate: str,
         sar: str,
@@ -68,6 +72,8 @@ class Job(ABC):
         self.segment_time = segment_time
         self.input_file = input_file
         self.output_file = output_file
+        self.width = width
+        self.height = height
         self.duration = duration
         self.framerate = framerate
         self.sar = sar
