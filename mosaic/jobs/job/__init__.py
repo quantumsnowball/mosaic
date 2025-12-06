@@ -24,6 +24,8 @@ def load_job(
     timestamp = datetime.fromisoformat(d['timestamp'])
     segment_time = HMS.from_str(d['segment_time'])
     input_file = Path(d['input_file'])
+    width = int(d['width'])
+    height = int(d['height'])
     duration = float(d['duration'])
     framerate = str(d['framerate'])
     sar = str(d['sar'])
@@ -36,6 +38,8 @@ def load_job(
             timestamp=timestamp,
             segment_time=segment_time,
             input_file=input_file,
+            width=width,
+            height=height,
             duration=duration,
             framerate=framerate,
             sar=sar,
@@ -49,6 +53,8 @@ def load_job(
             timestamp=timestamp,
             segment_time=segment_time,
             input_file=input_file,
+            width=width,
+            height=height,
             duration=duration,
             framerate=framerate,
             sar=sar,
@@ -62,6 +68,8 @@ def load_job(
             timestamp=timestamp,
             segment_time=segment_time,
             input_file=input_file,
+            width=width,
+            height=height,
             duration=duration,
             framerate=framerate,
             sar=sar,
@@ -79,6 +87,8 @@ def load_job(
             model=model,
             scale=scale,
             input_file=input_file,
+            width=width,
+            height=height,
             duration=duration,
             framerate=framerate,
             sar=sar,
