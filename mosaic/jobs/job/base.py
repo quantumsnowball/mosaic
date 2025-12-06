@@ -24,6 +24,8 @@ class Save:
     timestamp: str
     segment_time: HMS
     input_file: Path
+    width: int
+    height: int
     duration: float
     framerate: str
     sar: str
@@ -54,6 +56,8 @@ class Job(ABC):
         timestamp: datetime,
         segment_time: HMS,
         input_file: Path,
+        width: int,
+        height: int,
         duration: float,
         framerate: str,
         sar: str,
@@ -68,10 +72,13 @@ class Job(ABC):
         self.segment_time = segment_time
         self.input_file = input_file
         self.output_file = output_file
+        self.width = width
+        self.height = height
         self.duration = duration
         self.framerate = framerate
         self.sar = sar
         self.dar = dar
+        self.aspect = dar if dar != 'n.a.' else f'{width}:{height}'
         self.job_dirpath = JOBS_DIR / f'{self.timestamp_iso.replace(':', '.').replace('T', '_')}'
         self._input_dirpath = self.job_dirpath / self.inputs_dirname
         self._output_dirpath = self.job_dirpath / self.outputs_dirname
@@ -160,7 +167,7 @@ class Job(ABC):
             ).output(
                 '-vcodec', 'copy',
                 '-acodec', 'copy',
-                '-aspect', self.dar,
+                '-aspect', self.aspect,
                 self.output_file,
             ).run()
 
