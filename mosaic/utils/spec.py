@@ -26,9 +26,6 @@ class VideoSource:
         self.start_time = start_time
         self.end_time = end_time
 
-        # checks
-        self.ensure_framerate_match_avg_framerate()
-
     def __str__(self) -> str:
         return str(self.input_file)
 

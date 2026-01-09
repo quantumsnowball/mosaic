@@ -50,7 +50,7 @@ def job_info(job: Job, i: int | None = None) -> str:
         total = job.checklist.count
 
         name = f'{" "*indent + "progress":{width}s} '
-        pct = f'{done / total:.2%}'
+        pct = f'{done / total:.2%}' if total > 0 else '0.00%'
         count = f'{done} / {total}'
         segment_time = f'{job.segment_time}'
         return (

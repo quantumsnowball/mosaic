@@ -43,7 +43,7 @@ class FreeJob(Job):
                 except KeyboardInterrupt as e:
                     log.info(e.__class__)
                     cleaner.stop()
-                    break
+                    raise e
 
             # mark task done
             self.checklist.mark_done(task)
@@ -57,6 +57,8 @@ class FreeJob(Job):
             timestamp=self.timestamp_iso,
             segment_time=self.segment_time,
             input_file=self.input_file,
+            width=self.width,
+            height=self.height,
             duration=self.duration,
             framerate=self.framerate,
             sar=self.sar,
@@ -81,6 +83,8 @@ class FreeJob(Job):
             timestamp=datetime.now(),
             segment_time=segment_time,
             input_file=input_file,
+            width=origin.width,
+            height=origin.height,
             duration=origin.duration,
             framerate=origin.framerate,
             sar=origin.sar,

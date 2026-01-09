@@ -6,7 +6,7 @@ from typing import Self
 
 from alive_progress import alive_bar
 
-from mosaic.utils import TEMP_DIR
+from mosaic.utils import ROOT_DIR, TEMP_DIR
 
 
 class ProgressBar:
@@ -18,6 +18,8 @@ class ProgressBar:
         self._thread: Thread | None = None
 
     def __enter__(self) -> Self:
+        ROOT_DIR.mkdir(exist_ok=True)
+        TEMP_DIR.mkdir(exist_ok=True)
         self.start()
         self.run()
         return self
