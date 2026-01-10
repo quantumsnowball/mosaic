@@ -11,7 +11,7 @@ from mosaic.jobs.utils import JOBS_DIR
 from mosaic.utils.ffprobe import FFprobe
 
 
-def job_info(job: Job, i: int | None = None) -> str:
+def job_info(job: Job, i: int | None = None, *, verbose: bool = False) -> str:
     dim = job.is_finished
     width = 16
     indent = 2
@@ -68,6 +68,10 @@ def job_info(job: Job, i: int | None = None) -> str:
 
         size_mb = round(file.stat().st_size / 1e6, 2)
         txt += w(f'{str(file)} ') + y(f'{size_mb:,.2f} MB')
+
+        if not verbose:
+            return txt
+
         details = FFprobe(file)
         for i, v_stream in enumerate(details.video):
             txt += (
@@ -120,9 +124,9 @@ class Manager:
         except OSError:
             pass
 
-    def list_jobs(self, jobs: Iterable[Job]) -> None:
+    def list_jobs(self, jobs: Iterable[Job], *, verbose: bool = False) -> None:
         for i, job in enumerate(jobs):
-            click.echo(job_info(job, i))
+            click.echo(job_info(job, i, verbose=verbose))
 
     def run_job(self) -> None:
         while True:
