@@ -14,13 +14,15 @@ class Dashboard(App):
         yield Header()
 
         # Create a scrollable list of items
-        with Manager() as manager:
-            job_infos = [job_info(job) for job in manager.jobs]
-
-        yield ListView(
-            *[ListItem(Label(info)) for info in job_infos],
-            id="job_list"
-        )
+        yield ListView(id="job_list")
 
         # footer
         yield Footer()
+
+    async def on_mount(self) -> None:
+        # Populate the list after the UI has started
+        job_list = self.query_one("#job_list", ListView)
+        with Manager() as manager:
+            for job in manager.jobs:
+                info = job_info(job)
+                await job_list.append(ListItem(Label(info)))
