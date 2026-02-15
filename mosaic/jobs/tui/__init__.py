@@ -41,5 +41,5 @@ class Dashboard(App):
         job_list = self.query_one("#job_list", ListView)
         with Manager() as manager:
             for job in manager.jobs:
-                info = job_info(job)
+                info = job_info(job, verbose=True, textual_color=True)
                 await job_list.append(ListItem(Label(info)))
