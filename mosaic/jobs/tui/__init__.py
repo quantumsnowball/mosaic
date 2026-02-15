@@ -1,7 +1,8 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Footer, Header, Label, ListItem, ListView, Static
+from textual.widgets import Footer, Header, Label, ListItem, ListView
 
-from mosaic.jobs.manager import Manager, job_info
+from mosaic.jobs.manager import Manager
+from mosaic.jobs.text import job_info
 
 
 # 1. Define the TUI Layout
