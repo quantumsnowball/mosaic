@@ -6,6 +6,7 @@ from mosaic.jobs.delete import delete
 from mosaic.jobs.ls import ls
 from mosaic.jobs.run import run
 from mosaic.jobs.select import select
+from mosaic.jobs.tui import Dashboard
 from mosaic.utils.service import service
 
 
@@ -18,6 +19,8 @@ def jobs(ctx: click.Context) -> None:
         return
 
     # pass
+    app = Dashboard()
+    app.run()
 
 
 jobs.add_command(create)

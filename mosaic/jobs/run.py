@@ -1,6 +1,8 @@
 import click
+import rich
 
-from mosaic.jobs.manager import Manager, job_info
+from mosaic.jobs.manager import Manager
+from mosaic.jobs.text import job_info
 from mosaic.utils.logging import log
 from mosaic.utils.service import service
 
@@ -12,7 +14,7 @@ def run() -> None:
     with Manager() as manager:
         while (job := next(manager.jobs_unfinished, None)):
             # get the next unfinished job to run
-            click.echo(job_info(job))
+            rich.print(job_info(job))
             try:
                 job.run(force_overwrite=True)
             except KeyboardInterrupt as e:
