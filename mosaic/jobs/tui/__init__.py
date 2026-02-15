@@ -20,6 +20,13 @@ class Dashboard(App):
     #job_list {
         background: transparent;
     }
+
+    #job_list > ListItem.-highlight {
+        /* a very faint background */
+        background: $accent 25%;
+    }
+
+
     """
 
     BINDINGS = [("q", "quit", "Quit")]
