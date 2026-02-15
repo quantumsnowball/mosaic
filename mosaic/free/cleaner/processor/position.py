@@ -16,7 +16,7 @@ def find_mostlikely_ROI(mask: np.ndarray) -> np.ndarray:
             areas.append(cv2.contourArea(contour))
         index = areas.index(max(areas))
         mask = np.zeros_like(mask)
-        mask = cv2.fillPoly(mask, [contours[index]], (255))
+        mask = cv2.fillPoly(mask, [contours[index]], (255))  # type: ignore[arg-type]
     return mask
 
 
