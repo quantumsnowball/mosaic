@@ -86,9 +86,11 @@ def job_info(job: Job, i: int | None = None, *, verbose: bool = False) -> str:
         file = job.output_file
         return video_file_details(file, tag='output file')
 
-    return '\n'.join([
+    rich_text = '\n'.join([
         title(),
         progress(),
         input_file(),
         output_file(),
     ])
+
+    return rich_text
