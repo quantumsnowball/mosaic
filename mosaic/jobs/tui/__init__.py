@@ -1,6 +1,8 @@
 from textual.app import App, ComposeResult
 from textual.widgets import Footer, Header, Label, ListItem, ListView, Static
 
+from mosaic.jobs.manager import Manager, job_info
+
 
 # 1. Define the TUI Layout
 class Dashboard(App):
@@ -12,10 +14,11 @@ class Dashboard(App):
         yield Header()
 
         # Create a scrollable list of items
-        job_names = [f"Job #{i}: Processing data chunk {i*10}..." for i in range(1, 51)]
+        with Manager() as manager:
+            job_infos = [job_info(job) for job in manager.jobs]
 
         yield ListView(
-            *[ListItem(Label(name)) for name in job_names],
+            *[ListItem(Label(info)) for info in job_infos],
             id="job_list"
         )
 
