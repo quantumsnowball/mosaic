@@ -2,11 +2,21 @@ from textual.app import App, ComposeResult
 from textual.containers import Vertical
 from textual.widgets import Footer, Header, Label, ListItem, ListView
 
+from mosaic.jobs.job.base import Job
 from mosaic.jobs.manager import Manager
 from mosaic.jobs.text import job_info
 
 
-# 1. Define the TUI Layout
+class JobListItem(ListItem):
+    def __init__(self, job: Job) -> None:
+        super().__init__()
+        self.job = job
+        self.job_info = job_info(job, verbose=True, textual_color=True)
+
+    def compose(self) -> ComposeResult:
+        yield Label(self.job_info)
+
+
 class Dashboard(App):
     """A simple Textual TUI for managing jobs."""
     CSS = """
@@ -48,5 +58,13 @@ class Dashboard(App):
         job_list = self.query_one("#job_list", ListView)
         with Manager() as manager:
             for job in manager.jobs:
-                info = job_info(job, verbose=True, textual_color=True)
-                await job_list.append(ListItem(Label(info)))
+                # info = job_info(job, verbose=True, textual_color=True)
+                await job_list.append(JobListItem(job))
+
+    def on_list_view_highlighted(self, event: ListView.Highlighted) -> None:
+        """Called when the user moves the selection cursor."""
+        if isinstance(event.item, JobListItem):
+            job = event.item.job
+
+            # Print to your textual console
+            self.log(f"Selected Job id: {job.id}")
