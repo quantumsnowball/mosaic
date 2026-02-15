@@ -1,3 +1,5 @@
+import os
+
 import click
 
 from mosaic.jobs.clean import clean
@@ -11,14 +13,17 @@ from mosaic.utils.service import service
 
 
 @click.group(invoke_without_command=True)
+@click.option("--debug", is_flag=True, help="Enable Textual developer tools")
 @click.pass_context
 @service()
-def jobs(ctx: click.Context) -> None:
+def jobs(ctx: click.Context, debug: bool) -> None:
     # jobs can be a standalone command
     if ctx.invoked_subcommand:
         return
 
-    # pass
+    if debug:
+        os.environ["TEXTUAL"] = "devtools"
+
     app = Dashboard()
     app.run()
 

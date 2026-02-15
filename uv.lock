@@ -182,7 +182,7 @@ requires-dist = [
     { name = "alive-progress" },
     { name = "click" },
     { name = "opencv-python" },
-    { name = "textual", specifier = ">=7.0.3" },
+    { name = "textual" },
     { name = "torch" },
     { name = "torchvision" },
 ]
