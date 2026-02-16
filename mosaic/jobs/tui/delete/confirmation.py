@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from mosaic.jobs.tui.dashboard import Dashboard
 
 
-class ConfirmDelete(ModalScreen[bool]):
+class ConfirmationModalScreen(ModalScreen[bool]):
     """A minimal key-driven confirmation modal."""
 
     # Key bindings specifically for this modal
@@ -60,7 +60,7 @@ class Confirmation:
 
     def prompt(self) -> None:
         if self._job_list_view.highlighted_item is not None:
-            self._app.push_screen(ConfirmDelete(), self._delete_job)
+            self._app.push_screen(ConfirmationModalScreen(), self._delete_job)
 
     def _delete_job(self, confirmed: bool | None) -> None:
         if not confirmed:

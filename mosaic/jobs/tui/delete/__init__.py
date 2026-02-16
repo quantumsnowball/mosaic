@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from mosaic.jobs.tui.delete.delete import Confirmation
+from mosaic.jobs.tui.delete.confirmation import Confirmation
 from mosaic.jobs.tui.delete.list import JobListView
 
 if TYPE_CHECKING:
