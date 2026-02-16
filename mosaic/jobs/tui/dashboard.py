@@ -1,13 +1,7 @@
-import shutil
-
 from textual.app import App, ComposeResult
-from textual.containers import Vertical
-from textual.widgets import Footer, Header, ListView
+from textual.widgets import Footer, Header
 
-from mosaic.jobs.manager import Manager
 from mosaic.jobs.tui.delete import JobList
-from mosaic.jobs.tui.delete.delete import ConfirmDelete
-from mosaic.jobs.tui.delete.list import JobListItem
 
 
 class Dashboard(App):
@@ -31,11 +25,7 @@ class Dashboard(App):
         yield Footer()
 
     async def on_mount(self) -> None:
-        # Populate the list after the UI has started
-        list_view = self.query_one("#job_list", ListView)
-        with Manager() as manager:
-            for job in manager.jobs:
-                await list_view.append(JobListItem(job))
+        await self._job_list.populate_job_list()
 
     def action_delete(self) -> None:
         self._job_list.prompt_for_delete_confirmation()

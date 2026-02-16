@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from textual.widgets import ListView
 
+from mosaic.jobs.manager import Manager
 from mosaic.jobs.tui.delete.delete import ConfirmDelete
 from mosaic.jobs.tui.delete.list import JobListItem
 
@@ -11,12 +12,19 @@ if TYPE_CHECKING:
 
 
 class JobList:
+    id = 'job_list'
+
     def __init__(self, app: Dashboard) -> None:
         self._app = app
-        self.list_view = ListView(id='job_list')
+        self.list_view = ListView(id=self.id)
+
+    async def populate_job_list(self) -> None:
+        with Manager() as manager:
+            for job in manager.jobs:
+                await self.list_view.append(JobListItem(job))
 
     def prompt_for_delete_confirmation(self) -> None:
-        item = self._app.query_one("#job_list", ListView).highlighted_child
+        item = self._app.query_one(f'#{self.id}', ListView).highlighted_child
         if isinstance(item, JobListItem):
             self._app.push_screen(ConfirmDelete(), self._delete_job)
 
@@ -24,7 +32,7 @@ class JobList:
         if not confirmed:
             return
 
-        item = self._app.query_one("#job_list", ListView).highlighted_child
+        item = self._app.query_one(f'#{self.id}', ListView).highlighted_child
 
         if not isinstance(item, JobListItem):
             self._app.notify(f'Failed to get job info', severity='error')
@@ -36,6 +44,6 @@ class JobList:
             if job.job_dirpath.exists():
                 shutil.rmtree(job.job_dirpath)
             item.remove()
-            self._app.notify(f"Job {job.id} deleted.")
+            self._app.notify(f'Job {job.id} deleted.')
         except Exception as e:
-            self._app.notify(f"Failed to delete: {e}", severity="error")
+            self._app.notify(f'Failed to delete: {e}', severity="error")
