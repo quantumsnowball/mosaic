@@ -10,10 +10,10 @@ if TYPE_CHECKING:
     from mosaic.jobs.tui.dashboard import Dashboard
 
 
-class JobHandler:
+class JobList:
     def __init__(self, app: Dashboard) -> None:
         self._app = app
-        self.job_list = ListView(id='job_list')
+        self.list_view = ListView(id='job_list')
 
     def prompt_for_delete_confirmation(self) -> None:
         item = self._app.query_one("#job_list", ListView).highlighted_child
