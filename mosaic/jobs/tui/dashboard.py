@@ -24,10 +24,8 @@ class Dashboard(App):
         # header
         yield Header()
 
-        # Create a Vertical container to be the main window frame
-        with Vertical(id='main-window') as v:
-            v.border_title = 'JOBS'
-            yield ListView(id='job_list')
+        # job_list ListView
+        yield self._job_handler.job_list
 
         # footer
         yield Footer()

@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 class JobHandler:
     def __init__(self, app: Dashboard) -> None:
         self._app = app
+        self.job_list = ListView(id='job_list')
 
     def prompt_for_delete_confirmation(self) -> None:
         item = self._app.query_one("#job_list", ListView).highlighted_child
