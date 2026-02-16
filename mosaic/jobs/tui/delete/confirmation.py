@@ -15,8 +15,8 @@ if TYPE_CHECKING:
 class ConfirmationModalScreen(ModalScreen[bool]):
     """A minimal key-driven confirmation modal."""
 
-    from .bindings import BINDINGS
-    from .style import CSS
+    from .bindings import confirmatino_model_screen as BINDINGS
+    from .styles import CSS
 
     def compose(self) -> ComposeResult:
         # Wrap in Center/Middle to float it in the screen center

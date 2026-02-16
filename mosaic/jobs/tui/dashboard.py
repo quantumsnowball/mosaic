@@ -1,25 +1,30 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Footer, Header
+from textual.containers import Vertical
+from textual.widgets import ContentSwitcher, DirectoryTree, Footer, Header
 
+from mosaic.jobs.tui.create import FileList
 from mosaic.jobs.tui.delete import JobList
 
 
 class Dashboard(App):
     """A simple Textual TUI for managing jobs."""
 
+    TITLE = 'Mosaic TUI'
     from .bindings import BINDINGS
-    from .style import CSS
+    from .styles import CSS
 
     def __init__(self) -> None:
         super().__init__()
         self._job_list = JobList(self)
+        self._directory_tree = FileList()
 
     def compose(self) -> ComposeResult:
         # header
         yield Header()
 
-        # job_list ListView
-        yield self._job_list.list_view
+        # container widgets
+        yield self._directory_tree
+        yield self._job_list
 
         # footer
         yield Footer()
