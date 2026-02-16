@@ -1,8 +1,7 @@
 CSS = """
-    #main-window {
-        border: round $primary;      /* The window frame */
-        border-title-align: center;  /* Center the title */
-        margin: 1 2;                 /* Breathing room from screen edges */
+    .section {
+        border: round $primary;
+        border-title-align: center;
         background: $surface;
     }
     
