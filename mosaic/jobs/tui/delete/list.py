@@ -1,7 +1,8 @@
 from textual.app import ComposeResult
-from textual.widgets import Label, ListItem
+from textual.widgets import Label, ListItem, ListView
 
 from mosaic.jobs.job.base import Job
+from mosaic.jobs.manager import Manager
 from mosaic.jobs.text import job_info
 
 
@@ -13,3 +14,17 @@ class JobListItem(ListItem):
 
     def compose(self) -> ComposeResult:
         yield Label(self.job_info)
+
+
+class JobListView(ListView):
+    def __init__(self, id: str) -> None:
+        super().__init__(id=id)
+
+    async def fetch_jobs(self) -> None:
+        with Manager() as manager:
+            for job in manager.jobs:
+                await self.append(JobListItem(job))
+
+    def select_first_item(self) -> None:
+        if len(self) > 0:
+            self.index = 0

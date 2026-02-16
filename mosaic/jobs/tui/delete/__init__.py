@@ -1,11 +1,8 @@
 import shutil
 from typing import TYPE_CHECKING
 
-from textual.widgets import ListView
-
-from mosaic.jobs.manager import Manager
 from mosaic.jobs.tui.delete.delete import ConfirmDelete
-from mosaic.jobs.tui.delete.list import JobListItem
+from mosaic.jobs.tui.delete.list import JobListItem, JobListView
 
 if TYPE_CHECKING:
     from mosaic.jobs.tui.dashboard import Dashboard
@@ -16,23 +13,15 @@ class JobList:
 
     def __init__(self, app: Dashboard) -> None:
         self._app = app
-        self.list_view = ListView(id=self.id)
+        self.job_list_view = JobListView(id=self.id)
 
     async def populate_job_list(self) -> None:
-        # clear
-        self.list_view.clear()
-
-        # populate
-        with Manager() as manager:
-            for job in manager.jobs:
-                await self.list_view.append(JobListItem(job))
-
-        # try to select the first index
-        if len(self.list_view) > 0:
-            self.list_view.index = 0
+        self.job_list_view.clear()
+        await self.job_list_view.fetch_jobs()
+        self.job_list_view.select_first_item()
 
     def prompt_for_delete_confirmation(self) -> None:
-        item = self.list_view.highlighted_child
+        item = self.job_list_view.highlighted_child
         if isinstance(item, JobListItem):
             self._app.push_screen(ConfirmDelete(), self._delete_job)
 
@@ -40,7 +29,7 @@ class JobList:
         if not confirmed:
             return
 
-        item = self.list_view.highlighted_child
+        item = self.job_list_view.highlighted_child
 
         if not isinstance(item, JobListItem):
             self._app.notify(f'Failed to get job info', severity='error')

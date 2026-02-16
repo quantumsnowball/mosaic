@@ -19,7 +19,7 @@ class Dashboard(App):
         yield Header()
 
         # job_list ListView
-        yield self._job_list.list_view
+        yield self._job_list.job_list_view
 
         # footer
         yield Footer()
