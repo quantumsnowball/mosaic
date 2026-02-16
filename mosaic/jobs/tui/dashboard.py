@@ -12,28 +12,8 @@ from mosaic.jobs.tui.delete.list import JobListItem
 class Dashboard(App):
     """A simple Textual TUI for managing jobs."""
 
-    CSS = """
-    #main-window {
-        border: round $primary;      /* The window frame */
-        border-title-align: center;  /* Center the title */
-        margin: 1 2;                 /* Breathing room from screen edges */
-        background: $surface;
-    }
-    
-    #job_list {
-        background: transparent;
-    }
-
-    #job_list > ListItem.-highlight {
-        /* a very faint background */
-        background: $accent 25%;
-    }
-    """
-
-    BINDINGS = [
-        ("q", "quit", "Quit"),
-        ("d", "confirm_delete", "Delete Job"),
-    ]
+    from .bindings import BINDINGS
+    from .style import CSS
 
     def compose(self) -> ComposeResult:
         # header
