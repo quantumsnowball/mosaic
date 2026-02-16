@@ -1,14 +1,13 @@
 CSS = """
     .section {
-        border: round $primary;
+        border: round $primary 30%;     
         border-title-align: center;
-        background: $surface;
+        border-subtitle-align: center;
+    }
+    .section:focus-within {
+        border: round $primary;    
     }
     
-    #job_list {
-        background: transparent;
-    }
-
     #job_list > ListItem.-highlight {
         /* a very faint background */
         background: $accent 25%;
