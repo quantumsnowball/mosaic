@@ -19,9 +19,17 @@ class JobList:
         self.list_view = ListView(id=self.id)
 
     async def populate_job_list(self) -> None:
+        # clear
+        self.list_view.clear()
+
+        # populate
         with Manager() as manager:
             for job in manager.jobs:
                 await self.list_view.append(JobListItem(job))
+
+        # try to select the first index
+        if len(self.list_view) > 0:
+            self.list_view.index = 0
 
     def prompt_for_delete_confirmation(self) -> None:
         item = self._app.query_one(f'#{self.id}', ListView).highlighted_child
