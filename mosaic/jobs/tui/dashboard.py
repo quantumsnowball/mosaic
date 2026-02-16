@@ -14,7 +14,6 @@ class Dashboard(App):
     def __init__(self) -> None:
         super().__init__()
         self._vertical1 = Vertical(classes='section')
-        self._vertical2 = Vertical(classes='section')
         self._job_list = JobList(self)
         self._directory_tree = DirectoryTree('./', id='files-view')
 
@@ -25,8 +24,7 @@ class Dashboard(App):
         # job_list ListView
         with self._vertical1:
             yield self._directory_tree
-        with self._vertical2:
-            yield self._job_list.list_view
+        yield self._job_list
 
         # footer
         yield Footer()
