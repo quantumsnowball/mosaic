@@ -2,6 +2,7 @@ from textual.app import App, ComposeResult
 from textual.containers import Vertical
 from textual.widgets import ContentSwitcher, DirectoryTree, Footer, Header
 
+from mosaic.jobs.tui.create import FileList
 from mosaic.jobs.tui.delete import JobList
 
 
@@ -13,17 +14,15 @@ class Dashboard(App):
 
     def __init__(self) -> None:
         super().__init__()
-        self._vertical1 = Vertical(classes='section')
         self._job_list = JobList(self)
-        self._directory_tree = DirectoryTree('./', id='files-view')
+        self._directory_tree = FileList()
 
     def compose(self) -> ComposeResult:
         # header
         yield Header()
 
-        # job_list ListView
-        with self._vertical1:
-            yield self._directory_tree
+        # container widgets
+        yield self._directory_tree
         yield self._job_list
 
         # footer
