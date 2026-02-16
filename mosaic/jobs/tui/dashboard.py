@@ -8,7 +8,7 @@ class Dashboard(App):
     """A simple Textual TUI for managing jobs."""
 
     from .bindings import BINDINGS
-    from .style import CSS
+    from .styles import CSS
 
     def __init__(self) -> None:
         super().__init__()
