@@ -20,6 +20,11 @@ class JobListView(ListView):
     def __init__(self, id: str) -> None:
         super().__init__(id=id)
 
+    @property
+    def highlighted_item(self) -> JobListItem | None:
+        item = self.highlighted_child
+        return item if isinstance(item, JobListItem) else None
+
     async def fetch_jobs(self) -> None:
         with Manager() as manager:
             for job in manager.jobs:

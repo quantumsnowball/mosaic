@@ -21,8 +21,7 @@ class JobList:
         self.job_list_view.select_first_item()
 
     def prompt_for_delete_confirmation(self) -> None:
-        item = self.job_list_view.highlighted_child
-        if isinstance(item, JobListItem):
+        if self.job_list_view.highlighted_item is not None:
             self._app.push_screen(ConfirmDelete(), self._delete_job)
 
     def _delete_job(self, confirmed: bool | None) -> None:
