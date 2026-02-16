@@ -9,6 +9,7 @@ from mosaic.jobs.tui.delete import JobList
 class Dashboard(App):
     """A simple Textual TUI for managing jobs."""
 
+    TITLE = 'Mosaic TUI'
     from .bindings import BINDINGS
     from .styles import CSS
 
