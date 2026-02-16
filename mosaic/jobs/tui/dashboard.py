@@ -19,13 +19,13 @@ class Dashboard(App):
         yield Header()
 
         # job_list ListView
-        yield self._job_list.job_list_view
+        yield self._job_list.list_view
 
         # footer
         yield Footer()
 
     async def on_mount(self) -> None:
-        await self._job_list.populate_job_list()
+        await self._job_list.list_view.populate()
 
     def action_delete(self) -> None:
-        self._job_list.prompt_for_delete_confirmation()
+        self._job_list.confirmation.prompt()

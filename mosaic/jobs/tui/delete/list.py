@@ -25,11 +25,10 @@ class JobListView(ListView):
         item = self.highlighted_child
         return item if isinstance(item, JobListItem) else None
 
-    async def fetch_jobs(self) -> None:
+    async def populate(self) -> None:
+        self.clear()
         with Manager() as manager:
             for job in manager.jobs:
                 await self.append(JobListItem(job))
-
-    def select_first_item(self) -> None:
         if len(self) > 0:
             self.index = 0
