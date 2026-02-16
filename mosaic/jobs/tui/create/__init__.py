@@ -10,6 +10,8 @@ class FileTree(DirectoryTree):
 class FileList(Vertical):
     def __init__(self) -> None:
         super().__init__(classes='section')
+        self.border_title = 'Files'
+        self.border_subtitle = 'Files'
         self.directory_tree = FileTree('./')
 
     def compose(self) -> ComposeResult:

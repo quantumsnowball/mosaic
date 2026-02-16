@@ -13,7 +13,8 @@ if TYPE_CHECKING:
 class JobList(Vertical):
     def __init__(self, app: Dashboard) -> None:
         super().__init__(classes='section')
-        self._app = app
+        self.border_title = 'Jobs'
+        self.border_subtitle = 'Jobs'
         self.list_view = JobListView(id='job_list')
         self.confirmation = Confirmation(app, self.list_view)
 
