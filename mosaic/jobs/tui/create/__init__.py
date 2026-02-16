@@ -10,7 +10,7 @@ class FileTree(DirectoryTree):
 class FileList(Vertical):
     def __init__(self) -> None:
         super().__init__(classes='section')
-        self.directory_tree = FileTree('./', id='directory-tree')
+        self.directory_tree = FileTree('./')
 
     def compose(self) -> ComposeResult:
         yield self.directory_tree
