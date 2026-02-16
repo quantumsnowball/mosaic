@@ -1,8 +1,11 @@
+import shutil
+
 from textual.app import App, ComposeResult
 from textual.containers import Vertical
 from textual.widgets import Footer, Header, ListView
 
 from mosaic.jobs.manager import Manager
+from mosaic.jobs.tui.confirm_delete import ConfirmDelete
 from mosaic.jobs.tui.list_item import JobListItem
 
 
@@ -27,7 +30,10 @@ class Dashboard(App):
     }
     """
 
-    BINDINGS = [("q", "quit", "Quit")]
+    BINDINGS = [
+        ("q", "quit", "Quit"),
+        ("d", "confirm_delete", "Delete Job"),
+    ]
 
     def compose(self) -> ComposeResult:
         # header
@@ -53,3 +59,29 @@ class Dashboard(App):
         if isinstance(event.item, JobListItem):
             job = event.item.job
             self.log(f"Selected Job id: {job.id}")
+
+    def action_confirm_delete(self) -> None:
+
+        item = self.query_one("#job_list", ListView).highlighted_child
+        if isinstance(item, JobListItem):
+            self.push_screen(ConfirmDelete(), self.handle_delete_result)
+
+    def handle_delete_result(self, confirmed: bool | None) -> None:
+        if not confirmed:
+            return
+
+        item = self.query_one("#job_list", ListView).highlighted_child
+
+        if not isinstance(item, JobListItem):
+            self.notify(f'Failed to get job info', severity='error')
+            return
+
+        job = item.job
+
+        try:
+            if job.job_dirpath.exists():
+                shutil.rmtree(job.job_dirpath)
+            item.remove()
+            self.notify(f"Job {job.id} deleted.")
+        except Exception as e:
+            self.notify(f"Failed to delete: {e}", severity="error")
