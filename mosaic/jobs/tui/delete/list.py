@@ -17,6 +17,8 @@ class JobListItem(ListItem):
 
 
 class JobListView(ListView):
+    from .bindings import list_view as BINDINGS
+
     def __init__(self, id: str) -> None:
         super().__init__(id=id)
 

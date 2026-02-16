@@ -1,4 +1,3 @@
-
 from textual.binding import BindingType
 
 BINDINGS: list[BindingType] = [
