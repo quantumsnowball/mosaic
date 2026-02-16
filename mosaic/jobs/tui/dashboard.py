@@ -5,6 +5,7 @@ from textual.containers import Vertical
 from textual.widgets import Footer, Header, ListView
 
 from mosaic.jobs.manager import Manager
+from mosaic.jobs.tui.delete import JobHandler
 from mosaic.jobs.tui.delete.delete import ConfirmDelete
 from mosaic.jobs.tui.delete.list import JobListItem
 
@@ -14,6 +15,10 @@ class Dashboard(App):
 
     from .bindings import BINDINGS
     from .style import CSS
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._job_handler = JobHandler(self)
 
     def compose(self) -> ComposeResult:
         # header
@@ -35,26 +40,4 @@ class Dashboard(App):
                 await job_list.append(JobListItem(job))
 
     def action_delete(self) -> None:
-        item = self.query_one("#job_list", ListView).highlighted_child
-        if isinstance(item, JobListItem):
-            self.push_screen(ConfirmDelete(), self.handle_delete_result)
-
-    def handle_delete_result(self, confirmed: bool | None) -> None:
-        if not confirmed:
-            return
-
-        item = self.query_one("#job_list", ListView).highlighted_child
-
-        if not isinstance(item, JobListItem):
-            self.notify(f'Failed to get job info', severity='error')
-            return
-
-        job = item.job
-
-        try:
-            if job.job_dirpath.exists():
-                shutil.rmtree(job.job_dirpath)
-            item.remove()
-            self.notify(f"Job {job.id} deleted.")
-        except Exception as e:
-            self.notify(f"Failed to delete: {e}", severity="error")
+        self._job_handler.prompt_for_delete_confirmation()
