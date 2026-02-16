@@ -1,7 +1,15 @@
+import shutil
+from typing import TYPE_CHECKING
+
 from textual.app import ComposeResult
 from textual.containers import Center, Middle
 from textual.screen import ModalScreen
 from textual.widgets import Label
+
+from mosaic.jobs.tui.delete.list import JobListView
+
+if TYPE_CHECKING:
+    from mosaic.jobs.tui.dashboard import Dashboard
 
 
 class ConfirmDelete(ModalScreen[bool]):
@@ -43,3 +51,33 @@ class ConfirmDelete(ModalScreen[bool]):
         width: auto;
     }
     """
+
+
+class Confirmation:
+    def __init__(self, app: Dashboard, job_list_view: JobListView) -> None:
+        self._app = app
+        self._job_list_view = job_list_view
+
+    def prompt(self) -> None:
+        if self._job_list_view.highlighted_item is not None:
+            self._app.push_screen(ConfirmDelete(), self._delete_job)
+
+    def _delete_job(self, confirmed: bool | None) -> None:
+        if not confirmed:
+            return
+
+        item = self._job_list_view.highlighted_item
+
+        if not item:
+            self._app.notify(f'Failed to get job info', severity='error')
+            return
+
+        job = item.job
+
+        try:
+            if job.job_dirpath.exists():
+                shutil.rmtree(job.job_dirpath)
+            item.remove()
+            self._app.notify(f'Job {job.id} deleted.')
+        except Exception as e:
+            self._app.notify(f'Failed to delete: {e}', severity="error")
