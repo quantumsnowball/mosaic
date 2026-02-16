@@ -34,14 +34,7 @@ class Dashboard(App):
             for job in manager.jobs:
                 await job_list.append(JobListItem(job))
 
-    def on_list_view_highlighted(self, event: ListView.Highlighted) -> None:
-        # when the user moves the selection cursor
-        if isinstance(event.item, JobListItem):
-            job = event.item.job
-            self.log(f"Selected Job id: {job.id}")
-
-    def action_confirm_delete(self) -> None:
-
+    def action_delete(self) -> None:
         item = self.query_one("#job_list", ListView).highlighted_child
         if isinstance(item, JobListItem):
             self.push_screen(ConfirmDelete(), self.handle_delete_result)
