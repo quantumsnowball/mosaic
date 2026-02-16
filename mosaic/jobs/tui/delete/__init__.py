@@ -32,7 +32,7 @@ class JobList:
             self.list_view.index = 0
 
     def prompt_for_delete_confirmation(self) -> None:
-        item = self._app.query_one(f'#{self.id}', ListView).highlighted_child
+        item = self.list_view.highlighted_child
         if isinstance(item, JobListItem):
             self._app.push_screen(ConfirmDelete(), self._delete_job)
 
@@ -40,7 +40,7 @@ class JobList:
         if not confirmed:
             return
 
-        item = self._app.query_one(f'#{self.id}', ListView).highlighted_child
+        item = self.list_view.highlighted_child
 
         if not isinstance(item, JobListItem):
             self._app.notify(f'Failed to get job info', severity='error')
