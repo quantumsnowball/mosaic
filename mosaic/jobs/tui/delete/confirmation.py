@@ -15,14 +15,8 @@ if TYPE_CHECKING:
 class ConfirmationModalScreen(ModalScreen[bool]):
     """A minimal key-driven confirmation modal."""
 
-    # Key bindings specifically for this modal
-    BINDINGS = [
-        ("y", "confirm", "Yes, Delete"),
-        ("Y", "confirm", "Yes, Delete"),
-        ("n", "cancel", "No, Cancel"),
-        ("N", "cancel", "No, Cancel"),
-        ("escape", "cancel", "Cancel")
-    ]
+    from .bindings import BINDINGS
+    from .style import CSS
 
     def compose(self) -> ComposeResult:
         # Wrap in Center/Middle to float it in the screen center
@@ -38,19 +32,6 @@ class ConfirmationModalScreen(ModalScreen[bool]):
 
     def action_cancel(self) -> None:
         self.dismiss(False)
-
-    CSS = """
-    ConfirmDelete {
-        align: center middle;
-        background: $background 50%; /* Dim the background */
-    }
-    #confirm-msg {
-        padding: 2 4;
-        background: $surface;
-        border: thick $error;
-        width: auto;
-    }
-    """
 
 
 class Confirmation:
