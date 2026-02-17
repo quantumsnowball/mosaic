@@ -1,15 +1,13 @@
 from pathlib import Path
 
 from textual.app import ComposeResult
-from textual.containers import Horizontal, Vertical
+from textual.containers import Vertical
 from textual.screen import ModalScreen
-from textual.widgets import Button, Input, Label
+from textual.widgets import Input, Label
 
 
 class SaveAsModalScreen(ModalScreen[str]):
-    BINDINGS = [
-        ("escape", "cancel", "Cancel"),
-    ]
+    from .bindings import save as BINDINGS
 
     def __init__(self, default_path: Path) -> None:
         super().__init__()
