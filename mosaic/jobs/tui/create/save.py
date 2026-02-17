@@ -1,44 +1,43 @@
+from pathlib import Path
+
 from textual.app import ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.screen import ModalScreen
 from textual.widgets import Button, Input, Label
 
 
-class OutputPathModal(ModalScreen[str]):
-    """A modal to get the output path from the user."""
+class SaveAsModalScreen(ModalScreen[str]):
+    BINDINGS = [
+        ("escape", "cancel", "Cancel"),
+    ]
 
-    def __init__(self, default_path: str) -> None:
+    def __init__(self, default_path: Path) -> None:
         super().__init__()
-        self.default_path = default_path
+        self._default_path = default_path
 
     def compose(self) -> ComposeResult:
         with Vertical(id="modal-container"):
-            yield Label("Confirm Output Path:")
+            yield Label("Create lada job, save output file as:")
             yield Input(
-                value=self.default_path,
-                placeholder="Enter path...",
+                value=str(self._default_path),
+                placeholder="Save output file as ...",
                 id="output-input"
             )
-            with Horizontal(id="modal-buttons"):
-                yield Button("Cancel", variant="primary", id="cancel")
-                yield Button("Create Job", variant="success", id="create")
+            yield Label("Press <Escape> to cancel")
 
     def on_mount(self) -> None:
-        # Auto-focus the input so the user can start typing immediately
         self.query_one(Input).focus()
 
-    def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button.id == "create":
-            self.dismiss(self.query_one(Input).value)
-        else:
-            self.dismiss(None)
-
     def on_input_submitted(self, event: Input.Submitted) -> None:
-        """Allows pressing 'Enter' inside the input to submit."""
+        # press enter to proceed
         self.dismiss(event.value)
 
+    def action_cancel(self) -> None:
+        # press excape to cancel
+        self.dismiss(None)
+
     CSS = """
-    OutputPathModal {
+    SaveAsModalScreen {
         align: center middle;
         background: $background 50%;
     }

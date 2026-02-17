@@ -5,7 +5,7 @@ from subprocess import DEVNULL
 
 from textual.widgets import DirectoryTree
 
-from mosaic.jobs.tui.create.save import OutputPathModal
+from mosaic.jobs.tui.create.save import SaveAsModalScreen
 
 
 class FileTree(DirectoryTree):
@@ -53,4 +53,4 @@ class FileTree(DirectoryTree):
             else:
                 self.notify("Job creation cancelled")
 
-        self.app.push_screen(OutputPathModal(str(input_rel_path)), handle_submit)
+        self.app.push_screen(SaveAsModalScreen(input_rel_path), handle_submit)
