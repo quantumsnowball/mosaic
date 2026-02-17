@@ -5,12 +5,12 @@ from mosaic.jobs.tui.create import FileList
 from mosaic.jobs.tui.delete import JobList
 
 
-class Dashboard(App):
+class Main(App):
     """A simple Textual TUI for managing jobs."""
 
     TITLE = 'Mosaic TUI'
-    from .bindings import dashboard as BINDINGS
-    from .styles import dashboard as CSS
+    from .bindings import main as BINDINGS
+    from .styles import main as CSS
 
     def __init__(self) -> None:
         super().__init__()

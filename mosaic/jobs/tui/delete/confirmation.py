@@ -32,12 +32,12 @@ class ConfirmationModalScreen(ModalScreen[bool]):
 
 class Confirmation:
     def __init__(self, job_list: JobList) -> None:
-        self.dashboard = job_list.dashboard
+        self.main = job_list.main
         self._list_view = job_list.list_view
 
     def prompt(self) -> None:
         if self._list_view.highlighted_item is not None:
-            self.dashboard.push_screen(ConfirmationModalScreen(), self._delete_job)
+            self.main.push_screen(ConfirmationModalScreen(), self._delete_job)
 
     def _delete_job(self, confirmed: bool | None) -> None:
         if not confirmed:
@@ -46,7 +46,7 @@ class Confirmation:
         item = self._list_view.highlighted_item
 
         if not item:
-            self.dashboard.notify(f'Failed to get job info', severity='error')
+            self.main.notify(f'Failed to get job info', severity='error')
             return
 
         job = item.job
@@ -55,6 +55,6 @@ class Confirmation:
             if job.job_dirpath.exists():
                 shutil.rmtree(job.job_dirpath)
             item.remove()
-            self.dashboard.notify(f'Job {job.id} deleted.')
+            self.main.notify(f'Job {job.id} deleted.')
         except Exception as e:
-            self.dashboard.notify(f'Failed to delete: {e}', severity="error")
+            self.main.notify(f'Failed to delete: {e}', severity="error")

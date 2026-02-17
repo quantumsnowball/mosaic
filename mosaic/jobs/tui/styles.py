@@ -1,4 +1,4 @@
-dashboard = """
+main = """
     .section {
         border: round $primary 30%;     
         border-title-align: center;

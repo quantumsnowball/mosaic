@@ -6,15 +6,15 @@ from textual.containers import Vertical
 from mosaic.jobs.tui.create.tree import FileTree
 
 if TYPE_CHECKING:
-    from mosaic.jobs.tui.dashboard import Dashboard
+    from mosaic.jobs.tui.main import Main
 
 
 class FileList(Vertical):
-    def __init__(self, dashboard: Dashboard) -> None:
+    def __init__(self, main: Main) -> None:
         super().__init__(classes='section')
         self.border_title = 'Files'
         self.border_subtitle = 'Files'
-        self.directory_tree = FileTree(dashboard)
+        self.directory_tree = FileTree(main)
 
     def compose(self) -> ComposeResult:
         yield self.directory_tree

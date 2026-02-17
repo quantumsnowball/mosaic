@@ -7,13 +7,13 @@ from mosaic.jobs.tui.delete.confirmation import Confirmation
 from mosaic.jobs.tui.delete.list import JobListView
 
 if TYPE_CHECKING:
-    from mosaic.jobs.tui.dashboard import Dashboard
+    from mosaic.jobs.tui.main import Main
 
 
 class JobList(Vertical):
-    def __init__(self, dashboard: Dashboard) -> None:
+    def __init__(self, main: Main) -> None:
         super().__init__(classes='section')
-        self.dashboard = dashboard
+        self.main = main
         self.border_title = 'Jobs'
         self.border_subtitle = 'Jobs'
         self.list_view = JobListView()
