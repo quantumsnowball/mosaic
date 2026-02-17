@@ -1,6 +1,6 @@
 from textual.binding import BindingType
 
-BINDINGS: list[BindingType] = [
+dashboard: list[BindingType] = [
     ("q", "quit", "Quit"),
     ("d", "delete", "Delete Job"),
 ]

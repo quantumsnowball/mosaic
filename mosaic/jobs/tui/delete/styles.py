@@ -1,9 +1,13 @@
-CSS = """
-    ConfirmDelete {
+confirmation_model_screen = """
+    ConfirmationModalScreen {
         align: center middle;
-        background: $background 50%; /* Dim the background */
+        background: $background 50%;
     }
-    #confirm-msg {
+    ConfirmationModalScreen Vertical {
+        width: auto;
+        height: auto;
+    }
+    ConfirmationModalScreen Label {
         padding: 2 4;
         background: $surface;
         border: thick $error;

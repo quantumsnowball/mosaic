@@ -2,7 +2,7 @@ import shutil
 from typing import TYPE_CHECKING
 
 from textual.app import ComposeResult
-from textual.containers import Center, Middle
+from textual.containers import Vertical
 from textual.screen import ModalScreen
 from textual.widgets import Label
 
@@ -16,16 +16,14 @@ class ConfirmationModalScreen(ModalScreen[bool]):
     """A minimal key-driven confirmation modal."""
 
     from .bindings import confirmatino_model_screen as BINDINGS
-    from .styles import CSS
+    from .styles import confirmation_model_screen as CSS
 
     def compose(self) -> ComposeResult:
-        # Wrap in Center/Middle to float it in the screen center
-        with Center():
-            with Middle():
-                yield Label(
-                    "Are you sure? [bold red]Y[/] to Delete / [bold white]N[/] to Cancel",
-                    id="confirm-msg"
-                )
+        with Vertical():
+            yield Label(
+                "Are you sure? "
+                "[bold red]Y[/] to Delete / [bold white]N[/] to Cancel",
+            )
 
     def action_confirm(self) -> None:
         self.dismiss(True)

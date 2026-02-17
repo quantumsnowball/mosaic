@@ -1,4 +1,4 @@
-CSS = """
+dashboard = """
     .section {
         border: round $primary 30%;     
         border-title-align: center;
@@ -8,7 +8,8 @@ CSS = """
         border: round $primary;    
     }
     
-    #job_list > ListItem.-highlight {
+    /* must put here at the root, otherwise doesn't work, why? */
+    JobList JobListView JobListItem.-highlight {
         /* a very faint background */
         background: $accent 25%;
     }

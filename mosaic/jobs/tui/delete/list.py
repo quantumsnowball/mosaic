@@ -10,17 +10,17 @@ class JobListItem(ListItem):
     def __init__(self, job: Job) -> None:
         super().__init__()
         self.job = job
-        self.job_info = job_info(job, verbose=True, textual_color=True)
+        self.job_info = job_info(job, textual_color=True)
 
     def compose(self) -> ComposeResult:
         yield Label(self.job_info)
 
 
 class JobListView(ListView):
-    from .bindings import list_view as BINDINGS
+    from .bindings import job_list_view as BINDINGS
 
-    def __init__(self, id: str) -> None:
-        super().__init__(id=id)
+    def __init__(self) -> None:
+        super().__init__()
 
     @property
     def highlighted_item(self) -> JobListItem | None:

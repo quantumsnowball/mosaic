@@ -1,6 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import Vertical
-from textual.widgets import ContentSwitcher, DirectoryTree, Footer, Header
+from textual.widgets import Footer, Header
 
 from mosaic.jobs.tui.create import FileList
 from mosaic.jobs.tui.delete import JobList
@@ -10,8 +9,8 @@ class Dashboard(App):
     """A simple Textual TUI for managing jobs."""
 
     TITLE = 'Mosaic TUI'
-    from .bindings import BINDINGS
-    from .styles import CSS
+    from .bindings import dashboard as BINDINGS
+    from .styles import dashboard as CSS
 
     def __init__(self) -> None:
         super().__init__()

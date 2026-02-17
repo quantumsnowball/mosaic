@@ -1,10 +1,7 @@
 from textual.app import ComposeResult
 from textual.containers import Vertical
-from textual.widgets import DirectoryTree
 
-
-class FileTree(DirectoryTree):
-    from .bindings import BINDINGS
+from mosaic.jobs.tui.create.tree import FileTree
 
 
 class FileList(Vertical):
