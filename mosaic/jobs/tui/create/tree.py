@@ -5,6 +5,8 @@ from subprocess import DEVNULL
 
 from textual.widgets import DirectoryTree
 
+from mosaic.jobs.tui.create.save import OutputPathModal
+
 
 class FileTree(DirectoryTree):
     from .bindings import BINDINGS
@@ -43,4 +45,12 @@ class FileTree(DirectoryTree):
             self.notify('Select a valid file to create lada job')
             return
 
-        self.app.notify(f'creating lada job: {input_rel_path}')
+        def handle_submit(output_rel_path: str | None) -> None:
+            if output_rel_path:
+                self.app.notify(f"Creating job: {input_rel_path} -> {output_rel_path}")
+                # CALL YOUR JOB CREATION LOGIC HERE
+                # self.manager.add_job(input_rel_path, output_rel_path)
+            else:
+                self.notify("Job creation cancelled")
+
+        self.app.push_screen(OutputPathModal(str(input_rel_path)), handle_submit)
