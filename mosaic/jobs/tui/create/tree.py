@@ -7,7 +7,8 @@ from typing import TYPE_CHECKING
 from textual.widgets import DirectoryTree
 
 from mosaic.jobs.job.lada import LadaJob
-from mosaic.jobs.tui.create.progress import ProgressBarModalScreen
+from mosaic.jobs.tui.create.progress import (CreateJobProgressBar,
+                                             ProgressBarModalScreen)
 from mosaic.jobs.tui.create.save import SaveAsModalScreen
 from mosaic.utils.time import HMS
 
@@ -56,20 +57,25 @@ class FileTree(DirectoryTree):
             self.notify('Select a valid file to create lada job')
             return
 
-        async def handle_submit(user_input: str | None) -> None:
+        def handle_submit(user_input: str | None) -> None:
             if user_input:
                 output_rel_path = Path(user_input)
                 self.main.notify(f"Creating job: {input_rel_path} -> {output_rel_path}")
-                with LadaJob.create(
-                    segment_time=HMS(0, 5, 0),
-                    input_file=input_rel_path,
-                    output_file=output_rel_path,
-                ) as job:
-                    # save
-                    job.save()
-                    # initialize
-                    job.initialize()
-                await self.main.job_list.list_view.populate()
+
+                def create_and_save_job() -> None:
+                    with LadaJob.create(
+                        segment_time=HMS(0, 5, 0),
+                        input_file=input_rel_path,
+                        output_file=output_rel_path,
+                    ) as job:
+                        # save
+                        job.save()
+                        # initialize
+                        job.initialize(progress_bar_cls=CreateJobProgressBar.bind(self.main))
+                    self.main.call_from_thread(self.main.run_worker, self.main.job_list.list_view.populate)
+                # await self.main.job_list.list_view.populate()
+
+                self.run_worker(create_and_save_job, thread=True)
             else:
                 self.notify("Job creation cancelled")
 
