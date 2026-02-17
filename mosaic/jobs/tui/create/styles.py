@@ -1,4 +1,4 @@
-save = """
+save_as_model_screen = """
     SaveAsModalScreen {
         align: center middle;
         background: $background 50%;

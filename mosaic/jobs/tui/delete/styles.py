@@ -1,4 +1,4 @@
-confirmation = """
+confirmation_model_screen = """
     ConfirmationModalScreen {
         align: center middle;
         background: $background 50%;

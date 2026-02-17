@@ -1,6 +1,6 @@
 from textual.binding import BindingType
 
-tree: list[BindingType] = [
+file_tree: list[BindingType] = [
     ("k", "cursor_up", "Up"),
     ("j", "cursor_down", "Down"),
     ("l", "toggle_node", "Toggle node"),
@@ -8,6 +8,6 @@ tree: list[BindingType] = [
     ("c", "create_lada_job", "Create lada job"),
 ]
 
-save = [
+save_as_model_screen = [
     ("escape", "cancel", "Cancel"),
 ]

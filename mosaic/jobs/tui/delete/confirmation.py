@@ -16,7 +16,7 @@ class ConfirmationModalScreen(ModalScreen[bool]):
     """A minimal key-driven confirmation modal."""
 
     from .bindings import confirmatino_model_screen as BINDINGS
-    from .styles import confirmation as CSS
+    from .styles import confirmation_model_screen as CSS
 
     def compose(self) -> ComposeResult:
         with Vertical():

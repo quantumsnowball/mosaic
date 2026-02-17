@@ -7,8 +7,8 @@ from textual.widgets import Input, Label
 
 
 class SaveAsModalScreen(ModalScreen[str]):
-    from .bindings import save as BINDINGS
-    from .styles import save as CSS
+    from .bindings import save_as_model_screen as BINDINGS
+    from .styles import save_as_model_screen as CSS
 
     def __init__(self, default_path: Path) -> None:
         super().__init__()

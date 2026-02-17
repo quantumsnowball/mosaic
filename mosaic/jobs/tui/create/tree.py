@@ -9,7 +9,7 @@ from mosaic.jobs.tui.create.save import SaveAsModalScreen
 
 
 class FileTree(DirectoryTree):
-    from .bindings import tree as BINDINGS
+    from .bindings import file_tree as BINDINGS
 
     def on_directory_tree_file_selected(self, event: DirectoryTree.FileSelected) -> None:
         abs_path = event.path
