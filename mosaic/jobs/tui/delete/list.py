@@ -19,8 +19,8 @@ class JobListItem(ListItem):
 class JobListView(ListView):
     from .bindings import list_view as BINDINGS
 
-    def __init__(self, id: str) -> None:
-        super().__init__(id=id)
+    def __init__(self) -> None:
+        super().__init__()
 
     @property
     def highlighted_item(self) -> JobListItem | None:

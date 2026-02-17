@@ -15,7 +15,7 @@ class JobList(Vertical):
         super().__init__(classes='section')
         self.border_title = 'Jobs'
         self.border_subtitle = 'Jobs'
-        self.list_view = JobListView(id='job_list')
+        self.list_view = JobListView()
         self.confirmation = Confirmation(app, self.list_view)
 
     def compose(self) -> ComposeResult:
