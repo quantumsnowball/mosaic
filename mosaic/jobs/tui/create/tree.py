@@ -11,7 +11,7 @@ from mosaic.jobs.tui.create.save import SaveAsModalScreen
 from mosaic.utils.time import HMS
 
 if TYPE_CHECKING:
-    from mosaic.jobs.tui.main import Main
+    from mosaic.jobs.tui import Main
 
 
 class FileTree(DirectoryTree):

@@ -7,7 +7,7 @@ from mosaic.jobs.tui.delete.confirmation import Confirmation
 from mosaic.jobs.tui.delete.list import JobListView
 
 if TYPE_CHECKING:
-    from mosaic.jobs.tui.main import Main
+    from mosaic.jobs.tui import Main
 
 
 class JobList(Vertical):

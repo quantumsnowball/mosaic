@@ -6,7 +6,7 @@ from textual.containers import Vertical
 from mosaic.jobs.tui.create.tree import FileTree
 
 if TYPE_CHECKING:
-    from mosaic.jobs.tui.main import Main
+    from mosaic.jobs.tui import Main
 
 
 class FileList(Vertical):
