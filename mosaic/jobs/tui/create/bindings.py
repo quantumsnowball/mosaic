@@ -5,4 +5,5 @@ BINDINGS: list[BindingType] = [
     ("j", "cursor_down", "Down"),
     ("l", "toggle_node", "Toggle node"),
     ("h", "toggle_node", "Toggle node"),
+    ("c", "create_lada_job", "Create lada job"),
 ]
