@@ -32,7 +32,15 @@ class FileTree(DirectoryTree):
         self.app.notify("VLC not found on Linux or Windows path.", severity="error")
 
     def action_create_lada_job(self) -> None:
-        if self.cursor_node and self.cursor_node.data:
-            file_abs_path = self.cursor_node.data.path
-            file_rel_path = file_abs_path.relative_to(Path.cwd())
-            self.app.notify(f'create lada job: {file_rel_path}')
+        if not self.cursor_node or not self.cursor_node.data:
+            self.notify('Error when retrieving file node data')
+            return
+
+        input_abs_path = self.cursor_node.data.path
+        input_rel_path = input_abs_path.relative_to(Path.cwd())
+
+        if not input_rel_path.is_file():
+            self.notify('Select a valid file to create lada job')
+            return
+
+        self.app.notify(f'creating lada job: {input_rel_path}')
