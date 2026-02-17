@@ -5,7 +5,9 @@ from subprocess import DEVNULL
 
 from textual.widgets import DirectoryTree
 
+from mosaic.jobs.job.lada import LadaJob
 from mosaic.jobs.tui.create.save import SaveAsModalScreen
+from mosaic.utils.time import HMS
 
 
 class FileTree(DirectoryTree):
@@ -45,11 +47,19 @@ class FileTree(DirectoryTree):
             self.notify('Select a valid file to create lada job')
             return
 
-        def handle_submit(output_rel_path: str | None) -> None:
-            if output_rel_path:
+        def handle_submit(user_input: str | None) -> None:
+            if user_input:
+                output_rel_path = Path(user_input)
                 self.app.notify(f"Creating job: {input_rel_path} -> {output_rel_path}")
-                # CALL YOUR JOB CREATION LOGIC HERE
-                # self.manager.add_job(input_rel_path, output_rel_path)
+                with LadaJob.create(
+                    segment_time=HMS(0, 5, 0),
+                    input_file=input_rel_path,
+                    output_file=output_rel_path,
+                ) as job:
+                    # save
+                    job.save()
+                    # initialize
+                    job.initialize()
             else:
                 self.notify("Job creation cancelled")
 
