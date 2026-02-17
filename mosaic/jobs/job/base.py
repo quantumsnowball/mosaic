@@ -101,11 +101,11 @@ class Job(ABC):
             self.output_file.exists(),
         ))
 
-    def initialize(self) -> None:
+    def initialize(self, *, progress_bar_cls: type[ProgressBar] = ProgressBar) -> None:
         with NamedTemporaryFile(suffix='.mp4', dir=self.job_dirpath) as prep_video:
             log.debug(f'prep_video={prep_video.name}')
             # conver video timescale to most universal timescale
-            with ProgressBar(self.duration) as pbar:
+            with progress_bar_cls(self.duration) as pbar:
                 FFmpeg(
                 ).global_args(
                     '-loglevel', 'fatal',
@@ -122,7 +122,7 @@ class Job(ABC):
                 ).run()
 
             # split video into segments
-            with ProgressBar(self.duration) as pbar:
+            with progress_bar_cls(self.duration) as pbar:
                 FFmpeg(
                 ).global_args(
                     '-loglevel', 'fatal',
