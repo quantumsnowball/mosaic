@@ -14,22 +14,22 @@ class Dashboard(App):
 
     def __init__(self) -> None:
         super().__init__()
-        self._job_list = JobList(self)
-        self._directory_tree = FileList(self)
+        self.job_list = JobList(self)
+        self.directory_tree = FileList(self)
 
     def compose(self) -> ComposeResult:
         # header
         yield Header()
 
         # container widgets
-        yield self._directory_tree
-        yield self._job_list
+        yield self.directory_tree
+        yield self.job_list
 
         # footer
         yield Footer()
 
     async def on_mount(self) -> None:
-        await self._job_list.list_view.populate()
+        await self.job_list.list_view.populate()
 
     def action_delete(self) -> None:
-        self._job_list.confirmation.prompt()
+        self.job_list.confirmation.prompt()

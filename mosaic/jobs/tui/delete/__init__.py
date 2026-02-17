@@ -11,12 +11,13 @@ if TYPE_CHECKING:
 
 
 class JobList(Vertical):
-    def __init__(self, app: Dashboard) -> None:
+    def __init__(self, dashboard: Dashboard) -> None:
         super().__init__(classes='section')
+        self.dashboard = dashboard
         self.border_title = 'Jobs'
         self.border_subtitle = 'Jobs'
         self.list_view = JobListView()
-        self.confirmation = Confirmation(app, self.list_view)
+        self.confirmation = Confirmation(self)
 
     def compose(self) -> ComposeResult:
         yield self.list_view

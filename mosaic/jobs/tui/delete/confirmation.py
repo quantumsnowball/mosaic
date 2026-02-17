@@ -6,10 +6,8 @@ from textual.containers import Vertical
 from textual.screen import ModalScreen
 from textual.widgets import Label
 
-from mosaic.jobs.tui.delete.list import JobListView
-
 if TYPE_CHECKING:
-    from mosaic.jobs.tui.dashboard import Dashboard
+    from mosaic.jobs.tui.delete import JobList
 
 
 class ConfirmationModalScreen(ModalScreen[bool]):
@@ -33,22 +31,22 @@ class ConfirmationModalScreen(ModalScreen[bool]):
 
 
 class Confirmation:
-    def __init__(self, app: Dashboard, job_list_view: JobListView) -> None:
-        self._app = app
-        self._job_list_view = job_list_view
+    def __init__(self, job_list: JobList) -> None:
+        self.dashboard = job_list.dashboard
+        self._list_view = job_list.list_view
 
     def prompt(self) -> None:
-        if self._job_list_view.highlighted_item is not None:
-            self._app.push_screen(ConfirmationModalScreen(), self._delete_job)
+        if self._list_view.highlighted_item is not None:
+            self.dashboard.push_screen(ConfirmationModalScreen(), self._delete_job)
 
     def _delete_job(self, confirmed: bool | None) -> None:
         if not confirmed:
             return
 
-        item = self._job_list_view.highlighted_item
+        item = self._list_view.highlighted_item
 
         if not item:
-            self._app.notify(f'Failed to get job info', severity='error')
+            self.dashboard.notify(f'Failed to get job info', severity='error')
             return
 
         job = item.job
@@ -57,6 +55,6 @@ class Confirmation:
             if job.job_dirpath.exists():
                 shutil.rmtree(job.job_dirpath)
             item.remove()
-            self._app.notify(f'Job {job.id} deleted.')
+            self.dashboard.notify(f'Job {job.id} deleted.')
         except Exception as e:
-            self._app.notify(f'Failed to delete: {e}', severity="error")
+            self.dashboard.notify(f'Failed to delete: {e}', severity="error")
