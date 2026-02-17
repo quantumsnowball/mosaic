@@ -2,16 +2,26 @@ import shutil
 import subprocess
 from pathlib import Path
 from subprocess import DEVNULL
+from typing import TYPE_CHECKING, cast
 
 from textual.widgets import DirectoryTree
 
 from mosaic.jobs.job.lada import LadaJob
 from mosaic.jobs.tui.create.save import SaveAsModalScreen
+from mosaic.jobs.tui.delete.list import JobListView
 from mosaic.utils.time import HMS
+
+if TYPE_CHECKING:
+    from mosaic.jobs.tui.dashboard import Dashboard
 
 
 class FileTree(DirectoryTree):
     from .bindings import file_tree as BINDINGS
+
+    app: Dashboard
+
+    def __init__(self, app: Dashboard, *, path: str | Path = './') -> None:
+        super().__init__(path)
 
     def on_directory_tree_file_selected(self, event: DirectoryTree.FileSelected) -> None:
         abs_path = event.path
@@ -47,7 +57,7 @@ class FileTree(DirectoryTree):
             self.notify('Select a valid file to create lada job')
             return
 
-        def handle_submit(user_input: str | None) -> None:
+        async def handle_submit(user_input: str | None) -> None:
             if user_input:
                 output_rel_path = Path(user_input)
                 self.app.notify(f"Creating job: {input_rel_path} -> {output_rel_path}")
@@ -60,6 +70,7 @@ class FileTree(DirectoryTree):
                     job.save()
                     # initialize
                     job.initialize()
+                await self.app._job_list.list_view.populate()
             else:
                 self.notify("Job creation cancelled")
 

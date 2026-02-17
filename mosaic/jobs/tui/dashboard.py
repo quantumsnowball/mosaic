@@ -15,7 +15,7 @@ class Dashboard(App):
     def __init__(self) -> None:
         super().__init__()
         self._job_list = JobList(self)
-        self._directory_tree = FileList()
+        self._directory_tree = FileList(self)
 
     def compose(self) -> ComposeResult:
         # header
