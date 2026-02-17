@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from textual.widgets import DirectoryTree
 
 from mosaic.jobs.job.lada import LadaJob
+from mosaic.jobs.tui.create.progress import ProgressBarModalScreen
 from mosaic.jobs.tui.create.save import SaveAsModalScreen
 from mosaic.utils.time import HMS
 
@@ -73,3 +74,8 @@ class FileTree(DirectoryTree):
                 self.notify("Job creation cancelled")
 
         self.main.push_screen(SaveAsModalScreen(input_rel_path), handle_submit)
+
+    def action_pbar(self) -> None:
+        pbar_screen = ProgressBarModalScreen()
+        pbar_screen.progress.update(progress=20, total=100)
+        self.main.push_screen(pbar_screen)
