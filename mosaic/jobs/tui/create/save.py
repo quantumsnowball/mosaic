@@ -20,7 +20,6 @@ class SaveAsModalScreen(ModalScreen[str]):
             yield Input(
                 value=str(self._default_path),
                 placeholder="Save output file as ...",
-                id="output-input"
             )
             yield Label("Press <Escape> to cancel")
 
