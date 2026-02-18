@@ -76,4 +76,4 @@ class FileTree(DirectoryTree):
             output_rel_path = Path(user_input)
             self.run_worker(lambda: init_lada_job(input_rel_path, output_rel_path), thread=True)
 
-        self.main.push_screen(SaveAsModalScreen(input_rel_path), handle_submit)
+        self.main.push_screen(SaveAsModalScreen(input_rel_path.name), handle_submit)

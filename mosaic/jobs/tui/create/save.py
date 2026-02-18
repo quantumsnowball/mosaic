@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from textual.app import ComposeResult
 from textual.containers import Vertical
 from textual.screen import ModalScreen
@@ -10,11 +8,10 @@ class SaveAsModalScreen(ModalScreen[str]):
     from .bindings import save_as_model_screen as BINDINGS
     from .styles import save_as_model_screen as CSS
 
-    def __init__(self, default_path: Path) -> None:
+    def __init__(self, default_value: str) -> None:
         super().__init__()
-        self._default_path = default_path
         self._input = Input(
-            value=str(default_path),
+            value=default_value,
             placeholder="Save output file as ...",
         )
 
