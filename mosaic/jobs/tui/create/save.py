@@ -23,6 +23,7 @@ class SaveAsModalScreen(ModalScreen[str]):
 
     def on_mount(self) -> None:
         self._input.focus()
+        self._input.cursor_position = 0
 
     def on_input_submitted(self, event: Input.Submitted) -> None:
         # press enter to proceed
