@@ -25,21 +25,19 @@ class FileTree(DirectoryTree):
     def on_directory_tree_file_selected(self, event: DirectoryTree.FileSelected) -> None:
         abs_path = event.path
         rel_path = abs_path.relative_to(Path.cwd())
-        self.open_in_vlc(rel_path)
 
-    def open_in_vlc(self, target_path: Path) -> None:
-        # try Linux VLC first
+        # try open in Linux VLC first
         if shutil.which("vlc"):
-            subprocess.Popen(["vlc", target_path], stdout=DEVNULL, stderr=DEVNULL)
-            self.main.notify(f"Opening in Linux VLC: {target_path}")
+            subprocess.Popen(["vlc", rel_path], stdout=DEVNULL, stderr=DEVNULL)
+            self.main.notify(f"Opening in Linux VLC: {rel_path}")
             return
 
-        # try Windows VLC Fallback
+        # try open in Windows VLC Fallback
         vlc_win_path = Path("/mnt/c/Program Files/VideoLAN/VLC/vlc.exe")
         if vlc_win_path.exists():
-            target_win_path = subprocess.check_output(["wslpath", "-w", str(target_path)], text=True).strip()
+            target_win_path = subprocess.check_output(["wslpath", "-w", str(rel_path)], text=True).strip()
             subprocess.Popen([vlc_win_path, target_win_path], stdout=DEVNULL, stderr=DEVNULL)
-            self.main.notify(f"Opening in Windows VLC: {target_path}")
+            self.main.notify(f"Opening in Windows VLC: {rel_path}")
             return
 
         self.main.notify("VLC not found on Linux or Windows path.", severity="error")
