@@ -16,15 +16,15 @@ class ProgressBarModalScreen(ModalScreen):
     from .bindings import progress_bar_model_screen as BINDINGS
     from .styles import progress_bar_model_screen as CSS
 
-    def __init__(self) -> None:
+    def __init__(self, title: str) -> None:
         super().__init__()
+        self._title = title
         self.progress = ProgressBar(total=100, show_eta=False)
 
     def compose(self) -> ComposeResult:
         with Vertical():
-            yield Label("Processing Job...")
+            yield Label(self._title)
             yield self.progress
-            yield Label("Preparing...")
 
     def action_cancel(self) -> None:
         self.dismiss(None)
@@ -38,9 +38,9 @@ class CreateJobProgressBar(mosaic.utils.progress.ProgressBar):
         cls.main = main
         return cls
 
-    def __init__(self, duration: float) -> None:
-        super().__init__(duration)
-        self._screen = ProgressBarModalScreen()
+    def __init__(self, duration: float, *, title: str = '') -> None:
+        super().__init__(duration, title=title)
+        self._screen = ProgressBarModalScreen(title)
         self._bar = self._screen.progress
 
     def __enter__(self) -> Self:
@@ -59,8 +59,6 @@ class CreateJobProgressBar(mosaic.utils.progress.ProgressBar):
                 open(self.input, 'r') as progress,
             ):
                 pct = 0.0
-                speed_text = ''
-                fps_text = ''
 
                 while line := progress.readline():
                     # break gracefully even before EOF

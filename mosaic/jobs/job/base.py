@@ -105,7 +105,10 @@ class Job(ABC):
         with NamedTemporaryFile(suffix='.mp4', dir=self.job_dirpath) as prep_video:
             log.debug(f'prep_video={prep_video.name}')
             # conver video timescale to most universal timescale
-            with progress_bar_cls(self.duration) as pbar:
+            with progress_bar_cls(
+                self.duration,
+                title='Converting video to universal timescale ...',
+            ) as pbar:
                 FFmpeg(
                 ).global_args(
                     '-loglevel', 'fatal',
@@ -122,7 +125,10 @@ class Job(ABC):
                 ).run()
 
             # split video into segments
-            with progress_bar_cls(self.duration) as pbar:
+            with progress_bar_cls(
+                self.duration,
+                title='Spliting video into segments ...'
+            ) as pbar:
                 FFmpeg(
                 ).global_args(
                     '-loglevel', 'fatal',
