@@ -6,7 +6,6 @@ file_tree: list[BindingType] = [
     ("l", "toggle_node", "Toggle node"),
     ("h", "toggle_node", "Toggle node"),
     ("c", "create_lada_job", "Create lada job"),
-    ("p", "pbar", "PBar"),
 ]
 
 save_as_model_screen = [

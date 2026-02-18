@@ -40,17 +40,17 @@ class CreateJobProgressBar(mosaic.utils.progress.ProgressBar):
 
     def __init__(self, duration: float) -> None:
         super().__init__(duration)
-        self._progress_bar_model_screen = ProgressBarModalScreen()
-        self._bar = self._progress_bar_model_screen.progress
+        self._screen = ProgressBarModalScreen()
+        self._bar = self._screen.progress
 
     def __enter__(self) -> Self:
-        # self.main.push_screen(self._progress_bar_model_screen)
-        self.main.call_from_thread(self.main.push_screen, self._progress_bar_model_screen)
+        # push screen
+        self.main.call_from_thread(self.main.push_screen, self._screen)
         return super().__enter__()
 
     def __exit__(self, type, value, traceback) -> None:
-        # self._progress_bar_model_screen.dismiss(None)
-        self.main.call_from_thread(self._progress_bar_model_screen.dismiss)
+        # dismiss screen
+        self.main.call_from_thread(self._screen.dismiss)
         return super().__exit__(type, value, traceback)
 
     def run(self) -> None:
@@ -62,14 +62,10 @@ class CreateJobProgressBar(mosaic.utils.progress.ProgressBar):
                 speed_text = ''
                 fps_text = ''
 
-                def info() -> str:
-                    return f'{speed_text}, {fps_text}'
-
                 while line := progress.readline():
                     # break gracefully even before EOF
                     if line.startswith('progress=end'):
                         # finish bar to 100% then break loop
-                        # self._bar.update(progress=1, total=1)
                         self.main.call_from_thread(self._bar.update, progress=1.0, total=1.0)
                         break
 
@@ -83,7 +79,6 @@ class CreateJobProgressBar(mosaic.utils.progress.ProgressBar):
                             continue
                         # calc and show progress percentage
                         pct = min(out_time / self.duration, 1.0)
-                        # self._bar.update(progress=pct, total=1.0)
                         self.main.call_from_thread(self._bar.update, progress=pct, total=1.0)
 
         # run in own thread
