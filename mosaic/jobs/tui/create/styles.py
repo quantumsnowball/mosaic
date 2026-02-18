@@ -5,6 +5,8 @@ save_as_model_screen = """
     }
     SaveAsModalScreen Vertical {
         width: auto;
+        min-width: 50%;
+        max-width: 95%;
         height: auto;
         padding: 1 2;
         background: $surface;
@@ -12,6 +14,9 @@ save_as_model_screen = """
     }
     SaveAsModalScreen Input {
         margin: 1 0;
+        width: auto;
+        min-width: 100%;
+        max-width: 100%;
     }
 """
 
