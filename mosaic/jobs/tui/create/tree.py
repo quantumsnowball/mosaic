@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from textual.widgets import DirectoryTree
 
 from mosaic.jobs.job.lada import LadaJob
+from mosaic.jobs.tui.create.progress import CreateJobProgressBar
 from mosaic.jobs.tui.create.save import SaveAsModalScreen
 from mosaic.utils.time import HMS
 
@@ -55,21 +56,26 @@ class FileTree(DirectoryTree):
             self.notify('Select a valid file to create lada job')
             return
 
-        async def handle_submit(user_input: str | None) -> None:
-            if user_input:
-                output_rel_path = Path(user_input)
-                self.main.notify(f"Creating job: {input_rel_path} -> {output_rel_path}")
-                with LadaJob.create(
-                    segment_time=HMS(0, 5, 0),
-                    input_file=input_rel_path,
-                    output_file=output_rel_path,
-                ) as job:
-                    # save
-                    job.save()
-                    # initialize
-                    job.initialize()
-                await self.main.job_list.list_view.populate()
-            else:
+        def init_lada_job(input_file: Path, output_file: Path) -> None:
+            with LadaJob.create(
+                segment_time=HMS(0, 5, 0),
+                input_file=input_file,
+                output_file=output_file,
+            ) as job:
+                # save
+                job.save()
+                # initialize
+                job.initialize(progress_bar_cls=CreateJobProgressBar.bind(self.main))
+
+            # populate job list again after adding job
+            self.main.call_from_thread(self.main.run_worker, self.main.job_list.list_view.populate)
+            self.main.call_from_thread(self.main.notify, "Lada job created successfully")
+
+        def handle_submit(user_input: str | None) -> None:
+            if not user_input:
                 self.notify("Job creation cancelled")
+                return
+            output_rel_path = Path(user_input)
+            self.run_worker(lambda: init_lada_job(input_rel_path, output_rel_path), thread=True)
 
         self.main.push_screen(SaveAsModalScreen(input_rel_path), handle_submit)

@@ -12,8 +12,9 @@ from mosaic.utils import ROOT_DIR, TEMP_DIR
 class ProgressBar:
     REFRESH_RATE = '0.5'
 
-    def __init__(self, duration: float) -> None:
+    def __init__(self, duration: float, *, title: str = '') -> None:
         self.duration = duration
+        self._title = title
         self._pipe = TEMP_DIR / f'{__name__}.{uuid.uuid4()}'
         self._thread: Thread | None = None
 

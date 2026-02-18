@@ -11,3 +11,7 @@ file_tree: list[BindingType] = [
 save_as_model_screen = [
     ("escape", "cancel", "Cancel"),
 ]
+
+progress_bar_model_screen = [
+    ('escape', 'cancel', 'Cancel')
+]
