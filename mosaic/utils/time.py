@@ -1,7 +1,6 @@
 import re
 from typing import Self
 
-import click
 from typer import BadParameter
 
 
@@ -54,20 +53,6 @@ class HMS:
         seconds = (total_seconds % 3600) % 60
 
         return cls(hours, minutes, seconds)
-
-
-class HMSParamType(click.ParamType):
-    name = 'HMS'
-    time_pattern = re.compile(r'^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$')
-
-    def convert(self,
-                value: str,
-                param: click.Parameter | None,
-                ctx: click.Context | None) -> HMS:
-        if not self.time_pattern.match(value):
-            self.fail('Invalid time format. Please provide time in HH:MM:SS format.')
-        hours, minutes, seconds = map(int, value.split(':'))
-        return HMS(hours, minutes, seconds)
 
 
 def parse_hms(value: HMS | str) -> HMS:
