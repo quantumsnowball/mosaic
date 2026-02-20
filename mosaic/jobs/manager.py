@@ -1,14 +1,13 @@
 from shutil import rmtree
 from typing import Generator, Iterable, Self
 
-import click
-import rich
-from click import style
+from rich.prompt import Confirm, IntPrompt
 
 from mosaic.jobs.job import load_job
 from mosaic.jobs.job.base import Job
 from mosaic.jobs.text import job_info
 from mosaic.jobs.utils import JOBS_DIR
+from mosaic.utils.console import stderr, stdout
 
 
 class Manager:
@@ -36,17 +35,17 @@ class Manager:
 
     def list_jobs(self, jobs: Iterable[Job], *, verbose: bool = False) -> None:
         for i, job in enumerate(jobs):
-            rich.print(job_info(job, i, verbose=verbose))
+            stdout(job_info(job, i, verbose=verbose))
 
     def run_job(self) -> None:
         while True:
             jobs = list(self.jobs_unfinished)
             if len(jobs) == 0:
-                click.echo('No jobs available. Please create a job first.')
+                stdout('No jobs available. Please create a job first.')
                 return
 
             self.list_jobs(jobs)
-            n: int = click.prompt('Please select an unfinished job to run', type=int)
+            n: int = IntPrompt.ask('Please select an unfinished job to run')
             if n > len(jobs):
                 continue
 
@@ -58,42 +57,42 @@ class Manager:
         while True:
             jobs = list(self.jobs)
             if len(jobs) == 0:
-                click.echo('Job list is empty.')
+                stdout('Job list is empty.')
                 return
 
             self.list_jobs(jobs)
-            n: int = click.prompt('Please select a job to delete', type=int)
+            n: int = IntPrompt.ask('Please select a job to delete')
             if n > len(jobs):
                 continue
 
             selected_job = jobs[n - 1]
-            if click.prompt(style(f'Are you sure to DELETE job {selected_job.id} (y/N)?', fg='red'), type=str).lower() == 'y':
+            if Confirm.ask(f'[red]Are you sure to DELETE job {selected_job.id}?[/]', default=False):
                 rmtree(selected_job.job_dirpath)
-                click.secho(f'Deleted job: {selected_job.id}', fg='yellow')
+                stdout(f'[yellow]Deleted job: {selected_job.id}[/]')
 
     def clear_finished(self) -> None:
         jobs = list(self.jobs_finished)
         self.list_jobs(jobs)
-        if click.prompt('Do you want to DELETE ALL finished jobs (y/N)?', type=str).lower() == 'y':
+        if Confirm.ask('Do you want to DELETE ALL finished jobs?', default=False):
             for job in jobs:
                 try:
                     rmtree(job.job_dirpath)
-                    click.secho(f'Deleted job: {job.id}', fg='yellow')
+                    stdout(f'[yellow]Deleted job: {job.id}[/]')
                 except Exception:
-                    click.secho(f'Failed to delete job: {job.id}', fg='red')
+                    stderr(f'[red]Failed to delete job: {job.id}[/]')
         else:
-            click.echo('Operation cancelled')
+            stdout('Operation cancelled')
 
     def clear_all_jobs(self) -> None:
         jobs = list(self.jobs)
         self.list_jobs(jobs)
-        if click.prompt(style('Do you want to DELETE ALL jobs (y/N)?', fg='red'), type=str).lower() == 'y':
+        if Confirm.ask('[red]Do you want to DELETE ALL jobs?[/]', default=False):
             for job in jobs:
                 try:
                     rmtree(job.job_dirpath)
-                    click.secho(f'Deleted job: {job.id}', fg='yellow')
+                    stdout(f'[yellow]Deleted job: {job.id}[/]')
                 except Exception:
-                    click.secho(f'Failed to delete job: {job.id}', fg='red')
+                    stderr(f'[red]Failed to delete job: {job.id}[/]')
 
         else:
-            click.echo('Operation cancelled')
+            stdout('Operation cancelled')
