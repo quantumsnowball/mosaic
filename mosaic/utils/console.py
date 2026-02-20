@@ -1,6 +1,10 @@
 from rich.console import Console
 
-stdout = Console()
-stderr = Console(stderr=True)
 
-print = stdout.print
+class RichConsole:
+    stdout = Console(highlight=False)
+    stderr = Console(highlight=False, stderr=True)
+
+
+stdout = RichConsole.stdout.print
+stderr = RichConsole.stderr.print

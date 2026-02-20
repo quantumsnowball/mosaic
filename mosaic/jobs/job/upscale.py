@@ -10,7 +10,7 @@ from mosaic.jobs.utils import Command
 from mosaic.upscale.net import presets
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler import Upscaler
-from mosaic.utils.console import print
+from mosaic.utils.console import stdout
 from mosaic.utils.logging import log
 from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
@@ -62,7 +62,7 @@ class UpscaleJob(Job):
     def proceed(self) -> None:
         # loop through available tasks
         while task := self.checklist.next_task():
-            print(self.progress(task.name), highlight=False)
+            stdout(self.progress(task.name))
 
             # load upsampler
             net = presets[self.model]

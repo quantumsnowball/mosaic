@@ -10,7 +10,7 @@ from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.jobs.job.base import Job, Save
 from mosaic.utils import PACKAGE_ROOT
-from mosaic.utils.console import print
+from mosaic.utils.console import stdout
 from mosaic.utils.logging import log
 from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
@@ -26,7 +26,7 @@ class FreeJob(Job):
     def proceed(self) -> None:
         # loop through available tasks
         while task := self.checklist.next_task():
-            print(self.progress(task.name), highlight=False)
+            stdout(self.progress(task.name))
 
             with Cleaner(
                 input_file=self._input_dirpath / task.name,
