@@ -8,7 +8,7 @@ from mosaic.jobs.create import create
 from mosaic.jobs.delete import delete
 from mosaic.jobs.ls import ls
 from mosaic.jobs.run import run
-from mosaic.jobs.select import select
+from mosaic.jobs.select import app as select
 from mosaic.jobs.tui import Main
 from mosaic.utils.service import service
 
@@ -33,8 +33,9 @@ def jobs(
     app = Main()
     app.run()
 
+
 # jobs.add_command(create)
-# jobs.add_command(select)
+app.add_typer(select)
 # jobs.add_command(run)
 # jobs.add_command(clean)
 # jobs.add_command(delete)
