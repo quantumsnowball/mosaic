@@ -2,7 +2,7 @@ import importlib.metadata as meta
 
 import typer
 
-from mosaic.free import free
+from mosaic.free import app as free
 from mosaic.jobs import jobs
 from mosaic.lada import lada
 from mosaic.upscale import upscale
@@ -29,7 +29,8 @@ def version() -> None:
     print(f'v{meta.version(NAME)}')
 
 
-# mosaic.add_command(free)
+app.add_typer(free)
+
 # mosaic.add_command(lada)
 # mosaic.add_command(upscale)
 # mosaic.add_command(jobs)

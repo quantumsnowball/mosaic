@@ -1,36 +1,38 @@
 from pathlib import Path
+from typing import Annotated
 
-import click
+import typer
+from typer import Argument, Option
 
-import mosaic.free.args as args
+from mosaic.free.args import preprocess_args
 from mosaic.free.cleaner import Cleaner
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
 from mosaic.utils.logging import log
-from mosaic.utils.path import PathParamType
 from mosaic.utils.service import service
-from mosaic.utils.time import HMS, HMSParamType
+from mosaic.utils.time import HMS, parse_hms
 
 PACKAGE_DIR = Path(__file__).parent
 
 
-@click.command()
-@click.option('-i', '--input-file', required=True, type=PathParamType(), help='input media path')
-@click.option('-ss', '--start-time', default=None, type=HMSParamType(), help='start time in HH:MM:SS')
-@click.option('-to', '--end-time', default=None, type=HMSParamType(), help='end time in HH:MM:SS')
-@click.option('-y', '--force', is_flag=True, default=False, help='overwrite output file without asking')
-@click.option('--time-tag', is_flag=True, default=False, help='auto append time tag at end of filename')
-@click.option('--raw-info', is_flag=True, default=False, help='display raw ffmpeg info')
-@click.argument('output-file', required=True, type=PathParamType())
+app = typer.Typer()
+
+
+@app.command(no_args_is_help=True)
 @service()
-@args.preprocess
 def free(
-    input_file: Path,
-    start_time: HMS | None,
-    end_time: HMS | None,
-    raw_info: bool,
-    output_file: Path,
+    output_file: Annotated[Path, Argument(help="Output file path")],
+    input_file: Annotated[Path, Option("--input-file", "-i", help="input media path")],
+    start_time: Annotated[HMS | None, Option("--start-time", "-ss", parser=parse_hms, help="start time in HH:MM:SS")] = None,
+    end_time: Annotated[HMS | None, Option("--end-time", "-to", parser=parse_hms, help="end time in HH:MM:SS")] = None,
+    force: Annotated[bool, Option("--force", "-y", help="overwrite output file without asking")] = False,
+    time_tag: Annotated[bool, Option("--time-tag", help="auto append time tag at end of filename")] = False,
+    raw_info: Annotated[bool, Option("--raw-info", help="display raw ffmpeg info")] = False,
 ) -> None:
+    # preprocess args
+    output_file, input_file, start_time, end_time, raw_info = preprocess_args(
+        output_file, input_file, start_time, end_time, force, time_tag, raw_info)
+
     # run
     with Cleaner(
         input_file=input_file,

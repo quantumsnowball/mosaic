@@ -2,6 +2,7 @@ import re
 from typing import Self
 
 import click
+from typer import BadParameter
 
 
 class HMS:
@@ -67,3 +68,11 @@ class HMSParamType(click.ParamType):
             self.fail('Invalid time format. Please provide time in HH:MM:SS format.')
         hours, minutes, seconds = map(int, value.split(':'))
         return HMS(hours, minutes, seconds)
+
+
+def parse_hms(value: str) -> HMS:
+    time_pattern = re.compile(r'^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$')
+    if not time_pattern.match(value):
+        raise BadParameter('Invalid time format. Please provide time in HH:MM:SS format.')
+    hours, minutes, seconds = map(int, value.split(':'))
+    return HMS(hours, minutes, seconds)
