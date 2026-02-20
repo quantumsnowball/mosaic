@@ -1,26 +1,30 @@
 from pathlib import Path
+from typing import Annotated
 
-import click
+import typer
+from typer import Argument, Option
 
-import mosaic.lada.args as args
+from mosaic.lada.args import preprocess_args
 from mosaic.lada.cleaner import Cleaner
 from mosaic.utils.logging import log
-from mosaic.utils.path import PathParamType
 from mosaic.utils.service import service
 
 PACKAGE_DIR = Path(__file__).parent
 
 
-@click.command()
+app = typer.Typer()
+
+
+@app.command(no_args_is_help=True)
 @service()
-@click.option('-i', '--input-file', required=True, type=PathParamType(), help='input media path')
-@click.option('-y', '--force', is_flag=True, default=False, help='overwrite output file without asking')
-@click.argument('output-file', required=True, type=PathParamType())
-@args.preprocess
 def lada(
-    input_file: Path,
-    output_file: Path,
+    output_file: Annotated[Path, Argument(help="Output file path", show_default=False)],
+    input_file: Annotated[Path, Option("--input-file", "-i", help="input media path", show_default=False)],
+    force: Annotated[bool, Option("--force", "-y", help="overwrite output file without asking")] = False,
 ) -> None:
+    # preprocess args
+    output_file, input_file = preprocess_args(output_file, input_file, force)
+
     # run
     with Cleaner(
         input_file=input_file,

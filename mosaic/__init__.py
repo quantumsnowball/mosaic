@@ -4,7 +4,7 @@ import typer
 
 from mosaic.free import app as free
 from mosaic.jobs import jobs
-from mosaic.lada import lada
+from mosaic.lada import app as lada
 from mosaic.upscale import app as upscale
 from mosaic.utils.logging import setup_logger
 
@@ -31,6 +31,6 @@ def version() -> None:
 
 app.add_typer(free)
 app.add_typer(upscale)
+app.add_typer(lada)
 
-# mosaic.add_command(lada)
 # mosaic.add_command(jobs)
