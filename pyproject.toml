@@ -10,13 +10,13 @@ authors = [
     { name = "Quantum Snowball", email = "quantum.snowball@gmail.com" }
 ]
 dependencies = [
-    'click',
     'torch',
     'torchvision',
     'opencv-python',
     'alive-progress',
     'textual',
     'textual-dev',
+    "typer",
 ]
 requires-python = ">=3.14"
 
