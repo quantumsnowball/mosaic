@@ -324,6 +324,7 @@ source = { editable = "." }
 dependencies = [
     { name = "alive-progress" },
     { name = "opencv-python" },
+    { name = "rich" },
     { name = "textual" },
     { name = "textual-dev" },
     { name = "torch" },
@@ -335,6 +336,7 @@ dependencies = [
 requires-dist = [
     { name = "alive-progress" },
     { name = "opencv-python" },
+    { name = "rich", specifier = ">=14.2.0" },
     { name = "textual" },
     { name = "textual-dev" },
     { name = "torch" },
