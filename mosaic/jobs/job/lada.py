@@ -5,11 +5,10 @@ from pathlib import Path
 from typing import Self, override
 from uuid import uuid4
 
-import click
-
 from mosaic.jobs.job.base import Job, Save
 from mosaic.lada.cleaner import Cleaner
 from mosaic.utils import PACKAGE_ROOT
+from mosaic.utils.console import print
 from mosaic.utils.logging import log
 from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
@@ -25,7 +24,7 @@ class LadaJob(Job):
     def proceed(self) -> None:
         # loop through available tasks
         while task := self.checklist.next_task():
-            click.echo(self.progress(task.name))
+            print(self.progress(task.name), highlight=False)
 
             with Cleaner(
                 input_file=self._input_dirpath / task.name,

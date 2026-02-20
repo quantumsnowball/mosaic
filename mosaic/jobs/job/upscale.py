@@ -5,13 +5,12 @@ from pathlib import Path
 from typing import Self, override
 from uuid import UUID, uuid4
 
-import click
-
 from mosaic.jobs.job.base import Job, Save
 from mosaic.jobs.utils import Command
 from mosaic.upscale.net import presets
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler import Upscaler
+from mosaic.utils.console import print
 from mosaic.utils.logging import log
 from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
@@ -63,7 +62,7 @@ class UpscaleJob(Job):
     def proceed(self) -> None:
         # loop through available tasks
         while task := self.checklist.next_task():
-            click.echo(self.progress(task.name))
+            print(self.progress(task.name), highlight=False)
 
             # load upsampler
             net = presets[self.model]
