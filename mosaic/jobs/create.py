@@ -67,7 +67,7 @@ class Args:
         scale: OutputResolution = '1080p'
 
 
-@app.command()
+@app.command(no_args_is_help=True)
 @service()
 def free(
     input_file: Args.input_file,
@@ -86,7 +86,7 @@ def free(
         job.initialize()
 
 
-@app.command()
+@app.command(no_args_is_help=True)
 @service()
 def lada(
     input_file: Args.input_file,
@@ -105,7 +105,7 @@ def lada(
         job.initialize()
 
 
-@app.command()
+@app.command(no_args_is_help=True)
 @service()
 def copy(
     input_file: Args.input_file,
@@ -124,7 +124,7 @@ def copy(
         job.initialize()
 
 
-@app.command()
+@app.command(no_args_is_help=True)
 @service()
 def upscale(
     input_file: Args.input_file,
