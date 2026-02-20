@@ -62,7 +62,9 @@ class Args:
     scale = Annotated[OutputResolution, Option("--scale", "-s", help="output scale")]
 
     class default:
-        segment_time = parse_hms('00:05:00')
+        segment_time: HMS = parse_hms('00:05:00')
+        model: ModelNames = 'realesr_animevideov3'
+        scale: OutputResolution = '1080p'
 
 
 @app.command()
@@ -122,19 +124,14 @@ def copy(
         job.initialize()
 
 
-# @create.command
-@args.input_file
-@args.segment_time
-@args.model
-@args.scale
-@args.output_file
+@app.command()
 @service()
 def upscale(
-    input_file: Path,
-    segment_time: HMS,
-    model: str,
-    scale: str,
-    output_file: Path,
+    input_file: Args.input_file,
+    output_file: Args.output_file,
+    model: Args.model = Args.default.model,
+    scale: Args.scale = Args.default.scale,
+    segment_time: Args.segment_time = Args.default.segment_time,
 ) -> None:
     # create a new job
     with UpscaleJob.create(
