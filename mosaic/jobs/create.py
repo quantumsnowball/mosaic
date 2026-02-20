@@ -84,15 +84,12 @@ def free(
         job.initialize()
 
 
-# @create.command
-@args.input_file
-@args.segment_time
-@args.output_file
+@app.command()
 @service()
 def lada(
-    input_file: Path,
-    segment_time: HMS,
-    output_file: Path,
+    input_file: Args.input_file,
+    output_file: Args.output_file,
+    segment_time: Args.segment_time = Args.default.segment_time,
 ) -> None:
     # create a new job
     with LadaJob.create(
