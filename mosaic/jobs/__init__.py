@@ -1,3 +1,5 @@
+import os
+
 import click
 
 from mosaic.jobs.clean import clean
@@ -6,20 +8,23 @@ from mosaic.jobs.delete import delete
 from mosaic.jobs.ls import ls
 from mosaic.jobs.run import run
 from mosaic.jobs.select import select
-from mosaic.jobs.tui import Dashboard
+from mosaic.jobs.tui import Main
 from mosaic.utils.service import service
 
 
 @click.group(invoke_without_command=True)
+@click.option("--debug", is_flag=True, help="Enable Textual developer tools")
 @click.pass_context
 @service()
-def jobs(ctx: click.Context) -> None:
+def jobs(ctx: click.Context, debug: bool) -> None:
     # jobs can be a standalone command
     if ctx.invoked_subcommand:
         return
 
-    # pass
-    app = Dashboard()
+    if debug:
+        os.environ["TEXTUAL"] = "devtools"
+
+    app = Main()
     app.run()
 
 

@@ -15,7 +15,8 @@ dependencies = [
     'torchvision',
     'opencv-python',
     'alive-progress',
-    "textual",
+    'textual',
+    'textual-dev',
 ]
 requires-python = ">=3.14"
 

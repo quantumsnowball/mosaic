@@ -4,31 +4,42 @@ from mosaic.jobs.job.base import Job
 from mosaic.utils.ffprobe import FFprobe
 
 
-def job_info(job: Job, i: int | None = None, *, verbose: bool = False) -> str:
+def job_info(
+    job: Job,
+    i: int | None = None,
+    *,
+    verbose: bool = False,
+    textual_color: bool = False,
+) -> str:
     dim = 'dim ' if job.is_finished else ''
     width = 16
     indent = 2
 
+    def color(name: str) -> str:
+        if not textual_color:
+            return name
+        return f'ansi_{name}'
+
     def r(txt: str) -> str:
-        return f'[{dim}red]{txt}[/]'
+        return f'[{dim}{color('red')}]{txt}[/]'
 
     def g(txt: str) -> str:
-        return f'[{dim}green]{txt}[/]'
+        return f'[{dim}{color('green')}]{txt}[/]'
 
     def y(txt: str) -> str:
-        return f'[{dim}yellow]{txt}[/]'
+        return f'[{dim}{color('yellow')}]{txt}[/]'
 
     def b(txt: str) -> str:
-        return f'[{dim}blue]{txt}[/]'
+        return f'[{dim}{color('blue')}]{txt}[/]'
 
     def m(txt: str) -> str:
-        return f'[{dim}magenta]{txt}[/]'
+        return f'[{dim}{color('magenta')}]{txt}[/]'
 
     def c(txt: str) -> str:
-        return f'[{dim}cyan]{txt}[/]'
+        return f'[{dim}{color('cyan')}]{txt}[/]'
 
     def w(txt: str) -> str:
-        return f'[{dim}white]{txt}[/]'
+        return f'[{dim}{color('white')}]{txt}[/]'
 
     def title() -> str:
         index = f'{i+1}. ' if i is not None else 'Job: '

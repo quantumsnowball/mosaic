@@ -1,29 +1,37 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Footer, Header, Label, ListItem, ListView
+from textual.containers import Center, Middle, Vertical
+from textual.screen import ModalScreen
+from textual.widgets import Footer, Header, Label, ProgressBar
 
-from mosaic.jobs.manager import Manager
-from mosaic.jobs.text import job_info
+from mosaic.jobs.tui.create import FileList
+from mosaic.jobs.tui.delete import JobList
 
 
-# 1. Define the TUI Layout
-class Dashboard(App):
+class Main(App):
     """A simple Textual TUI for managing jobs."""
-    BINDINGS = [("q", "quit", "Quit")]
+
+    TITLE = 'Mosaic TUI'
+    from .bindings import main as BINDINGS
+    from .styles import main as CSS
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.job_list = JobList(self)
+        self.directory_tree = FileList(self)
 
     def compose(self) -> ComposeResult:
         # header
         yield Header()
 
-        # Create a scrollable list of items
-        yield ListView(id="job_list")
+        # container widgets
+        yield self.directory_tree
+        yield self.job_list
 
         # footer
         yield Footer()
 
     async def on_mount(self) -> None:
-        # Populate the list after the UI has started
-        job_list = self.query_one("#job_list", ListView)
-        with Manager() as manager:
-            for job in manager.jobs:
-                info = job_info(job)
-                await job_list.append(ListItem(Label(info)))
+        await self.job_list.list_view.populate()
+
+    def action_delete(self) -> None:
+        self.job_list.confirmation.prompt()
