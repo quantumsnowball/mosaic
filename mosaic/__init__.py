@@ -1,6 +1,6 @@
 import importlib.metadata as meta
 
-import click
+import typer
 
 from mosaic.free import free
 from mosaic.jobs import jobs
@@ -13,17 +13,23 @@ setup_logger()
 NAME = 'mosaic'
 
 
-@click.group()
-def mosaic() -> None:
+app = typer.Typer(no_args_is_help=True)
+
+
+@app.callback()
+def main() -> None:
+    """
+    mosaic: a multi-feature video restoration tool
+    """
     pass
 
 
-@mosaic.command
+@app.command()
 def version() -> None:
     print(f'v{meta.version(NAME)}')
 
 
-mosaic.add_command(free)
-mosaic.add_command(lada)
-mosaic.add_command(upscale)
-mosaic.add_command(jobs)
+# mosaic.add_command(free)
+# mosaic.add_command(lada)
+# mosaic.add_command(upscale)
+# mosaic.add_command(jobs)
