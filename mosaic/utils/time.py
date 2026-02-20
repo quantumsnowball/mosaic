@@ -70,7 +70,9 @@ class HMSParamType(click.ParamType):
         return HMS(hours, minutes, seconds)
 
 
-def parse_hms(value: str) -> HMS:
+def parse_hms(value: HMS | str) -> HMS:
+    if isinstance(value, HMS):
+        return value
     time_pattern = re.compile(r'^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$')
     if not time_pattern.match(value):
         raise BadParameter('Invalid time format. Please provide time in HH:MM:SS format.')
