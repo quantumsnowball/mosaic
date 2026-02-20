@@ -1,39 +1,39 @@
 from pathlib import Path
+from typing import Annotated, Optional
 
-import click
+import typer
+from typer import Argument, Option
 
-import mosaic.upscale.args as args
-from mosaic.upscale.net import PRESETS, presets
+from mosaic.upscale.args import preprocess_args
+from mosaic.upscale.net import ModelNames, OutputResolution, presets
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler import Upscaler
 from mosaic.utils.logging import log
-from mosaic.utils.path import PathParamType
 from mosaic.utils.service import service
-from mosaic.utils.time import HMS, HMSParamType
+from mosaic.utils.time import HMS, parse_hms
 
 PACKAGE_DIR = Path(__file__).parent
 
 
-@click.command()
-@click.option('-i', '--input-file', required=True, type=PathParamType(), help='input media path')
-@click.option('-ss', '--start-time', default=None, type=HMSParamType(), help='start time in HH:MM:SS')
-@click.option('-to', '--end-time', default=None, type=HMSParamType(), help='end time in HH:MM:SS')
-@click.option('-m', '--model', default='realesr_animevideov3', type=click.Choice(PRESETS), help='Real-ESRGAN model choices')
-@click.option('-s', '--scale', default='1080p', type=click.Choice(('720p', '1080p', '1440p', '2160p')), help='output scale')
-@click.option('-y', '--force', is_flag=True, default=False, help='overwrite output file without asking')
-@click.option('--raw-info', is_flag=True, default=False, help='display raw ffmpeg info')
-@click.argument('output-file', required=True, type=PathParamType())
+app = typer.Typer()
+
+
+@app.command(no_args_is_help=True)
 @service()
-@args.preprocess
 def upscale(
-    input_file: Path,
-    start_time: HMS | None,
-    end_time: HMS | None,
-    model: str,
-    scale: str,
-    raw_info: bool,
-    output_file: Path,
+    output_file: Annotated[Path, Argument(help="output file path")],
+    input_file: Annotated[Path, Option("--input-file", "-i", help="input media path")],
+    start_time: Annotated[Optional[HMS], Option("--start-time", "-ss", parser=parse_hms, help="start time in HH:MM:SS")] = None,
+    end_time: Annotated[Optional[HMS], Option("--end-time", "-to", parser=parse_hms, help="end time in HH:MM:SS")] = None,
+    model: Annotated[ModelNames, Option("--model", "-m", help='Real-ESRGAN model choices')] = "realesr_animevideov3",
+    scale: Annotated[OutputResolution, Option("--scale", "-s", help="output scale")] = "1080p",
+    force: Annotated[bool, Option("--force", "-y", help="overwrite output file without asking")] = False,
+    raw_info: Annotated[bool, Option("--raw-info", help="display raw ffmpeg info")] = False,
 ) -> None:
+    # preprocess args
+    output_file, input_file, start_time, end_time, model, scale, raw_info = preprocess_args(
+        output_file, input_file, start_time, end_time, model, scale, force, raw_info)
+
     # load upsampler
     net = presets[model]
     upsampler = RealESRGANer(

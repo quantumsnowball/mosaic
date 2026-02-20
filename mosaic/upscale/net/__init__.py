@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Literal, get_args
 
 from mosaic.upscale.net.rrdb_net import RRDBNet
 from mosaic.upscale.net.srvgg_net import SRVGGNetCompact
@@ -18,8 +19,18 @@ class Preset:
         return PACKAGE_DIR/f'state_dicts/{self.filename}'
 
 
-presets = dict(
-    RealESRGAN_x4plus=Preset(
+ModelNames = Literal[
+    'RealESRGAN_x4plus',
+    'RealESRNet_x4plus',
+    'RealESRGAN_x4plus_anime_6B',
+    'RealESRGAN_x2plus',
+    'realesr_animevideov3',
+]
+
+PRESETS = get_args(ModelNames)  # to be delete
+
+presets = {k: v for k, v in zip(get_args(ModelNames), (
+    Preset(
         # 67 MB
         filename='RealESRGAN_x4plus.pth',
         model=RRDBNet(
@@ -32,7 +43,7 @@ presets = dict(
         ),
         scale=4,
     ),
-    RealESRNet_x4plus=Preset(
+    Preset(
         # 67 MB
         filename='RealESRNet_x4plus.pth',
         model=RRDBNet(
@@ -45,7 +56,7 @@ presets = dict(
         ),
         scale=4,
     ),
-    RealESRGAN_x4plus_anime_6B=Preset(
+    Preset(
         # 17 MB
         filename='RealESRGAN_x4plus_anime_6B.pth',
         model=RRDBNet(
@@ -58,7 +69,7 @@ presets = dict(
         ),
         scale=4,
     ),
-    RealESRGAN_x2plus=Preset(
+    Preset(
         # 67 MB
         filename='RealESRGAN_x2plus.pth',
         model=RRDBNet(
@@ -71,7 +82,7 @@ presets = dict(
         ),
         scale=2,
     ),
-    realesr_animevideov3=Preset(
+    Preset(
         # 2.39 MB
         filename='realesr-animevideov3.pth',
         model=SRVGGNetCompact(
@@ -84,6 +95,6 @@ presets = dict(
         ),
         scale=4,
     )
-)
+))}
 
-PRESETS = tuple(presets.keys())
+OutputResolution = Literal["720p", "1080p", "1440p", "2160p"]
