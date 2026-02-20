@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import click
+import typer
 
 from mosaic.jobs.job.copy import CopyJob
 from mosaic.jobs.job.free import FreeJob
@@ -11,10 +12,7 @@ from mosaic.utils.path import PathParamType
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, HMSParamType
 
-
-@click.group
-def create() -> None:
-    pass
+app = typer.Typer(no_args_is_help=True, help="create a jobs")
 
 
 class args:
@@ -54,7 +52,7 @@ class args:
     )
 
 
-@create.command
+# @create.command
 @args.input_file
 @args.segment_time
 @args.output_file
@@ -76,7 +74,7 @@ def free(
         job.initialize()
 
 
-@create.command
+# @create.command
 @args.input_file
 @args.segment_time
 @args.output_file
@@ -98,7 +96,7 @@ def lada(
         job.initialize()
 
 
-@create.command
+# @create.command
 @args.input_file
 @args.segment_time
 @args.output_file
@@ -120,7 +118,7 @@ def copy(
         job.initialize()
 
 
-@create.command
+# @create.command
 @args.input_file
 @args.segment_time
 @args.model
