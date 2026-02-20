@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from textual.widgets import DirectoryTree
 
 from mosaic.jobs.job.lada import LadaJob
+from mosaic.jobs.tui.create.progress import CreateJobProgressBar
 from mosaic.jobs.tui.create.save import SaveAsModalScreen
 from mosaic.utils.time import HMS
 
@@ -24,21 +25,19 @@ class FileTree(DirectoryTree):
     def on_directory_tree_file_selected(self, event: DirectoryTree.FileSelected) -> None:
         abs_path = event.path
         rel_path = abs_path.relative_to(Path.cwd())
-        self.open_in_vlc(rel_path)
 
-    def open_in_vlc(self, target_path: Path) -> None:
-        # try Linux VLC first
+        # try open in Linux VLC first
         if shutil.which("vlc"):
-            subprocess.Popen(["vlc", target_path], stdout=DEVNULL, stderr=DEVNULL)
-            self.main.notify(f"Opening in Linux VLC: {target_path}")
+            subprocess.Popen(["vlc", rel_path], stdout=DEVNULL, stderr=DEVNULL)
+            self.main.notify(f"Opening in Linux VLC: {rel_path}")
             return
 
-        # try Windows VLC Fallback
+        # try open in Windows VLC Fallback
         vlc_win_path = Path("/mnt/c/Program Files/VideoLAN/VLC/vlc.exe")
         if vlc_win_path.exists():
-            target_win_path = subprocess.check_output(["wslpath", "-w", str(target_path)], text=True).strip()
+            target_win_path = subprocess.check_output(["wslpath", "-w", str(rel_path)], text=True).strip()
             subprocess.Popen([vlc_win_path, target_win_path], stdout=DEVNULL, stderr=DEVNULL)
-            self.main.notify(f"Opening in Windows VLC: {target_path}")
+            self.main.notify(f"Opening in Windows VLC: {rel_path}")
             return
 
         self.main.notify("VLC not found on Linux or Windows path.", severity="error")
@@ -55,21 +54,26 @@ class FileTree(DirectoryTree):
             self.notify('Select a valid file to create lada job')
             return
 
-        async def handle_submit(user_input: str | None) -> None:
-            if user_input:
-                output_rel_path = Path(user_input)
-                self.main.notify(f"Creating job: {input_rel_path} -> {output_rel_path}")
-                with LadaJob.create(
-                    segment_time=HMS(0, 5, 0),
-                    input_file=input_rel_path,
-                    output_file=output_rel_path,
-                ) as job:
-                    # save
-                    job.save()
-                    # initialize
-                    job.initialize()
-                await self.main.job_list.list_view.populate()
-            else:
-                self.notify("Job creation cancelled")
+        def init_lada_job(input_file: Path, output_file: Path) -> None:
+            with LadaJob.create(
+                segment_time=HMS(0, 5, 0),
+                input_file=input_file,
+                output_file=output_file,
+            ) as job:
+                # save
+                job.save()
+                # initialize
+                job.initialize(progress_bar_cls=CreateJobProgressBar.bind(self.main))
 
-        self.main.push_screen(SaveAsModalScreen(input_rel_path), handle_submit)
+            # populate job list again after adding job
+            self.main.call_from_thread(self.main.run_worker, self.main.job_list.list_view.populate)
+            self.main.call_from_thread(self.main.notify, "Lada job created successfully")
+
+        def handle_submit(user_input: str | None) -> None:
+            if not user_input:
+                self.notify("Job creation cancelled")
+                return
+            output_rel_path = Path(user_input)
+            self.run_worker(lambda: init_lada_job(input_rel_path, output_rel_path), thread=True)
+
+        self.main.push_screen(SaveAsModalScreen(input_rel_path.name), handle_submit)
