@@ -1,16 +1,18 @@
 from pathlib import Path
+from typing import Annotated
 
 import click
 import typer
+from typer import Argument, Option
 
 from mosaic.jobs.job.copy import CopyJob
 from mosaic.jobs.job.free import FreeJob
 from mosaic.jobs.job.lada import LadaJob
 from mosaic.jobs.job.upscale import UpscaleJob
-from mosaic.upscale.net import PRESETS
+from mosaic.upscale.net import PRESETS, ModelNames, OutputResolution
 from mosaic.utils.path import PathParamType
 from mosaic.utils.service import service
-from mosaic.utils.time import HMS, HMSParamType
+from mosaic.utils.time import HMS, HMSParamType, parse_hms
 
 app = typer.Typer(no_args_is_help=True, help="create a jobs")
 
@@ -52,15 +54,23 @@ class args:
     )
 
 
-# @create.command
-@args.input_file
-@args.segment_time
-@args.output_file
+class Args:
+    input_file = Annotated[Path, Option("--input-file", "-i", help="input media path")]
+    segment_time = Annotated[HMS, Option("--segment-time", "-sg", parser=parse_hms, help="segment time")]
+    output_file = Annotated[Path, Argument(help="output media path")]
+    model = Annotated[ModelNames, Option("--model", "-m", help='Real-ESRGAN model choices')]
+    scale = Annotated[OutputResolution, Option("--scale", "-s", help="output scale")]
+
+    class default:
+        segment_time = parse_hms('00:05:00')
+
+
+@app.command()
 @service()
 def free(
-    input_file: Path,
-    segment_time: HMS,
-    output_file: Path,
+    input_file: Args.input_file,
+    output_file: Args.output_file,
+    segment_time: Args.segment_time = Args.default.segment_time,
 ) -> None:
     # create a new job
     with FreeJob.create(
