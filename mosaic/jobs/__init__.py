@@ -6,7 +6,7 @@ import typer
 from mosaic.jobs.clean import app as clean
 from mosaic.jobs.create import create
 from mosaic.jobs.delete import app as delete
-from mosaic.jobs.ls import ls
+from mosaic.jobs.ls import app as ls
 from mosaic.jobs.run import app as run
 from mosaic.jobs.select import app as select
 from mosaic.jobs.tui import Main
@@ -39,4 +39,4 @@ app.add_typer(select)
 app.add_typer(run)
 app.add_typer(clean)
 app.add_typer(delete)
-# jobs.add_command(ls)
+app.add_typer(ls)

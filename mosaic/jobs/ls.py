@@ -1,13 +1,19 @@
-import click
+from typing import Annotated
+
+import typer
+from typer import Option
 
 from mosaic.jobs.manager import Manager
 from mosaic.utils.service import service
 
+app = typer.Typer()
 
-@click.command
-@click.option('-v', '--verbose', is_flag=True, default=False, help='Enable verbose output')
+
+@app.command()
 @service(mkdir=False)
-def ls(verbose: bool) -> None:
+def ls(
+    verbose: Annotated[bool, Option("--verbose", "-v", help="enable verbose output")] = False,
+) -> None:
     # search for jobs
     with Manager() as manager:
 
