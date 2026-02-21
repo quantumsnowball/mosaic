@@ -6,13 +6,14 @@ from tempfile import NamedTemporaryFile
 from typing import Self
 from uuid import UUID
 
-from mosaic.jobs.job._checklist import Checklist
-from mosaic.jobs.job._utils import prompt_overwrite_output
 from mosaic.jobs.utils import JOBS_DIR, Command
 from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.logging import log
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.time import HMS
+
+from ._checklist import Checklist
+from ._utils import prompt_overwrite_output
 
 
 @dataclass

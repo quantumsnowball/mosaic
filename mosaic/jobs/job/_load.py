@@ -4,13 +4,14 @@ from pathlib import Path
 from typing import cast
 from uuid import UUID
 
-from mosaic.jobs.job._base import Job
-from mosaic.jobs.job.copy import CopyJob
-from mosaic.jobs.job.free import FreeJob
-from mosaic.jobs.job.lada import LadaJob
-from mosaic.jobs.job.upscale import UpscaleJob
 from mosaic.jobs.utils import Command
 from mosaic.utils.time import HMS
+
+from ._base import Job
+from .copy import CopyJob
+from .free import FreeJob
+from .lada import LadaJob
+from .upscale import UpscaleJob
 
 
 def load_job(

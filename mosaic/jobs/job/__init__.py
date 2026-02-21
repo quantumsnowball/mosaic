@@ -1,5 +1,5 @@
-from mosaic.jobs.job._base import Job
-from mosaic.jobs.job._load import load_job
+from ._base import Job
+from ._load import load_job
 
 __all__ = (
     'Job',
