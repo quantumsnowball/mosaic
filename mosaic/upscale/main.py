@@ -4,13 +4,14 @@ from typing import Annotated, Optional
 import typer
 from typer import Argument, Option
 
-from mosaic.upscale.args import preprocess_args
-from mosaic.upscale.net import ModelNames, OutputResolution, presets
-from mosaic.upscale.net.real_esrgan import RealESRGANer
-from mosaic.upscale.upscaler import Upscaler
 from mosaic.utils.logging import log
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, parse_hms
+
+from ._args import preprocess_args
+from .net import ModelNames, OutputResolution, presets
+from .net.real_esrgan import RealESRGANer
+from .upscaler import Upscaler
 
 PACKAGE_DIR = Path(__file__).parent
 

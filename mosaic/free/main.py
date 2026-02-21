@@ -4,13 +4,14 @@ from typing import Annotated
 import typer
 from typer import Argument, Option
 
-from mosaic.free.args import preprocess_args
-from mosaic.free.cleaner import Cleaner
-from mosaic.free.net.netG import video
-from mosaic.free.net.netM import bisenet
 from mosaic.utils.logging import log
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, parse_hms
+
+from ._args import preprocess_args
+from .cleaner import Cleaner
+from .net.netG import video
+from .net.netM import bisenet
 
 PACKAGE_DIR = Path(__file__).parent
 

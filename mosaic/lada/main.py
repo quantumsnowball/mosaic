@@ -4,10 +4,11 @@ from typing import Annotated
 import typer
 from typer import Argument, Option
 
-from mosaic.lada.args import preprocess_args
-from mosaic.lada.cleaner import Cleaner
 from mosaic.utils.logging import log
 from mosaic.utils.service import service
+
+from ._args import preprocess_args
+from .cleaner import Cleaner
 
 PACKAGE_DIR = Path(__file__).parent
 
