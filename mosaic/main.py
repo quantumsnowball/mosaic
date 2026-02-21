@@ -2,11 +2,11 @@ import importlib.metadata as meta
 
 import typer
 
-from mosaic.free import app as free
-from mosaic.jobs import app as jobs
-from mosaic.lada import app as lada
-from mosaic.upscale import app as upscale
-from mosaic.utils.logging import setup_logger
+from .free import app as free
+from .jobs import app as jobs
+from .lada import app as lada
+from .upscale import app as upscale
+from .utils.logging import setup_logger
 
 setup_logger()
 
