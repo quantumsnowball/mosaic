@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from mosaic.jobs.job.base import Job
+from mosaic.jobs.job import Job
 from mosaic.utils.ffprobe import FFprobe
 
 
