@@ -6,7 +6,7 @@ from tempfile import NamedTemporaryFile
 from typing import Self
 from uuid import UUID
 
-from mosaic.jobs.job.checklist import Checklist
+from mosaic.jobs.job._checklist import Checklist
 from mosaic.jobs.job.utils import prompt_overwrite_output
 from mosaic.jobs.utils import JOBS_DIR, Command
 from mosaic.utils.ffmpeg import FFmpeg
