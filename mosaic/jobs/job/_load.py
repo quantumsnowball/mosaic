@@ -2,9 +2,9 @@ import json
 from datetime import datetime
 from pathlib import Path
 from typing import cast
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from mosaic.jobs.job.base import Job
+from mosaic.jobs.job._base import Job
 from mosaic.jobs.job.copy import CopyJob
 from mosaic.jobs.job.free import FreeJob
 from mosaic.jobs.job.lada import LadaJob

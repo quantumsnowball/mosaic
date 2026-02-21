@@ -1,7 +1,7 @@
 from textual.app import ComposeResult
 from textual.widgets import Label, ListItem, ListView
 
-from mosaic.jobs.job.base import Job
+from mosaic.jobs.job import Job
 from mosaic.jobs.manager import Manager
 from mosaic.jobs.text import job_info
 

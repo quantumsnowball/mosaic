@@ -3,8 +3,7 @@ from typing import Generator, Iterable, Self
 
 from rich.prompt import Confirm, IntPrompt
 
-from mosaic.jobs.job import load_job
-from mosaic.jobs.job.base import Job
+from mosaic.jobs.job import Job, load_job
 from mosaic.jobs.text import job_info
 from mosaic.jobs.utils import JOBS_DIR
 from mosaic.utils.console import stderr, stdout
