@@ -6,8 +6,6 @@ from tempfile import NamedTemporaryFile
 from typing import Self
 from uuid import UUID
 
-from click import style
-
 from mosaic.jobs.job.checklist import Checklist
 from mosaic.jobs.job.utils import prompt_overwrite_output
 from mosaic.jobs.utils import JOBS_DIR, Command
@@ -190,14 +188,14 @@ class Job(ABC):
     @abstractmethod
     def save(self) -> None: ...
 
-    def progress(self, name: str):
+    def progress(self, name: str) -> str:
         done = self.checklist.count_finished
         total = self.checklist.count
         pct = (done + 0.5) / total
         return (
             '\n' +
             f'{name}  ' +
-            style(f'{pct:.2%}', fg='red') + ', ' +
-            style(f'{done+1} / {total} ', fg='yellow') + 'on going, ' +
-            style(f'{self.segment_time} ', fg='yellow') + 'long'
+            f'[red]{pct:.2%}[/]' + ', ' +
+            f'[yellow]{done+1} / {total}[/] ' + 'on going, ' +
+            f'[yellow]{self.segment_time}[/] ' + 'long'
         )

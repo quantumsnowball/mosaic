@@ -10,13 +10,14 @@ authors = [
     { name = "Quantum Snowball", email = "quantum.snowball@gmail.com" }
 ]
 dependencies = [
-    'click',
     'torch',
     'torchvision',
     'opencv-python',
     'alive-progress',
     'textual',
     'textual-dev',
+    "typer",
+    "rich",
 ]
 requires-python = ">=3.14"
 
@@ -24,7 +25,7 @@ requires-python = ">=3.14"
 Homepage = "https://github.com/quantumsnowball/mosaic"
 
 [project.scripts]
-mosaic = "mosaic:mosaic"
+mosaic = "mosaic:app"
 
 [tool.pyright]
 venvPath = "./"

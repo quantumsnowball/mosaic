@@ -1,29 +1,5 @@
-import importlib.metadata as meta
+from mosaic.main import app
 
-import click
-
-from mosaic.free import free
-from mosaic.jobs import jobs
-from mosaic.lada import lada
-from mosaic.upscale import upscale
-from mosaic.utils.logging import setup_logger
-
-setup_logger()
-
-NAME = 'mosaic'
-
-
-@click.group()
-def mosaic() -> None:
-    pass
-
-
-@mosaic.command
-def version() -> None:
-    print(f'v{meta.version(NAME)}')
-
-
-mosaic.add_command(free)
-mosaic.add_command(lada)
-mosaic.add_command(upscale)
-mosaic.add_command(jobs)
+__all__ = [
+    'app',
+]

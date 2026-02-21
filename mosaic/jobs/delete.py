@@ -1,10 +1,12 @@
-import click
+import typer
 
 from mosaic.jobs.manager import Manager
 from mosaic.utils.service import service
 
+app = typer.Typer()
 
-@click.command
+
+@app.command()
 @service(mkdir=False)
 def delete() -> None:
     # search for jobs

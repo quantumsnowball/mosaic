@@ -1,13 +1,15 @@
-import click
 import rich
+import typer
 
 from mosaic.jobs.manager import Manager
 from mosaic.jobs.text import job_info
 from mosaic.utils.logging import log
 from mosaic.utils.service import service
 
+app = typer.Typer()
 
-@click.command
+
+@app.command()
 @service()
 def run() -> None:
     # create menu and discover jobs
