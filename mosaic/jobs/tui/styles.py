@@ -1,4 +1,4 @@
-main = """
+main = '''
     .section {
         border: round $primary 30%;     
         border-title-align: center;
@@ -13,4 +13,4 @@ main = """
         /* a very faint background */
         background: $accent 25%;
     }
-"""
+'''

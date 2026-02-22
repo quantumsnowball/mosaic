@@ -1,4 +1,4 @@
-save_as_model_screen = """
+save_as_model_screen = '''
     SaveAsModalScreen {
         align: center middle;
         background: $background 50%;
@@ -18,9 +18,9 @@ save_as_model_screen = """
         min-width: 100%;
         max-width: 100%;
     }
-"""
+'''
 
-progress_bar_model_screen = """
+progress_bar_model_screen = '''
     ProgressBarModalScreen {
         align: center middle;
         background: $background 50%;
@@ -32,4 +32,4 @@ progress_bar_model_screen = """
         background: $surface;
         border: thick $primary;
     }
-"""
+'''

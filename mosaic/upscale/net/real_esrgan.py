@@ -3,8 +3,6 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from mosaic.upscale.net.rrdb_net import RRDBNet
-
 
 class RealESRGANer:
     '''A helper class for upsampling images with RealESRGAN.
