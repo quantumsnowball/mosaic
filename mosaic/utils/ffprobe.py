@@ -132,7 +132,7 @@ class FFprobe:
     @property
     def video(self) -> tuple[VideoStream, ...]:
         if len(self.streams) <= 0:
-            raise ValueError("No video stream found.")
+            raise ValueError('No video stream found.')
         return tuple(VideoStream(s)
                      for s in self.streams
                      if s['codec_type'] == 'video')

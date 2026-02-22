@@ -18,9 +18,9 @@ app = typer.Typer(no_args_is_help=True)
 
 @app.callback()
 def main() -> None:
-    """
+    '''
     mosaic: a multi-feature video restoration tool
-    """
+    '''
     pass
 
 

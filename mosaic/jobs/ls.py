@@ -12,7 +12,7 @@ app = typer.Typer()
 @app.command()
 @service(mkdir=False)
 def ls(
-    verbose: Annotated[bool, Option("--verbose", "-v", help="enable verbose output")] = False,
+    verbose: Annotated[bool, Option('--verbose', '-v', help='enable verbose output')] = False,
 ) -> None:
     # search for jobs
     with Manager() as manager:

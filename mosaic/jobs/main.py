@@ -20,7 +20,7 @@ app = typer.Typer()
 @service()
 def jobs(
     ctx: typer.Context,
-    debug: Annotated[bool, typer.Option("--debug", help="Enable Textual developer tools")] = False,
+    debug: Annotated[bool, typer.Option('--debug', help='Enable Textual developer tools')] = False,
 ) -> None:
     # jobs can be a standalone command
     if ctx.invoked_subcommand is not None:
@@ -28,7 +28,7 @@ def jobs(
 
     # debug mode, to be used with textual console
     if debug:
-        os.environ["TEXTUAL"] = "devtools"
+        os.environ['TEXTUAL'] = 'devtools'
 
     # textual main app
     app = Main()

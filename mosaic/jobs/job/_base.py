@@ -67,7 +67,7 @@ class Job(ABC):
         self.id = id
         self.timestamp = timestamp
         self.timestamp_iso = self.timestamp.isoformat()
-        self.timestamp_pp = self.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        self.timestamp_pp = self.timestamp.strftime('%Y-%m-%d %H:%M:%S')
         self.segment_time = segment_time
         self.input_file = input_file
         self.output_file = output_file

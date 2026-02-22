@@ -12,7 +12,7 @@ app = typer.Typer()
 @app.command()
 @service(mkdir=False)
 def clean(
-    clear_all_jobs: Annotated[bool, Option("--clear-all-jobs", help="clear all jobs")] = False,
+    clear_all_jobs: Annotated[bool, Option('--clear-all-jobs', help='clear all jobs')] = False,
 ) -> None:
     # search for jobs
     with Manager() as manager:

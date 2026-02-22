@@ -97,4 +97,4 @@ presets = {k: v for k, v in zip(get_args(ModelNames), (
     )
 ))}
 
-OutputResolution = Literal["720p", "1080p", "1440p", "2160p"]
+OutputResolution = Literal['720p', '1080p', '1440p', '2160p']

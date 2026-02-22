@@ -27,20 +27,20 @@ class FileTree(DirectoryTree):
         rel_path = abs_path.relative_to(Path.cwd())
 
         # try open in Linux VLC first
-        if shutil.which("vlc"):
-            subprocess.Popen(["vlc", rel_path], stdout=DEVNULL, stderr=DEVNULL)
-            self.main.notify(f"Opening in Linux VLC: {rel_path}")
+        if shutil.which('vlc'):
+            subprocess.Popen(['vlc', rel_path], stdout=DEVNULL, stderr=DEVNULL)
+            self.main.notify(f'Opening in Linux VLC: {rel_path}')
             return
 
         # try open in Windows VLC Fallback
-        vlc_win_path = Path("/mnt/c/Program Files/VideoLAN/VLC/vlc.exe")
+        vlc_win_path = Path('/mnt/c/Program Files/VideoLAN/VLC/vlc.exe')
         if vlc_win_path.exists():
-            target_win_path = subprocess.check_output(["wslpath", "-w", str(rel_path)], text=True).strip()
+            target_win_path = subprocess.check_output(['wslpath', '-w', str(rel_path)], text=True).strip()
             subprocess.Popen([vlc_win_path, target_win_path], stdout=DEVNULL, stderr=DEVNULL)
-            self.main.notify(f"Opening in Windows VLC: {rel_path}")
+            self.main.notify(f'Opening in Windows VLC: {rel_path}')
             return
 
-        self.main.notify("VLC not found on Linux or Windows path.", severity="error")
+        self.main.notify('VLC not found on Linux or Windows path.', severity='error')
 
     def action_create_lada_job(self) -> None:
         if not self.cursor_node or not self.cursor_node.data:
@@ -67,11 +67,11 @@ class FileTree(DirectoryTree):
 
             # populate job list again after adding job
             self.main.call_from_thread(self.main.run_worker, self.main.job_list.list_view.populate)
-            self.main.call_from_thread(self.main.notify, "Lada job created successfully")
+            self.main.call_from_thread(self.main.notify, 'Lada job created successfully')
 
         def handle_submit(user_input: str | None) -> None:
             if not user_input:
-                self.notify("Job creation cancelled")
+                self.notify('Job creation cancelled')
                 return
             output_rel_path = Path(user_input)
             self.run_worker(lambda: init_lada_job(input_rel_path, output_rel_path), thread=True)

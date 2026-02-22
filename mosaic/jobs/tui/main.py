@@ -6,7 +6,7 @@ from mosaic.jobs.tui.delete import JobList
 
 
 class Main(App):
-    """A simple Textual TUI for managing jobs."""
+    '''A simple Textual TUI for managing jobs.'''
 
     TITLE = 'Mosaic TUI'
     from .bindings import main as BINDINGS

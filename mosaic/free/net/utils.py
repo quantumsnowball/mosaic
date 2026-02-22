@@ -9,7 +9,7 @@ from torch.nn import init
 
 
 def patch_instance_norm_state_dict(state_dict, module, keys, i=0):
-    """Fix InstanceNorm checkpoints incompatibility (prior to 0.4)"""
+    '''Fix InstanceNorm checkpoints incompatibility (prior to 0.4)'''
     key = keys[i]
     if i + 1 == len(keys):  # at the end, pointing to a parameter/buffer
         if module.__class__.__name__.startswith('InstanceNorm') and \
@@ -131,13 +131,13 @@ model_urls = {
 
 
 def conv3x3(in_planes, out_planes, stride=1):
-    """3x3 convolution with padding"""
+    '''3x3 convolution with padding'''
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
                      padding=1, bias=False)
 
 
 def conv1x1(in_planes, out_planes, stride=1):
-    """1x1 convolution"""
+    '''1x1 convolution'''
     return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
 
 
@@ -296,11 +296,11 @@ class ResNet(nn.Module):
 
 
 def resnet18(pretrained=False, **kwargs):
-    """Constructs a ResNet-18 model.
+    '''Constructs a ResNet-18 model.
 
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
+    '''
     model = ResNet(BasicBlock, [2, 2, 2, 2], **kwargs)
     if pretrained:
         model.load_state_dict(model_zoo.load_url(model_urls['resnet18']))

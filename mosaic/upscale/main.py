@@ -22,14 +22,14 @@ app = typer.Typer()
 @app.command(no_args_is_help=True)
 @service()
 def upscale(
-    output_file: Annotated[Path, Argument(help="output file path")],
-    input_file: Annotated[Path, Option("--input-file", "-i", help="input media path")],
-    start_time: Annotated[Optional[HMS], Option("--start-time", "-ss", parser=parse_hms, help="start time in HH:MM:SS")] = None,
-    end_time: Annotated[Optional[HMS], Option("--end-time", "-to", parser=parse_hms, help="end time in HH:MM:SS")] = None,
-    model: Annotated[ModelNames, Option("--model", "-m", help='Real-ESRGAN model choices')] = "realesr_animevideov3",
-    scale: Annotated[OutputResolution, Option("--scale", "-s", help="output scale")] = "1080p",
-    force: Annotated[bool, Option("--force", "-y", help="overwrite output file without asking")] = False,
-    raw_info: Annotated[bool, Option("--raw-info", help="display raw ffmpeg info")] = False,
+    output_file: Annotated[Path, Argument(help='output file path')],
+    input_file: Annotated[Path, Option('--input-file', '-i', help='input media path')],
+    start_time: Annotated[Optional[HMS], Option('--start-time', '-ss', parser=parse_hms, help='start time in HH:MM:SS')] = None,
+    end_time: Annotated[Optional[HMS], Option('--end-time', '-to', parser=parse_hms, help='end time in HH:MM:SS')] = None,
+    model: Annotated[ModelNames, Option('--model', '-m', help='Real-ESRGAN model choices')] = 'realesr_animevideov3',
+    scale: Annotated[OutputResolution, Option('--scale', '-s', help='output scale')] = '1080p',
+    force: Annotated[bool, Option('--force', '-y', help='overwrite output file without asking')] = False,
+    raw_info: Annotated[bool, Option('--raw-info', help='display raw ffmpeg info')] = False,
 ) -> None:
     # preprocess args
     output_file, input_file, start_time, end_time, model, scale, raw_info = preprocess_args(
