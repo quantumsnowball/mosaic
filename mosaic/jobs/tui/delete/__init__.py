@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 from textual.app import ComposeResult
 from textual.containers import Vertical
 
-from mosaic.jobs.tui.delete.confirmation import Confirmation
-from mosaic.jobs.tui.delete.list import JobListView
+from .confirmation import Confirmation
+from .list import JobListView
 
 if TYPE_CHECKING:
     from mosaic.jobs.tui import Main

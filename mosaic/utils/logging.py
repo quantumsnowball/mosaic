@@ -3,8 +3,8 @@ import logging
 import os
 from typing import Callable, ParamSpec, TypeVar
 
-P = ParamSpec("P")
-R = TypeVar("R")
+P = ParamSpec('P')
+R = TypeVar('R')
 
 ToBeWrapped = Callable[P, R]
 Wrapped = Callable[P, R]
@@ -72,7 +72,7 @@ def trace_function(level: int) -> Wrapper:
             # log info before funning the function
             logger.function.log(
                 level,
-                f"CALLED >> {func.__module__}::{func.__qualname__}()"
+                f'CALLED >> {func.__module__}::{func.__qualname__}()'
             )
 
             # run the actual function
@@ -81,7 +81,7 @@ def trace_function(level: int) -> Wrapper:
             # log info after funning the function
             logger.function.log(
                 level,
-                f"          {func.__module__}::{func.__qualname__}() >> RETURN"
+                f'          {func.__module__}::{func.__qualname__}() >> RETURN'
             )
 
             # return the run result

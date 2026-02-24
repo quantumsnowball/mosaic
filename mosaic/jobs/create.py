@@ -4,23 +4,24 @@ from typing import Annotated
 import typer
 from typer import Argument, Option
 
-from mosaic.jobs.job.copy import CopyJob
-from mosaic.jobs.job.free import FreeJob
-from mosaic.jobs.job.lada import LadaJob
-from mosaic.jobs.job.upscale import UpscaleJob
 from mosaic.upscale.net import ModelNames, OutputResolution
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, parse_hms
 
-app = typer.Typer(no_args_is_help=True, help="create a jobs")
+from .job.copy import CopyJob
+from .job.free import FreeJob
+from .job.lada import LadaJob
+from .job.upscale import UpscaleJob
+
+app = typer.Typer(no_args_is_help=True, help='create a jobs')
 
 
 class args:
-    input_file = Annotated[Path, Option("--input-file", "-i", help="input media path")]
-    segment_time = Annotated[HMS, Option("--segment-time", "-sg", parser=parse_hms, help="segment time")]
-    output_file = Annotated[Path, Argument(help="output media path")]
-    model = Annotated[ModelNames, Option("--model", "-m", help='Real-ESRGAN model choices')]
-    scale = Annotated[OutputResolution, Option("--scale", "-s", help="output scale")]
+    input_file = Annotated[Path, Option('--input-file', '-i', help='input media path')]
+    segment_time = Annotated[HMS, Option('--segment-time', '-sg', parser=parse_hms, help='segment time')]
+    output_file = Annotated[Path, Argument(help='output media path')]
+    model = Annotated[ModelNames, Option('--model', '-m', help='Real-ESRGAN model choices')]
+    scale = Annotated[OutputResolution, Option('--scale', '-s', help='output scale')]
 
     class default:
         segment_time: HMS = parse_hms('00:05:00')

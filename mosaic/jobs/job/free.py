@@ -8,12 +8,13 @@ from uuid import uuid4
 from mosaic.free.cleaner import Cleaner
 from mosaic.free.net.netG import video
 from mosaic.free.net.netM import bisenet
-from mosaic.jobs.job._base import Job, Save
 from mosaic.utils import PACKAGE_ROOT
 from mosaic.utils.console import stdout
 from mosaic.utils.logging import log
 from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
+
+from ._base import Job, Save
 
 
 @dataclass

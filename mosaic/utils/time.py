@@ -35,11 +35,11 @@ class HMS:
         return HMS(hours, minutes, seconds)
 
     def __str__(self) -> str:
-        return f"{self.hours:02d}:{self.minutes:02d}:{self.seconds:02d}"
+        return f'{self.hours:02d}:{self.minutes:02d}:{self.seconds:02d}'
 
     @property
     def time_tag(self) -> str:
-        return f"{self.hours:02d}{self.minutes:02d}{self.seconds:02d}"
+        return f'{self.hours:02d}{self.minutes:02d}{self.seconds:02d}'
 
     @classmethod
     def from_str(cls, txt: str) -> Self:

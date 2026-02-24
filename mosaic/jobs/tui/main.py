@@ -1,12 +1,12 @@
 from textual.app import App, ComposeResult
 from textual.widgets import Footer, Header
 
-from mosaic.jobs.tui.create import FileList
-from mosaic.jobs.tui.delete import JobList
+from .create import FileList
+from .delete import JobList
 
 
 class Main(App):
-    """A simple Textual TUI for managing jobs."""
+    '''A simple Textual TUI for managing jobs.'''
 
     TITLE = 'Mosaic TUI'
     from .bindings import main as BINDINGS

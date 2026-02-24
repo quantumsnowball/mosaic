@@ -6,13 +6,14 @@ from tempfile import NamedTemporaryFile
 from typing import Self
 from uuid import UUID
 
-from mosaic.jobs.job._checklist import Checklist
-from mosaic.jobs.job._utils import prompt_overwrite_output
 from mosaic.jobs.utils import JOBS_DIR, Command
 from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.logging import log
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.time import HMS
+
+from ._checklist import Checklist
+from ._utils import prompt_overwrite_output
 
 
 @dataclass
@@ -66,7 +67,7 @@ class Job(ABC):
         self.id = id
         self.timestamp = timestamp
         self.timestamp_iso = self.timestamp.isoformat()
-        self.timestamp_pp = self.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        self.timestamp_pp = self.timestamp.strftime('%Y-%m-%d %H:%M:%S')
         self.segment_time = segment_time
         self.input_file = input_file
         self.output_file = output_file

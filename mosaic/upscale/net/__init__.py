@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, get_args
 
-from mosaic.upscale.net.rrdb_net import RRDBNet
-from mosaic.upscale.net.srvgg_net import SRVGGNetCompact
+from .rrdb_net import RRDBNet
+from .srvgg_net import SRVGGNetCompact
 
 PACKAGE_DIR = Path(__file__).parent
 
@@ -97,4 +97,4 @@ presets = {k: v for k, v in zip(get_args(ModelNames), (
     )
 ))}
 
-OutputResolution = Literal["720p", "1080p", "1440p", "2160p"]
+OutputResolution = Literal['720p', '1080p', '1440p', '2160p']

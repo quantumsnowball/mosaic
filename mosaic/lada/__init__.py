@@ -1,4 +1,4 @@
-from mosaic.lada.main import app
+from .main import app
 
 __all__ = [
     'app',

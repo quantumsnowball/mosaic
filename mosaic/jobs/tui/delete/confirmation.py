@@ -7,11 +7,11 @@ from textual.screen import ModalScreen
 from textual.widgets import Label
 
 if TYPE_CHECKING:
-    from mosaic.jobs.tui.delete import JobList
+    from . import JobList
 
 
 class ConfirmationModalScreen(ModalScreen[bool]):
-    """A minimal key-driven confirmation modal."""
+    '''A minimal key-driven confirmation modal.'''
 
     from .bindings import confirmatino_model_screen as BINDINGS
     from .styles import confirmation_model_screen as CSS
@@ -19,8 +19,8 @@ class ConfirmationModalScreen(ModalScreen[bool]):
     def compose(self) -> ComposeResult:
         with Vertical():
             yield Label(
-                "Are you sure? "
-                "[bold red]Y[/] to Delete / [bold white]N[/] to Cancel",
+                'Are you sure? '
+                '[bold red]Y[/] to Delete / [bold white]N[/] to Cancel',
             )
 
     def action_confirm(self) -> None:
@@ -57,4 +57,4 @@ class Confirmation:
             item.remove()
             self.main.notify(f'Job {job.id} deleted.')
         except Exception as e:
-            self.main.notify(f'Failed to delete: {e}', severity="error")
+            self.main.notify(f'Failed to delete: {e}', severity='error')

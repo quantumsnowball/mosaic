@@ -3,11 +3,9 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from mosaic.upscale.net.rrdb_net import RRDBNet
-
 
 class RealESRGANer:
-    """A helper class for upsampling images with RealESRGAN.
+    '''A helper class for upsampling images with RealESRGAN.
 
     Args:
         scale (int): Upsampling scale factor used in the networks. It is usually 2 or 4. Scale of 4 mean width and
@@ -20,7 +18,7 @@ class RealESRGANer:
         tile_pad (int): The pad size for each tile, to remove border artifacts. Default: 10.
         pre_pad (int): Pad the input images to avoid border artifacts. Default: 10.
         half (float): Whether to use half precision during inference. Default: False.
-    """
+    '''
 
     def __init__(self,
                  scale,
@@ -70,10 +68,10 @@ class RealESRGANer:
             self.model = self.model.half()
 
     def dni(self, net_a, net_b, dni_weight, key='params', loc='cpu'):
-        """Deep network interpolation.
+        '''Deep network interpolation.
 
         ``Paper: Deep Network Interpolation for Continuous Imagery Effect Transition``
-        """
+        '''
         net_a = torch.load(net_a, map_location=torch.device(loc))
         net_b = torch.load(net_b, map_location=torch.device(loc))
         for k, v_a in net_a[key].items():
@@ -81,8 +79,8 @@ class RealESRGANer:
         return net_a
 
     def pre_process(self, img):
-        """Pre-process, such as pre-pad and mod pad, so that the images can be divisible
-        """
+        '''Pre-process, such as pre-pad and mod pad, so that the images can be divisible
+        '''
         img = torch.from_numpy(np.transpose(img, (2, 0, 1))).float()
         self.img = img.unsqueeze(0).to(self.device)
         if self.half:
@@ -112,11 +110,11 @@ class RealESRGANer:
         self.output = self.model(self.img)
 
     def tile_process(self):
-        """It will first crop input images to tiles, and then process each tile.
+        '''It will first crop input images to tiles, and then process each tile.
         Finally, all the processed tiles are merged into one images.
 
         Modified from: https://github.com/ata4/esrgan-launcher
-        """
+        '''
         batch, channel, height, width = self.img.shape
         output_height = height * self.scale
         output_width = width * self.scale

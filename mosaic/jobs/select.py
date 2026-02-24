@@ -1,7 +1,8 @@
 import typer
 
-from mosaic.jobs.manager import Manager
 from mosaic.utils.service import service
+
+from .manager import Manager
 
 app = typer.Typer()
 

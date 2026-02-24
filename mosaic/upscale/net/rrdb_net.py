@@ -7,7 +7,7 @@ from torch.nn.modules.batchnorm import _BatchNorm
 
 @torch.no_grad()
 def default_init_weights(module_list, scale=1, bias_fill=0, **kwargs):
-    """Initialize network weights.
+    '''Initialize network weights.
 
     Args:
         module_list (list[nn.Module] | nn.Module): Modules to be initialized.
@@ -15,7 +15,7 @@ def default_init_weights(module_list, scale=1, bias_fill=0, **kwargs):
             blocks. Default: 1.
         bias_fill (float): The value to fill bias. Default: 0
         kwargs (dict): Other arguments for initialization function.
-    """
+    '''
     if not isinstance(module_list, list):
         module_list = [module_list]
     for module in module_list:
@@ -37,7 +37,7 @@ def default_init_weights(module_list, scale=1, bias_fill=0, **kwargs):
 
 
 def make_layer(basic_block, num_basic_block, **kwarg):
-    """Make layers by stacking the same blocks.
+    '''Make layers by stacking the same blocks.
 
     Args:
         basic_block (nn.module): nn.module class for basic block.
@@ -45,7 +45,7 @@ def make_layer(basic_block, num_basic_block, **kwarg):
 
     Returns:
         nn.Sequential: Stacked blocks in nn.Sequential.
-    """
+    '''
     layers = []
     for _ in range(num_basic_block):
         layers.append(basic_block(**kwarg))
@@ -53,7 +53,7 @@ def make_layer(basic_block, num_basic_block, **kwarg):
 
 
 def pixel_unshuffle(x, scale):
-    """ Pixel unshuffle.
+    ''' Pixel unshuffle.
 
     Args:
         x (Tensor): Input feature with shape (b, c, hh, hw).
@@ -61,7 +61,7 @@ def pixel_unshuffle(x, scale):
 
     Returns:
         Tensor: the pixel unshuffled feature.
-    """
+    '''
     b, c, hh, hw = x.size()
     out_channel = c * (scale**2)
     assert hh % scale == 0 and hw % scale == 0
@@ -72,14 +72,14 @@ def pixel_unshuffle(x, scale):
 
 
 class ResidualDenseBlock(nn.Module):
-    """Residual Dense Block.
+    '''Residual Dense Block.
 
     Used in RRDB block in ESRGAN.
 
     Args:
         num_feat (int): Channel number of intermediate features.
         num_grow_ch (int): Channels for each growth.
-    """
+    '''
 
     def __init__(self, num_feat=64, num_grow_ch=32):
         super(ResidualDenseBlock, self).__init__()
@@ -108,14 +108,14 @@ class ResidualDenseBlock(nn.Module):
 
 
 class RRDB(nn.Module):
-    """Residual in Residual Dense Block.
+    '''Residual in Residual Dense Block.
 
     Used in RRDB-Net in ESRGAN.
 
     Args:
         num_feat (int): Channel number of intermediate features.
         num_grow_ch (int): Channels for each growth.
-    """
+    '''
 
     def __init__(self, num_feat, num_grow_ch=32):
         super(RRDB, self).__init__()
@@ -132,7 +132,7 @@ class RRDB(nn.Module):
 
 
 class RRDBNet(nn.Module):
-    """Networks consisting of Residual in Residual Dense Block, which is used
+    '''Networks consisting of Residual in Residual Dense Block, which is used
     in ESRGAN.
 
     ESRGAN: Enhanced Super-Resolution Generative Adversarial Networks.
@@ -149,7 +149,7 @@ class RRDBNet(nn.Module):
             Default: 64
         num_block (int): Block number in the trunk network. Defaults: 23
         num_grow_ch (int): Channels for each growth. Default: 32.
-    """
+    '''
 
     def __init__(self, num_in_ch, num_out_ch, scale=4, num_feat=64, num_block=23, num_grow_ch=32):
         super(RRDBNet, self).__init__()

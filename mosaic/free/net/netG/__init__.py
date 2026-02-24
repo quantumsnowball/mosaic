@@ -2,9 +2,9 @@ from pathlib import Path
 
 import torch
 
-from mosaic.free.net.netG.BVDNet import BVDNet
-from mosaic.free.net.netG.BVDNet import define_G as video_G
-from mosaic.free.net.netG.BVDNet import show_paramsnumber
+from .BVDNet import BVDNet
+from .BVDNet import define_G as video_G
+from .BVDNet import show_paramsnumber as show_paramsnumber
 
 
 def video(model_path: Path) -> BVDNet:

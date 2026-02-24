@@ -1,10 +1,11 @@
 import rich
 import typer
 
-from mosaic.jobs.manager import Manager
-from mosaic.jobs.text import job_info
 from mosaic.utils.logging import log
 from mosaic.utils.service import service
+
+from .manager import Manager
+from .text import job_info
 
 app = typer.Typer()
 

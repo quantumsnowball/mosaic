@@ -6,7 +6,7 @@ from typing import Self
 
 from alive_progress import alive_bar
 
-from mosaic.utils import ROOT_DIR, TEMP_DIR
+from . import ROOT_DIR, TEMP_DIR
 
 
 class ProgressBar:

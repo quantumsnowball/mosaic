@@ -1,10 +1,10 @@
 import functools
 from typing import Callable, ParamSpec, TypeVar
 
-from mosaic.utils.logging import logger
+from .logging import logger
 
-P = ParamSpec("P")
-R = TypeVar("R")
+P = ParamSpec('P')
+R = TypeVar('R')
 
 ToBeWrapped = Callable[P, R]
 Wrapped = Callable[P, R | None]

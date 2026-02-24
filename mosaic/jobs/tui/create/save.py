@@ -12,14 +12,14 @@ class SaveAsModalScreen(ModalScreen[str]):
         super().__init__()
         self._input = Input(
             value=default_value,
-            placeholder="Save output file as ...",
+            placeholder='Save output file as ...',
         )
 
     def compose(self) -> ComposeResult:
         with Vertical():
-            yield Label("Create lada job, save output file as:")
+            yield Label('Create lada job, save output file as:')
             yield self._input
-            yield Label("Press <Escape> to cancel")
+            yield Label('Press <Escape> to cancel')
 
     def on_mount(self) -> None:
         self._input.focus()

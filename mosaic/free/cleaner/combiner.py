@@ -2,10 +2,11 @@ from pathlib import Path
 from subprocess import Popen
 from typing import Self
 
-from mosaic.free.cleaner.processor import Processor
 from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.logging import trace
 from mosaic.utils.progress import ProgressBar
+
+from .processor import Processor
 
 
 class Combiner:

@@ -8,14 +8,15 @@ from typing import Self
 import numpy as np
 
 from mosaic.free.cleaner.packer import Package, Packer
-from mosaic.free.cleaner.processor.position import get_mosaic_position
-from mosaic.free.cleaner.processor.remove import remove_mosaic
-from mosaic.free.cleaner.processor.replace import replace_mosaic
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.utils import TEMP_DIR
 from mosaic.utils.exception import catch
 from mosaic.utils.logging import trace
+
+from .position import get_mosaic_position
+from .remove import remove_mosaic
+from .replace import replace_mosaic
 
 
 class Processor:

@@ -11,10 +11,11 @@ from typing import Self
 import numpy as np
 
 from mosaic.upscale.net.real_esrgan import RealESRGANer
-from mosaic.upscale.upscaler.splitter import Splitter
 from mosaic.utils import TEMP_DIR
 from mosaic.utils.exception import catch
 from mosaic.utils.logging import trace
+
+from .splitter import Splitter
 
 
 @dataclass

@@ -1,7 +1,8 @@
 from pathlib import Path
 
-from mosaic.jobs.job import Job
 from mosaic.utils.ffprobe import FFprobe
+
+from .job import Job
 
 
 def job_info(

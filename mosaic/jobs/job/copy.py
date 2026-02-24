@@ -6,10 +6,11 @@ from pathlib import Path
 from typing import Self, override
 from uuid import uuid4
 
-from mosaic.jobs.job._base import Job, Save
 from mosaic.utils.logging import log
 from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
+
+from ._base import Job, Save
 
 
 @dataclass

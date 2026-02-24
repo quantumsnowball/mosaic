@@ -3,14 +3,15 @@ from typing import Annotated
 
 import typer
 
-from mosaic.jobs.clean import app as clean
-from mosaic.jobs.create import app as create
-from mosaic.jobs.delete import app as delete
-from mosaic.jobs.ls import app as ls
-from mosaic.jobs.run import app as run
-from mosaic.jobs.select import app as select
-from mosaic.jobs.tui import Main
 from mosaic.utils.service import service
+
+from .clean import app as clean
+from .create import app as create
+from .delete import app as delete
+from .ls import app as ls
+from .run import app as run
+from .select import app as select
+from .tui import Main
 
 app = typer.Typer()
 
@@ -19,7 +20,7 @@ app = typer.Typer()
 @service()
 def jobs(
     ctx: typer.Context,
-    debug: Annotated[bool, typer.Option("--debug", help="Enable Textual developer tools")] = False,
+    debug: Annotated[bool, typer.Option('--debug', help='Enable Textual developer tools')] = False,
 ) -> None:
     # jobs can be a standalone command
     if ctx.invoked_subcommand is not None:
@@ -27,7 +28,7 @@ def jobs(
 
     # debug mode, to be used with textual console
     if debug:
-        os.environ["TEXTUAL"] = "devtools"
+        os.environ['TEXTUAL'] = 'devtools'
 
     # textual main app
     app = Main()
