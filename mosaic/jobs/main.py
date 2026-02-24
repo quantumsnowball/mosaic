@@ -15,11 +15,12 @@ from .tui import Main
 
 app = typer.Typer(
     name='jobs',
-    help='manage jobs',
+    invoke_without_command=True,
+    help='manage jobs using a TUI',
 )
 
 
-@app.callback(invoke_without_command=True)
+@app.callback()
 @service()
 def jobs(
     ctx: typer.Context,

@@ -14,7 +14,7 @@ NAME = 'mosaic'
 
 
 app = typer.Typer(
-    name='mosaic',
+    name=NAME,
     no_args_is_help=True,
     help='a video restoration and processing app',
 )
