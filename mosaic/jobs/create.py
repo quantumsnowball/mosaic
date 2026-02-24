@@ -13,7 +13,11 @@ from .job.free import FreeJob
 from .job.lada import LadaJob
 from .job.upscale import UpscaleJob
 
-app = typer.Typer(no_args_is_help=True, help='create a jobs by type')
+app = typer.Typer(
+    name='create',
+    no_args_is_help=True,
+    help='create a jobs by type'
+)
 
 
 class args:
@@ -29,7 +33,10 @@ class args:
         scale: OutputResolution = '1080p'
 
 
-@app.command(no_args_is_help=True)
+@app.command(
+    no_args_is_help=True,
+    help='create a free job',
+)
 @service()
 def free(
     input_file: args.input_file,
@@ -48,7 +55,10 @@ def free(
         job.initialize()
 
 
-@app.command(no_args_is_help=True)
+@app.command(
+    no_args_is_help=True,
+    help='create a lada job',
+)
 @service()
 def lada(
     input_file: args.input_file,
@@ -67,7 +77,10 @@ def lada(
         job.initialize()
 
 
-@app.command(no_args_is_help=True)
+@app.command(
+    no_args_is_help=True,
+    help='create a copy job',
+)
 @service()
 def copy(
     input_file: args.input_file,
@@ -86,7 +99,10 @@ def copy(
         job.initialize()
 
 
-@app.command(no_args_is_help=True)
+@app.command(
+    no_args_is_help=True,
+    help='create a upscale job',
+)
 @service()
 def upscale(
     input_file: args.input_file,

@@ -38,7 +38,7 @@ def jobs(
     app.run()
 
 
-app.add_typer(create, name='create')
+app.add_typer(create)
 app.add_typer(select)
 app.add_typer(run)
 app.add_typer(clean)
