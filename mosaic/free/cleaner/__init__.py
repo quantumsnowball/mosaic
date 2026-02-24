@@ -2,15 +2,16 @@ from contextlib import ExitStack
 from pathlib import Path
 from typing import Self
 
-from mosaic.free.cleaner.combiner import Combiner
-from mosaic.free.cleaner.packer import Packer
-from mosaic.free.cleaner.processor import Processor
-from mosaic.free.cleaner.splitter import Splitter
 from mosaic.free.net.netG.BVDNet import BVDNet
 from mosaic.free.net.netM.BiSeNet import BiSeNet
 from mosaic.utils.logging import trace
 from mosaic.utils.spec import VideoSource
 from mosaic.utils.time import HMS
+
+from .combiner import Combiner
+from .packer import Packer
+from .processor import Processor
+from .splitter import Splitter
 
 
 class Cleaner:

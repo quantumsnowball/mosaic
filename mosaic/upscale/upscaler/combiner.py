@@ -2,11 +2,12 @@ from pathlib import Path
 from subprocess import Popen
 from typing import Self
 
-from mosaic.upscale.upscaler.processor import Processor
 from mosaic.utils.ffmpeg import FFmpeg
 from mosaic.utils.logging import trace
 from mosaic.utils.progress import ProgressBar
 from mosaic.utils.spec import VideoDest
+
+from .processor import Processor
 
 
 class Combiner:

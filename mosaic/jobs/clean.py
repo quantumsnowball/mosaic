@@ -3,8 +3,9 @@ from typing import Annotated
 import typer
 from typer import Option
 
-from mosaic.jobs.manager import Manager
 from mosaic.utils.service import service
+
+from .manager import Manager
 
 app = typer.Typer()
 

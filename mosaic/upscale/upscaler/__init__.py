@@ -3,12 +3,13 @@ from pathlib import Path
 from typing import Self
 
 from mosaic.upscale.net.real_esrgan import RealESRGANer
-from mosaic.upscale.upscaler.combiner import Combiner
-from mosaic.upscale.upscaler.processor import Processor
-from mosaic.upscale.upscaler.splitter import Splitter
 from mosaic.utils.logging import trace
 from mosaic.utils.spec import VideoDest, VideoSource
 from mosaic.utils.time import HMS
+
+from .combiner import Combiner
+from .processor import Processor
+from .splitter import Splitter
 
 
 class Upscaler:

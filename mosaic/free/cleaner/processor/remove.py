@@ -4,8 +4,9 @@ import torch
 
 from mosaic.free.cleaner.constants import FRAME_POS, INPUT_SIZE, N, T
 from mosaic.free.cleaner.packer import Package
-from mosaic.free.cleaner.processor import utils
 from mosaic.free.net.netG.BVDNet import BVDNet
+
+from . import utils
 
 
 def normalize(data):

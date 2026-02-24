@@ -4,13 +4,14 @@ from typing import Annotated
 import typer
 from typer import Argument, Option
 
-from mosaic.jobs.job.copy import CopyJob
-from mosaic.jobs.job.free import FreeJob
-from mosaic.jobs.job.lada import LadaJob
-from mosaic.jobs.job.upscale import UpscaleJob
 from mosaic.upscale.net import ModelNames, OutputResolution
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, parse_hms
+
+from .job.copy import CopyJob
+from .job.free import FreeJob
+from .job.lada import LadaJob
+from .job.upscale import UpscaleJob
 
 app = typer.Typer(no_args_is_help=True, help='create a jobs')
 

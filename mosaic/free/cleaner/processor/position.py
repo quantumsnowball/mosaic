@@ -3,8 +3,9 @@ from typing import Any
 import cv2
 import numpy as np
 
-from mosaic.free.cleaner.processor import utils
 from mosaic.free.net.netM.BiSeNet import BiSeNet
+
+from . import utils
 
 
 def find_mostlikely_ROI(mask: np.ndarray) -> np.ndarray:

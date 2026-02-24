@@ -7,7 +7,7 @@ from textual.screen import ModalScreen
 from textual.widgets import Label
 
 if TYPE_CHECKING:
-    from mosaic.jobs.tui.delete import JobList
+    from . import JobList
 
 
 class ConfirmationModalScreen(ModalScreen[bool]):

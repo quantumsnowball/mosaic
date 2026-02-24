@@ -3,7 +3,7 @@ import subprocess
 from pathlib import Path
 from subprocess import PIPE
 
-from mosaic.utils.time import HMS
+from .time import HMS
 
 
 class VideoStream:

@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from textual.app import ComposeResult
 from textual.containers import Vertical
 
-from mosaic.jobs.tui.create.tree import FileTree
+from .tree import FileTree
 
 if TYPE_CHECKING:
     from mosaic.jobs.tui import Main

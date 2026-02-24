@@ -1,7 +1,7 @@
 from contextlib import ContextDecorator
 from typing import Self
 
-from mosaic.utils import ROOT_DIR, TEMP_DIR
+from . import ROOT_DIR, TEMP_DIR
 
 
 class service(ContextDecorator):

@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, get_args
 
-from mosaic.upscale.net.rrdb_net import RRDBNet
-from mosaic.upscale.net.srvgg_net import SRVGGNetCompact
+from .rrdb_net import RRDBNet
+from .srvgg_net import SRVGGNetCompact
 
 PACKAGE_DIR = Path(__file__).parent
 

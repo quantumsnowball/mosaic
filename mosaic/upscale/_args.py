@@ -3,8 +3,9 @@ from pathlib import Path
 from rich.prompt import Confirm
 from typer import BadParameter, Exit
 
-from mosaic.upscale.net import ModelNames, OutputResolution
 from mosaic.utils.time import HMS
+
+from .net import ModelNames, OutputResolution
 
 
 def preprocess_args(

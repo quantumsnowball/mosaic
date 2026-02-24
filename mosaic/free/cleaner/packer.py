@@ -6,10 +6,11 @@ from typing import Self, cast
 
 import numpy as np
 
-from mosaic.free.cleaner.constants import LEFT_FRAME, POOL_NUM
-from mosaic.free.cleaner.splitter import Splitter
 from mosaic.utils.exception import catch
 from mosaic.utils.logging import trace
+
+from .constants import LEFT_FRAME, POOL_NUM
+from .splitter import Splitter
 
 
 class Package:

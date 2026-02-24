@@ -7,9 +7,10 @@ from typing import TYPE_CHECKING
 from textual.widgets import DirectoryTree
 
 from mosaic.jobs.job.lada import LadaJob
-from mosaic.jobs.tui.create.progress import CreateJobProgressBar
-from mosaic.jobs.tui.create.save import SaveAsModalScreen
 from mosaic.utils.time import HMS
+
+from .progress import CreateJobProgressBar
+from .save import SaveAsModalScreen
 
 if TYPE_CHECKING:
     from mosaic.jobs.tui import Main
