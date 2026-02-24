@@ -10,7 +10,9 @@ from .text import job_info
 app = typer.Typer()
 
 
-@app.command()
+@app.command(
+    help='run all jobs',
+)
 @service()
 def run() -> None:
     # create menu and discover jobs

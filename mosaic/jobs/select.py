@@ -7,7 +7,9 @@ from .manager import Manager
 app = typer.Typer()
 
 
-@app.command()
+@app.command(
+    help='select a job to run',
+)
 @service()
 def select() -> None:
     # create menu and discover jobs
