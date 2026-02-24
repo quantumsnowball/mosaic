@@ -19,7 +19,10 @@ PACKAGE_DIR = Path(__file__).parent
 app = typer.Typer()
 
 
-@app.command(no_args_is_help=True)
+@app.command(
+    no_args_is_help=True,
+    help='use Real-ESRGAN to upscale video',
+)
 @service()
 def upscale(
     output_file: Annotated[Path, Argument(help='output file path')],

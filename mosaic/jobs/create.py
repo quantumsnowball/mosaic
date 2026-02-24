@@ -13,7 +13,7 @@ from .job.free import FreeJob
 from .job.lada import LadaJob
 from .job.upscale import UpscaleJob
 
-app = typer.Typer(no_args_is_help=True, help='create a jobs')
+app = typer.Typer(no_args_is_help=True, help='create a jobs by type')
 
 
 class args:

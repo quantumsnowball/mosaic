@@ -16,7 +16,10 @@ PACKAGE_DIR = Path(__file__).parent
 app = typer.Typer()
 
 
-@app.command(no_args_is_help=True)
+@app.command(
+    no_args_is_help=True,
+    help='use Lada to upscale video',
+)
 @service()
 def lada(
     output_file: Annotated[Path, Argument(help='Output file path', show_default=False)],

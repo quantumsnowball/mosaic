@@ -13,7 +13,10 @@ from .run import app as run
 from .select import app as select
 from .tui import Main
 
-app = typer.Typer()
+app = typer.Typer(
+    name='jobs',
+    help='manage jobs',
+)
 
 
 @app.callback(invoke_without_command=True)

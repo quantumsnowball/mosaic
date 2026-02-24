@@ -19,7 +19,10 @@ PACKAGE_DIR = Path(__file__).parent
 app = typer.Typer()
 
 
-@app.command(no_args_is_help=True)
+@app.command(
+    no_args_is_help=True,
+    help='use DeepMosaics to restore video'
+)
 @service()
 def free(
     output_file: Annotated[Path, Argument(help='Output file path')],

@@ -13,7 +13,11 @@ setup_logger()
 NAME = 'mosaic'
 
 
-app = typer.Typer(no_args_is_help=True)
+app = typer.Typer(
+    name='mosaic',
+    no_args_is_help=True,
+    help='a video restoration and processing app',
+)
 
 
 @app.callback()
@@ -24,7 +28,7 @@ def main() -> None:
     pass
 
 
-@app.command()
+@app.command(help='show version info')
 def version() -> None:
     print(f'v{meta.version(NAME)}')
 
@@ -32,4 +36,4 @@ def version() -> None:
 app.add_typer(free)
 app.add_typer(upscale)
 app.add_typer(lada)
-app.add_typer(jobs, name='jobs')
+app.add_typer(jobs)
