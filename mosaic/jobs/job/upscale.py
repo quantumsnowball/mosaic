@@ -6,7 +6,7 @@ from typing import Self, override
 from uuid import UUID, uuid4
 
 from mosaic.jobs.utils import Command
-from mosaic.upscale.net import presets
+from mosaic.upscale.net.presets import presets
 from mosaic.upscale.net.real_esrgan import RealESRGANer
 from mosaic.upscale.upscaler import Upscaler
 from mosaic.utils.console import stdout
