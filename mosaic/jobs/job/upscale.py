@@ -6,9 +6,6 @@ from typing import Self, override
 from uuid import UUID, uuid4
 
 from mosaic.jobs.utils import Command
-from mosaic.upscale.net.presets import presets
-from mosaic.upscale.net.real_esrgan import RealESRGANer
-from mosaic.upscale.upscaler import Upscaler
 from mosaic.utils.console import stdout
 from mosaic.utils.logging import log
 from mosaic.utils.spec import VideoSource
@@ -61,6 +58,11 @@ class UpscaleJob(Job):
 
     @override
     def proceed(self) -> None:
+        # lazy imports
+        from mosaic.upscale.net.presets import presets
+        from mosaic.upscale.net.real_esrgan import RealESRGANer
+        from mosaic.upscale.upscaler import Upscaler
+
         # loop through available tasks
         while task := self.checklist.next_task():
             stdout(self.progress(task.name))
