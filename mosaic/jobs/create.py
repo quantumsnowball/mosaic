@@ -4,7 +4,7 @@ from typing import Annotated
 import typer
 from typer import Argument, Option
 
-from mosaic.upscale.net import ModelNames, OutputResolution
+from mosaic.upscale.net.types import ModelNames, OutputResolution
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, parse_hms
 

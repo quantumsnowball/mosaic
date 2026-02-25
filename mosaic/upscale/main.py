@@ -8,10 +8,7 @@ from mosaic.utils.logging import log
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, parse_hms
 
-from ._args import preprocess_args
-from .net import ModelNames, OutputResolution, presets
-from .net.real_esrgan import RealESRGANer
-from .upscaler import Upscaler
+from .net.types import ModelNames, OutputResolution
 
 PACKAGE_DIR = Path(__file__).parent
 
@@ -34,6 +31,12 @@ def upscale(
     force: Annotated[bool, Option('--force', '-y', help='overwrite output file without asking')] = False,
     raw_info: Annotated[bool, Option('--raw-info', help='display raw ffmpeg info')] = False,
 ) -> None:
+    # lazy imports
+    from ._args import preprocess_args
+    from .net.presets import presets
+    from .net.real_esrgan import RealESRGANer
+    from .upscaler import Upscaler
+
     # preprocess args
     output_file, input_file, start_time, end_time, model, scale, raw_info = preprocess_args(
         output_file, input_file, start_time, end_time, model, scale, force, raw_info)

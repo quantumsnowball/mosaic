@@ -5,9 +5,6 @@ from pathlib import Path
 from typing import Self, override
 from uuid import uuid4
 
-from mosaic.free.cleaner import Cleaner
-from mosaic.free.net.netG import video
-from mosaic.free.net.netM import bisenet
 from mosaic.utils import PACKAGE_ROOT
 from mosaic.utils.console import stdout
 from mosaic.utils.logging import log
@@ -25,6 +22,11 @@ class FreeJobSave(Save):
 class FreeJob(Job):
     @override
     def proceed(self) -> None:
+        # lazy imports
+        from mosaic.free.cleaner import Cleaner
+        from mosaic.free.net.netG import video
+        from mosaic.free.net.netM import bisenet
+
         # loop through available tasks
         while task := self.checklist.next_task():
             stdout(self.progress(task.name))

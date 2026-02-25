@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Self, override
 from uuid import uuid4
 
-from mosaic.lada.cleaner import Cleaner
 from mosaic.utils import PACKAGE_ROOT
 from mosaic.utils.console import stdout
 from mosaic.utils.logging import log
@@ -23,6 +22,9 @@ class LadaJobSave(Save):
 class LadaJob(Job):
     @override
     def proceed(self) -> None:
+        # lazy imports
+        from mosaic.lada.cleaner import Cleaner
+
         # loop through available tasks
         while task := self.checklist.next_task():
             stdout(self.progress(task.name))
