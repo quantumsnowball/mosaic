@@ -20,14 +20,6 @@ app = typer.Typer(
 )
 
 
-@app.callback()
-def main() -> None:
-    '''
-    mosaic: a multi-feature video restoration tool
-    '''
-    pass
-
-
 @app.command(help='show version info')
 def version() -> None:
     print(f'v{meta.version(NAME)}')
