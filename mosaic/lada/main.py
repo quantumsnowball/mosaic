@@ -7,22 +7,26 @@ from typer import Argument, Option
 from mosaic.utils.logging import log
 from mosaic.utils.service import service
 
-from ._args import preprocess_args
-from .cleaner import Cleaner
-
 PACKAGE_DIR = Path(__file__).parent
 
 
 app = typer.Typer()
 
 
-@app.command(no_args_is_help=True)
+@app.command(
+    no_args_is_help=True,
+    help='use Lada to upscale video',
+)
 @service()
 def lada(
     output_file: Annotated[Path, Argument(help='Output file path', show_default=False)],
     input_file: Annotated[Path, Option('--input-file', '-i', help='input media path', show_default=False)],
     force: Annotated[bool, Option('--force', '-y', help='overwrite output file without asking')] = False,
 ) -> None:
+    # lazy imports
+    from ._args import preprocess_args
+    from .cleaner import Cleaner
+
     # preprocess args
     output_file, input_file = preprocess_args(output_file, input_file, force)
 

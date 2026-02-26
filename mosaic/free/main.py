@@ -8,18 +8,16 @@ from mosaic.utils.logging import log
 from mosaic.utils.service import service
 from mosaic.utils.time import HMS, parse_hms
 
-from ._args import preprocess_args
-from .cleaner import Cleaner
-from .net.netG import video
-from .net.netM import bisenet
-
 PACKAGE_DIR = Path(__file__).parent
 
 
 app = typer.Typer()
 
 
-@app.command(no_args_is_help=True)
+@app.command(
+    no_args_is_help=True,
+    help='use DeepMosaics to restore video'
+)
 @service()
 def free(
     output_file: Annotated[Path, Argument(help='Output file path')],
@@ -30,6 +28,12 @@ def free(
     time_tag: Annotated[bool, Option('--time-tag', help='auto append time tag at end of filename')] = False,
     raw_info: Annotated[bool, Option('--raw-info', help='display raw ffmpeg info')] = False,
 ) -> None:
+    # lazy imports
+    from ._args import preprocess_args
+    from .cleaner import Cleaner
+    from .net.netG import video
+    from .net.netM import bisenet
+
     # preprocess args
     output_file, input_file, start_time, end_time, raw_info = preprocess_args(
         output_file, input_file, start_time, end_time, force, time_tag, raw_info)

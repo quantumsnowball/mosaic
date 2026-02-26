@@ -10,7 +10,9 @@ from .manager import Manager
 app = typer.Typer()
 
 
-@app.command()
+@app.command(
+    help='list jobs info',
+)
 @service(mkdir=False)
 def ls(
     verbose: Annotated[bool, Option('--verbose', '-v', help='enable verbose output')] = False,

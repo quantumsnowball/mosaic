@@ -10,7 +10,9 @@ from .manager import Manager
 app = typer.Typer()
 
 
-@app.command()
+@app.command(
+    help='clean up storage space',
+)
 @service(mkdir=False)
 def clean(
     clear_all_jobs: Annotated[bool, Option('--clear-all-jobs', help='clear all jobs')] = False,

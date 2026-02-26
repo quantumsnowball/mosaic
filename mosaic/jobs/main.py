@@ -13,10 +13,14 @@ from .run import app as run
 from .select import app as select
 from .tui import Main
 
-app = typer.Typer()
+app = typer.Typer(
+    name='jobs',
+    invoke_without_command=True,
+    help='manage jobs using a TUI',
+)
 
 
-@app.callback(invoke_without_command=True)
+@app.callback()
 @service()
 def jobs(
     ctx: typer.Context,
@@ -35,7 +39,7 @@ def jobs(
     app.run()
 
 
-app.add_typer(create, name='create')
+app.add_typer(create)
 app.add_typer(select)
 app.add_typer(run)
 app.add_typer(clean)

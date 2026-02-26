@@ -1,11 +1,13 @@
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from rich.prompt import Confirm
 from typer import BadParameter, Exit
 
 from mosaic.utils.time import HMS
 
-from .net import ModelNames, OutputResolution
+if TYPE_CHECKING:
+    from .net.types import ModelNames, OutputResolution
 
 
 def preprocess_args(

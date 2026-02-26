@@ -7,7 +7,9 @@ from .manager import Manager
 app = typer.Typer()
 
 
-@app.command()
+@app.command(
+    help='delete jobs',
+)
 @service(mkdir=False)
 def delete() -> None:
     # search for jobs
