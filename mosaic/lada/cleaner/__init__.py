@@ -31,14 +31,13 @@ class Cleaner:
     @trace
     def start(self) -> None:
         self._proc = Popen([
+            # version: lada 0.11.1-dev+20cb34a
             'lada-cli',
-            '--mosaic-restoration-model', 'basicvsrpp',
-            '--mosaic-detection-model-path', self._netD_path,
-            '--mosaic-restoration-model-path', self._netR_path,
+            '--mosaic-detection-model', self._netD_path,
+            '--mosaic-restoration-model', self._netR_path,
             '--input', self._input_file,
-            # lada-cli default for x264: crf=20, preset=medium
-            '--crf', '22',
-            '--preset', 'slow',
+            '--encoder', 'libx264',
+            '--encoder-options', '--crf 22 --preset slow',
             '--output', self._output_file,
         ])
 
