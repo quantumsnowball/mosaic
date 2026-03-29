@@ -34,7 +34,7 @@ def lada(
     with Cleaner(
         input_file=input_file,
         output_file=output_file,
-        netD_path=PACKAGE_DIR / 'net/state_dicts/lada_mosaic_detection_model_v2.pt',
+        netD_path=PACKAGE_DIR / 'net/state_dicts/lada_mosaic_detection_model_v4_accurate.pt',
         netR_path=PACKAGE_DIR / 'net/state_dicts/lada_mosaic_restoration_model_generic_v1.2.pth',
     ) as cleaner:
         try:

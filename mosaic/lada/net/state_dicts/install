@@ -4,9 +4,9 @@ src_dir="$HOME/Repos/lada/model_weights"
 dst_dir="$HOME/Repos/mosaic/mosaic/lada/net/state_dicts"
 
 files=(
-    "lada_mosaic_detection_model_v2.pt"
+    # "lada_mosaic_detection_model_v2.pt"
     "lada_mosaic_detection_model_v4_accurate.pt"
-    "lada_mosaic_detection_model_v4_fast.pt"
+    # "lada_mosaic_detection_model_v4_fast.pt"
     "lada_mosaic_restoration_model_generic_v1.2.pth"
 )
 

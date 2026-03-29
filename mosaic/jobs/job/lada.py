@@ -32,7 +32,7 @@ class LadaJob(Job):
             with Cleaner(
                 input_file=self._input_dirpath / task.name,
                 output_file=self._output_dirpath / task.name,
-                netD_path=PACKAGE_ROOT / 'lada/net/state_dicts/lada_mosaic_detection_model_v2.pt',
+                netD_path=PACKAGE_ROOT / 'lada/net/state_dicts/lada_mosaic_detection_model_v4_accurate.pt',
                 netR_path=PACKAGE_ROOT / 'lada/net/state_dicts/lada_mosaic_restoration_model_generic_v1.2.pth',
             ) as cleaner:
                 try:
