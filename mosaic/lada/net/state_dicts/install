@@ -3,12 +3,16 @@
 src_dir="$HOME/Repos/lada/model_weights"
 dst_dir="$HOME/Repos/mosaic/mosaic/lada/net/state_dicts"
 
-src="$src_dir/lada_mosaic_detection_model_v2.pt"
-dst="$dst_dir/lada_mosaic_detection_model_v2.pt"
-ln -sf $src $dst
-ls -l $dst
+files=(
+    "lada_mosaic_detection_model_v2.pt"
+    "lada_mosaic_detection_model_v4_accurate.pt"
+    "lada_mosaic_detection_model_v4_fast.pt"
+    "lada_mosaic_restoration_model_generic_v1.2.pth"
+)
 
-src="$src_dir/lada_mosaic_restoration_model_generic_v1.pth"
-dst="$dst_dir/lada_mosaic_restoration_model_generic_v1.pth"
-ln -sf $src $dst
-ls -l $dst
+for file in "${files[@]}"; do
+    src="$src_dir/$file"
+    dst="$dst_dir/$file"
+    ln -sf "$src" "$dst"
+    ls -l "$dst"
+done
