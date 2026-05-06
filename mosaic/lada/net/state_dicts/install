@@ -1,7 +1,7 @@
 #!/bin/sh
 
-src_dir="$HOME/Repos/lada/model_weights"
-dst_dir="$HOME/Repos/mosaic/mosaic/lada/net/state_dicts"
+src_dir="$HOME/Projects/lada/model_weights"
+dst_dir="$HOME/Projects/mosaic/mosaic/lada/net/state_dicts"
 
 files=(
     # "lada_mosaic_detection_model_v2.pt"
